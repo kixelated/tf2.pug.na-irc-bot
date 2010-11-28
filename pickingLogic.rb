@@ -8,8 +8,8 @@ module PickingLogic
   end
   
   def start_picking
-    possible_captains = classes["captain"]
-    for i in (1..@num_teams)
+    possible_captains = @players.invert_arr["captain"]
+    @team_count.times do |i|
       captain = possible_captains.delete_at rand(possible_captains.length)
       
       @captains << captain
@@ -17,7 +17,7 @@ module PickingLogic
       @players.delete captain
     end
     
-    msg "Captains are #{ @captains }"
+    msg "Captains are [#{ @captains.join(", ") }]"
     tell_captain # inform the captain that it is their pick
     
     @state = 2 # skips over 1 at the moment
@@ -25,20 +25,20 @@ module PickingLogic
   
   def tell_captain
     user = @captains[@pick_index]
-    counts = Util::hash_count(@teams[@pick_index])
+    classes = @teams[@pick_index].invert_pro
     
     # Displays the classes that are not yet full for this team
     priv user, "It is your turn to pick."
     @classes_count.each do |k, v|
-      count = counts[k] || 0
-      priv user, "#{v - count} #{ k.capitalize }: #{ classes[k] }" if v > count
+      diff = v - (classes[k] ||= []).size
+      priv user, "#{diff} #{ k }: [#{ @players.invert_arr[k].join(", ") }]" if diff > 0
     end
   end
   
   def list_captain user
     return priv(user, "Picking has not started.") unless picking?
     
-    msg "It is #{ @captains[@pick_index] }'s pick"
+    msg "It is #{ @captains[@pick_index].to_s }'s pick"
   end
   
   def can_pick? user
@@ -54,8 +54,8 @@ module PickingLogic
   end
   
   def pick_player_full? player_class
-    count = Util::hash_count(@teams[@pick_index])[player_class] || 0
-    count >= @classes_count[player_class]
+    count = (@teams[@pick_index].invert_pro[player_class] ||= []).size
+    @classes_count[player_class] <= count
   end
   
   def pick_player user, player, player_class
@@ -82,7 +82,7 @@ module PickingLogic
   
   def print_teams
     @teams.each do |team|
-      msg "#{ team }"
+      msg "#{ team.each { |k, v| "#{ k } => #{ v.to_s }" }}"
     end
   end
   

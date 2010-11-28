@@ -85,12 +85,3 @@ class Pug
     bot.notice user, message
   end
 end
-
-# Probably a bad thing to do, but fuck it makes clean printing easier
-module Cinch
-  class User
-    def inspect
-      to_s
-    end
-  end
-end
