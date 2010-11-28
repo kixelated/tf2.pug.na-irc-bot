@@ -1,6 +1,5 @@
 require 'cinch'
-
-load 'pug.rb'
+require './pug.rb'
 
 bot = Cinch::Bot.new do
   configure do |c|

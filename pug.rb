@@ -26,8 +26,8 @@ class Pug
   def setup
     @players = {}
 
-    @team_size = 3
-    @team_classes = { "scout" => 3, "soldier" => 0, "demo" => 0, "medic" => 0, "captain" => 1 }
+    @team_size = 6
+    @team_classes = { "scout" => 2, "soldier" => 2, "demo" => 1, "medic" => 1, "captain" => 1 }
     
     start_game
   end
@@ -72,12 +72,16 @@ class Pug
   def captain m
     list_captain m.user
   end
+  
+  def test m
+    m.user.notice "Test"
+  end
 
   def msg message
     bot.msg "#tf2.pug.na.beta", "\x02" + message + "\x02"
   end
   
   def priv user, message
-    bot.msg user, message
+    bot.notice user, message
   end
 end
