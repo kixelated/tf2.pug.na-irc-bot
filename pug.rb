@@ -13,25 +13,28 @@ class Pug
   match /remove/, method: :remove
   match /list/, method: :list
   
-  match /pick (.+) (.+)/, method: :pick
+  match /pick ([^\s]+) ([^\s]+)/, method: :pick
   match /captain/, method: :captain
   
-  match /test/, method: :test
-
   def initialize *args
     super
     setup
   end
   
+  # variables that do not reset between pugs
   def setup
+    @channel = "#tf2.pug.na.beta"
+  
     @players = {}
 
+    @team_count = 2
     @team_size = 6
-    @team_classes = { "scout" => 2, "soldier" => 2, "demo" => 1, "medic" => 1, "captain" => 1 }
+    @classes_count = { "scout" => 2, "soldier" => 2, "demo" => 1, "medic" => 1, "captain" => 1 }
     
     start_game
   end
   
+  # variables that reset between pugs
   def start_game
     @captains = []
     @teams = []
@@ -49,7 +52,7 @@ class Pug
   def add m, args
     if add_player m.user, args.split(/ /)
       list_players
-      start_picking
+      attempt_picking # checks if minimum requirements are met
     end
   end
 
@@ -72,16 +75,22 @@ class Pug
   def captain m
     list_captain m.user
   end
-  
-  def test m
-    m.user.notice "Test"
-  end
 
-  def msg message
-    bot.msg "#tf2.pug.na.beta", "\x02" + message + "\x02"
+  def msg channel = @channel, message
+    # \x02 is bold
+    bot.msg channel, "\x02" + message + "\x02"
   end
   
   def priv user, message
     bot.notice user, message
+  end
+end
+
+# Probably a bad thing to do, but fuck it makes clean printing easier
+module Cinch
+  class User
+    def inspect
+      to_s
+    end
   end
 end
