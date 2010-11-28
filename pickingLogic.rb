@@ -18,12 +18,13 @@ module PickingLogic
     end
     
     msg "Captains are #{ @captains }"
-    tell_captain @captains[@pick_index] # inform the captain
+    tell_captain # inform the captain that it is their pick
     
     @state = 2 # skips over 1 at the moment
   end
   
-  def tell_captain user
+  def tell_captain
+    user = @captains[@pick_index]
     counts = Util::hash_count(@teams[@pick_index])
     
     # Displays the classes that are not yet full for this team
@@ -75,7 +76,7 @@ module PickingLogic
       
       msg "Game started. Add to the pug using the !add command."
     else 
-      tell_captain @captains[@pick_index]
+      tell_captain
     end
   end
   
