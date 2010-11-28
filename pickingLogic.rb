@@ -1,42 +1,43 @@
 module PickingLogic
   def picking? 
-    @state >= 1
+    @state >= 1 # kind of crude
+  end
+  
+  def attempt_picking
+    start_picking if !picking? and minimum_players?
   end
   
   def start_picking
-    if !picking? and minimum_players?
-      possible_captains = Util::hash_invert_a(@players)["captain"]
-      for i in (1..2)
-        captain = possible_captains.delete_at(rand(possible_captains.length))
-        
-        @captains << captain
-        @teams << { captain => "captain" }
-        @players.delete captain
-      end
+    possible_captains = classes["captain"]
+    for i in (1..@num_teams)
+      captain = possible_captains.delete_at rand(possible_captains.length)
       
-      msg "Captains are #{@captains[0].nick} and #{@captains[1].nick}"
-      tell_captain
-      
-      @state = 1
+      @captains << captain
+      @teams << { captain => "captain" }
+      @players.delete captain
     end
+    
+    msg "Captains are #{ @captains }"
+    tell_captain @captains[@pick_index] # inform the captain
+    
+    @state = 2 # skips over 1 at the moment
   end
   
-  def tell_captain
-    remaining = []
+  def tell_captain user
     counts = Util::hash_count(@teams[@pick_index])
     
-    @team_classes.each do |k, v|
+    # Displays the classes that are not yet full for this team
+    priv user, "It is your turn to pick."
+    @classes_count.each do |k, v|
       count = counts[k] || 0
-      remaining << "#{v - count} #{k}" if v != count
+      priv user, "#{v - count} #{ k.capitalize }: #{ classes[k] }" if v > count
     end
-    
-    priv @captains[@pick_index], "It is your turn to pick. Remaining: #{remaining.join(", ")}"
   end
   
   def list_captain user
     return priv(user, "Picking has not started.") unless picking?
     
-    msg "It is #{@captains[@pick_index].nick}'s pick"
+    msg "It is #{ @captains[@pick_index] }'s pick"
   end
   
   def can_pick? user
@@ -44,7 +45,7 @@ module PickingLogic
   end
   
   def pick_player_valid? player, player_class
-    @players.key? player and @team_classes.key? player_class
+    @players.key? player and @classes_count.key? player_class
   end
   
   def pick_player_captain? user, player
@@ -53,7 +54,7 @@ module PickingLogic
   
   def pick_player_full? player_class
     count = Util::hash_count(@teams[@pick_index])[player_class] || 0
-    count + 1 > @team_classes[player_class]
+    count >= @classes_count[player_class]
   end
   
   def pick_player user, player, player_class
@@ -68,32 +69,30 @@ module PickingLogic
     @pick += 1
     @pick_index = staggered @pick
     
-    if @pick + 2 == @team_size * 2
+    if @pick + @team_count == @team_size * @team_count
       print_teams
       start_game
       
       msg "Game started. Add to the pug using the !add command."
     else 
-      tell_captain
+      tell_captain @captains[@pick_index]
     end
   end
   
   def print_teams
     @teams.each do |team|
-      players = []
-      team.each do |k, v|
-        players << "\"#{k.nick}\" => #{v}"
-      end
-      
-      msg "Team: #{players.join(", ")}"
+      msg "#{ team }"
     end
   end
   
   def sequential num
-    num % 2
+    # 0 1 0 1 0 1 0 1 ...
+    num % @team_count
   end
   
   def staggered num
-    ((num + 1) / 2) % 2
+    # 0 1 1 0 0 1 1 0 ...
+    # won't work as expected when @team_count > 2
+    ((num + 1) / @team_count) % @team_count
   end
 end
