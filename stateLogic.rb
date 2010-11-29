@@ -1,0 +1,96 @@
+module StateLogic
+  def can_add?
+    !picking?
+  end
+  
+  def picking? 
+    @state == 3
+  end
+  
+  # attempt_afk -> start_afk || attempt_picking
+  # start_afk -> attempt_picking (delay)
+  # check_afk -> attempt_picking (channel)
+  # attempt_picking -> start_delay, start_picking
+  # start_delay -> nil
+  # start_picking -> nil
+  
+  def attempt_afk
+    if @state == 0 and minimum_players?
+      @players.each_key do |p|
+        p.refresh
+        @afk << p if p.idle > @afk_threshold
+      end
+      
+      if @afk.empty?
+        attempt_picking true
+      else
+        start_afk 
+      end
+    end
+  end
+  
+  def attempt_picking override = false
+    @afk = []
+  
+    if override or minimum_players?
+      start_delay
+      start_picking
+    else
+      @state = 0
+    end
+  end
+
+  def check_afk user
+    if @state == 1 and @afk.delete user
+      if @afk.empty?
+        @state = 0
+        attempt_picking
+      end
+    end
+  end
+  
+  def start_afk
+    @state = 1
+    msg "The following players are considered afk: [#{ @afk.join(", ") }]"
+    
+    sleep(@afk_delay)
+    
+    if !@afk.empty?
+      @afk.each do |p|
+        p.refresh
+        @players.delete p if p.idle > @afk_threshold
+      end
+
+      list_players
+      attempt_picking 
+    end
+  end
+  
+  def start_delay
+    @state = 2
+    msg "Teams are being drafted, captains will be selected in #{@picking_delay} seconds"
+    
+    sleep(@picking_delay)
+  end
+  
+  def start_picking
+    @state = 3
+  
+    possible_captains = @players.invert_arr["captain"]
+    @team_count.times do |i|
+      @captains << (possible_captains.delete_at rand(possible_captains.length))
+    end
+    
+    @captains.each do |c|
+      @teams << { c => "captain" }
+      @players.delete c
+    end
+
+    msg "Captains are #{ @captains.join(", ") }"
+    tell_captain # inform the captain that it is their pick
+  end
+  
+  def end_picking
+    start_game
+  end
+end

@@ -1,12 +1,17 @@
 module PlayersLogic
   def add_player user, cs
-    remove_player user
-  
-    cs.each do |c|
-      (@players[user] ||= []) << c if @classes_count.key? c and not (@players.key? user and @players[user].include? c)
-    end
+    if can_add?
+      remove_player user
     
-    @players.key? user
+      cs.each do |c|
+        temp = c.downcase
+        (@players[user] ||= []) << temp if @team_classes.key? temp and not (@players.key? user and @players[user].include? temp)
+      end
+      
+      @players.key? user
+    else
+      priv user, "You cannot add at this time, picking is underway."
+    end
   end
 
   def remove_player user
@@ -24,13 +29,13 @@ module PlayersLogic
   end
   
   def remaining_classes hash, multiplier = 1
-    @classes_count.reject do |k, v| 
+    @team_classes.reject do |k, v| 
       v * multiplier <= (hash[k] || 0)
     end
   end
 
   def list_classes_needed
-    if !picking?
+    if can_add?
       output = remaining_classes(@players.invert_arr_size, @team_count)
       msg "Required classes: [#{ output.keys.join(", ") }]" unless output.empty?
     end
