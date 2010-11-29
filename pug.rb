@@ -1,12 +1,15 @@
 require './playersLogic.rb'
 require './pickingLogic.rb'
+require './stateLogic.rb'
 require './util.rb'
 
 class Pug
   include Cinch::Plugin
   include PlayersLogic
   include PickingLogic
+  include StateLogic
   
+  listen_to :channel, method: :channel
   listen_to :part, method: :part
   
   match /add (.+)/, method: :add
@@ -17,7 +20,7 @@ class Pug
   
   match /pick ([^\s]+) ([^\s]+)/, method: :pick
   match /captain/, method: :captain
-  
+
   def initialize *args
     super
     setup
@@ -26,13 +29,18 @@ class Pug
   # variables that do not reset between pugs
   def setup
     @channel = "#tf2.pug.na.beta"
+    @picking_delay = 45
+    
+    @afk_threshold = 60 * 5
+    @afk_delay = 45
   
     @players = {}
-
-    @team_colours = ["red", "blue"]
+    @afk = []
+    
     @team_count = 2
+    @team_colours = ["red", "blue"]
     @team_size = 6
-    @classes_count = { "scout" => 2, "soldier" => 2, "demo" => 1, "medic" => 1, "captain" => 1 }
+    @team_classes = { "scout" => 2, "soldier" => 2, "demo" => 1, "medic" => 1, "captain" => 1 }
     
     start_game
   end
@@ -42,9 +50,13 @@ class Pug
     @captains = []
     @teams = []
     
-    @state = 0 # 0 = add/remove, 1 = delay, 2 = picking
+    @state = 0 # 0 = add/remove, 1 = afk check, 2 = delay, 3 = picking
     @pick = 0
   end
+  
+  def channel m
+    check_afk m.user
+  end 
   
   def part m
     list_players if remove_player m.user
@@ -54,7 +66,7 @@ class Pug
   def add m, args
     if add_player m.user, args.split(/ /)
       list_players
-      attempt_picking # checks if minimum requirements are met
+      attempt_afk # checks if minimum requirements are met
     end
   end
 
@@ -69,6 +81,7 @@ class Pug
     list_players_detailed
   end
   
+  # !need
   def need m
     list_classes_needed
   end

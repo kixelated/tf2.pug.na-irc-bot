@@ -1,29 +1,4 @@
 module PickingLogic
-  def picking? 
-    @state >= 1 # kind of crude
-  end
-  
-  def attempt_picking
-    start_picking if !picking? and minimum_players?
-  end
-  
-  def start_picking
-    possible_captains = @players.invert_arr["captain"]
-    @team_count.times do |i|
-      @captains << (possible_captains.delete_at rand(possible_captains.length))
-    end
-    
-    @captains.each do |c|
-      @teams << { c => "captain" }
-      @players.delete c
-    end
-    
-    @state = 2 # skips over 1 at the moment
-    
-    msg "Captains are #{ @captains.join(", ") }"
-    tell_captain # inform the captain that it is their pick
-  end
-  
   def tell_captain
     # Displays the classes that are not yet full for this team
     priv current_captain, "It is your turn to pick."
@@ -45,7 +20,7 @@ module PickingLogic
   end
   
   def pick_player_valid? player, player_class
-    @players.key? player and @classes_count.key? player_class
+    @players.key? player and @team_classes.key? player_class
   end
   
   def pick_player_avaliable? player_class
@@ -64,8 +39,8 @@ module PickingLogic
     @pick += 1
     
     if @pick + @team_count >= @team_size * @team_count
+      end_picking
       print_teams
-      start_game
       
       msg "Game started. Add to the pug using the !add command."
     else 
