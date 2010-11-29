@@ -68,26 +68,15 @@ module StateLogic
   
   def start_delay
     @state = 2
-    msg "Teams are being drafted, captains will be selected in #{@picking_delay} seconds"
     
+    msg "Teams are being drafted, captains will be selected in #{@picking_delay} seconds"
     sleep(@picking_delay)
   end
   
   def start_picking
     @state = 3
-  
-    possible_captains = @players.invert_arr["captain"]
-    @team_count.times do |i|
-      @captains << (possible_captains.delete_at rand(possible_captains.length))
-    end
     
-    @captains.each do |c|
-      @teams << { c => "captain" }
-      @players.delete c
-    end
-
-    msg "Captains are #{ @captains.join(", ") }"
-    tell_captain # inform the captain that it is their pick
+    choose_captains
   end
   
   def end_picking

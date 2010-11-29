@@ -1,21 +1,15 @@
 class Team
-	attr_accessor: :captain
-	def initialize
-		@players = Array.new
-		@classes = Array.new
-		@captain
-		@classes_count = { "scout" => 4, #"soldier" => 2, "demo" => 1, "medic" => 1, "captain" => 1 
-		}
+	attr_accessor: :name, :captain, :players
+  
+	def initialize name, captain
+    @name = name
+    @captain = captain
+		@players = { @captain => "captain" }
 	end
 	
-	def add_player player, clss
-		@players << player
-		@classes << clss
-		@classes_count[clss] -= 1
-	end
-
-	def print_teams
-	
-	end
-	
+	def to_s
+    temp = []
+    @players.each { |k, v| temp << "#{ k } => #{ v.to_s }" }
+    "#{ @name.capitalize } team: #{ temp.join(", ") }"
+  end
 end
