@@ -1,3 +1,12 @@
-TODO
-
 ruby -Ilib bot.rb
+
+TODO List:
+  - Team colours
+  - Server rotation
+  - Rcon to servers
+  - Stats
+  - Delay before picking
+  - AFK check
+  - Sub system
+  - ChanServ authorization
+  - Pick random player (!random)
