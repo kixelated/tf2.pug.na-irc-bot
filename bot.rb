@@ -7,11 +7,11 @@ bot = Cinch::Bot.new do
     c.nick = "IRCCompanionBot"
     c.server = "irc.gamesurge.net"
     c.plugins.plugins = [Pug]
-    c.channels = ["#tf2.pug.na.beta"]
+    c.channels = ["#tf2.pug.na", "#tf2.pug.na.beta"]
   end
   
   # !quit
-  on :message, /quit/ do |m|
+  on :message, /!quit/ do |m|
     bot.quit
   end
 end

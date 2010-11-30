@@ -9,8 +9,8 @@ class Pug
   include PickingLogic
   include StateLogic
   
-  listen_to :channel, method: :channel
   listen_to :part, method: :part
+  listen_to :quit, method: :part
   
   match /add (.+)/, method: :add
   match /remove/, method: :remove
@@ -31,7 +31,7 @@ class Pug
     @channel = "#tf2.pug.na.beta"
     @picking_delay = 45
     
-    @afk_threshold = 60 * 5
+    @afk_threshold = 60 * 10
     @afk_delay = 45
   
     @players = {}
@@ -41,6 +41,8 @@ class Pug
     @team_colours = ["red", "blue"]
     @team_size = 6
     @team_classes = { "scout" => 2, "soldier" => 2, "demo" => 1, "medic" => 1, "captain" => 1 }
+    
+    @title_width = 15
     
     start_game
   end
@@ -53,11 +55,7 @@ class Pug
     @state = 0 # 0 = add/remove, 1 = afk check, 2 = delay, 3 = picking
     @pick = 0
   end
-  
-  def channel m
-    check_afk m.user
-  end 
-  
+
   def part m
     list_players if remove_player m.user
   end
@@ -95,13 +93,24 @@ class Pug
   def captain m
     list_captain m.user
   end
+  
+  def colour_start foreground, background = 0
+    "\x03#{ foreground.to_s.rjust(2, "0") },#{ background.to_s.rjust(2, "0") }"
+  end
+  
+  def colour_end
+    "\x03"
+  end
+  
+  def make_title message
+    colour_start(0, 2) + message.rjust(@title_width) + colour_end
+  end
 
   def msg channel = @channel, message
-    # \x02 is bold
-    bot.msg channel, "\x02" + message + "\x02"
+    bot.msg channel, message
   end
   
   def priv user, message
-    bot.notice user, message
+    #bot.notice user, message
   end
 end
