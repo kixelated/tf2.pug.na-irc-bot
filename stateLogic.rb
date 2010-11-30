@@ -1,6 +1,10 @@
 module StateLogic
   def can_add?
-    !picking?
+    @state < 3
+  end
+  
+  def can_remove?
+    @state < 3
   end
   
   def picking? 
@@ -15,9 +19,11 @@ module StateLogic
   
   def attempt_afk
     if @state == 0 and minimum_players?
+      @state = 1
+    
       @players.each_key do |p|
         p.refresh
-        @afk << p if p.idle > @afk_threshold
+        @afk << p if p.unknown? or p.idle > @afk_threshold
       end
       
       if @afk.empty?
@@ -40,8 +46,11 @@ module StateLogic
   end
 
   def start_afk
-    @state = 1
-    msg "The following players are considered afk: [#{ @afk.join(", ") }]"
+    msg "Warning, the following players are afk and will be removed unless they respond within #{ @afk_delay } seconds: #{ @afk.join(", ") }"
+    
+    @afk.each do |p|
+      priv p, "Warning, you are considered afk by the bot. Say anything in the channel within the next #{ @afk_delay } seconds to avoid being removed."
+    end
     
     sleep(@afk_delay)
 
@@ -65,9 +74,11 @@ module StateLogic
     @state = 3
     
     choose_captains
+    tell_captain
   end
   
   def end_picking
     start_game
+    msg "Game started. Add to the pug using the !add command."
   end
 end

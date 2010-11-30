@@ -1,6 +1,7 @@
 require './playersLogic.rb'
 require './pickingLogic.rb'
 require './stateLogic.rb'
+require './serverLogic.rb'
 require './util.rb'
 
 class Pug
@@ -8,6 +9,7 @@ class Pug
   include PlayersLogic
   include PickingLogic
   include StateLogic
+  include ServerLogic
   
   listen_to :part, method: :part
   listen_to :quit, method: :part
@@ -18,8 +20,12 @@ class Pug
   match /players/, method: :list
   match /need/, method: :need
   
-  match /pick ([^\s]+) ([^\s]+)/, method: :pick
+  match /pick (.+)/, method: :pick
   match /captain/, method: :captain
+  
+  match /mumble/, method: :mumble
+  match /map/, method: :map
+  match /server/, method: :server
 
   def initialize *args
     super
@@ -29,21 +35,13 @@ class Pug
   # variables that do not reset between pugs
   def setup
     @channel = "#tf2.pug.na.beta"
-    @picking_delay = 45
     
-    @afk_threshold = 60 * 10
-    @afk_delay = 45
+    @servers = [["chicago1.tf2pug.org", 27015, "tf2pug", "squid"]]
+    @maps = ["cp_badlands", "cp_granary"]
   
     @players = {}
     @afk = []
-    
-    @team_count = 2
-    @team_colours = ["red", "blue"]
-    @team_size = 6
-    @team_classes = { "scout" => 2, "soldier" => 2, "demo" => 1, "medic" => 1, "captain" => 1 }
-    
-    @title_width = 15
-    
+
     start_game
   end
   
@@ -51,7 +49,7 @@ class Pug
   def start_game
     @captains = []
     @teams = []
-    
+
     @state = 0 # 0 = add/remove, 1 = afk check, 2 = delay, 3 = picking
     @pick = 0
   end
@@ -85,13 +83,29 @@ class Pug
   end
   
   # !pick
-  def pick m, arg1, arg2
-    pick_player m.user, User(arg1), arg2
+  def pick m, args
+    pick_player m.user, args.split(/ /)
   end
   
   # !captain
   def captain m
     list_captain m.user
+  end
+  
+  # !mumble
+  def mumble m
+    msg "The Mumble IP is 'tf2pug.commandchannel.com:30153' (password 'tf2pug')"
+    msg "Download Mumble here: http://mumble.sourceforge.net/"
+  end
+  
+  # !map
+  def map m
+    list_map
+  end
+  
+  # !server
+  def server m
+    list_server
   end
   
   def colour_start foreground, background = 0
@@ -102,15 +116,19 @@ class Pug
     "\x03"
   end
   
-  def make_title message
-    colour_start(0, 2) + message.rjust(@title_width) + colour_end
-  end
-
-  def msg channel = @channel, message
-    bot.msg channel, message
+  def colour_default
+    colour_start(0, 2)
   end
   
-  def priv user, message
-    #bot.notice user, message
+  def make_title message, background = 1
+    colour_start(0, background) + (" " + message).rjust(15) + colour_end
+  end
+
+  def message channel = @channel, msg
+    bot.msg channel, msg
+  end
+  
+  def notice channel = @channel, msg
+    bot.notice user, msg
   end
 end

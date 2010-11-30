@@ -1,4 +1,21 @@
 module PickingLogic
+  def choose_captains
+    output = []
+    possible_captains = @players.invert_arr["captain"]
+    
+    @team_count.times do |i|
+      captain = possible_captains.delete_at rand(possible_captains.length)
+      
+      @teams << { captain => "captain" }
+      @captains << captain
+      @players.delete captain
+      
+      output << team_colour(captain.nick, i)
+    end
+
+    msg "Captains are #{ output.join(", ") }"
+  end
+
   def tell_captain
     # Displays the classes that are not yet full for this team
     priv current_captain, "It is your turn to pick."
@@ -12,7 +29,7 @@ module PickingLogic
   def list_captain user
     return priv(user, "Picking has not started.") unless picking?
  
-    msg "It is #{ current_captain.to_s }'s pick"
+    msg "It is #{ current_captain.to_s }'s turn to pick"
   end
   
   def can_pick? user
@@ -27,10 +44,15 @@ module PickingLogic
     remaining_classes(current_team).key? player_class
   end
   
-  def pick_player user, player, player_class
+  def pick_player user, pick
     return priv(user, "Picking has not started.") unless picking?
     return priv(user, "It is not your turn to pick.") unless can_pick? user
-    return priv(user, "Invalid pick.") unless pick_player_valid? player, player_class
+    return priv(user, "Invalid pick format. !pick user class") unless pick.size == 2
+  
+    player = User(pick[0])
+    player_class = pick[1]
+
+    return priv(user, "Invalid pick #{player} as #{player_class}.") unless pick_player_valid? player, player_class
     return priv(user, "That class is full.") unless pick_player_avaliable? player_class
 
     current_team[player] = player_class
@@ -39,20 +61,27 @@ module PickingLogic
     @pick += 1
     
     if @pick + @team_count >= @team_size * @team_count
+      announce_teams
+      start_server
       end_picking
-      print_teams
-      
-      msg "Game started. Add to the pug using the !add command."
     else 
       tell_captain
     end
   end
+  
+  def team_colour msg, id
+    colour_end + colour_start(@team_colours[id], 1) + msg + colour_end + colour_default
+  end
 
-  def print_teams
+  def announce_teams
     @teams.each_with_index do |team, i|
       temp = []
-      team.each { |k, v| temp << "#{ k } => #{ v.to_s }" }
-      msg "#{ @team_colours[i].capitalize } team: #{ temp.join(", ") }"
+      team.each do |k, v| 
+        priv k, "You have been picked for #{ @team_names[i] } as #{ v }. The server info is: #{ connect_info }" 
+        temp << "#{ k } as #{ team_colour(v.to_s, i) }"
+      end
+      
+      msg "#{ team_colour(@team_names[i], i) }:" + " #{ temp.join(", ") }"
     end
   end
   

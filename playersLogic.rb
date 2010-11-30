@@ -3,28 +3,38 @@ module PlayersLogic
     if can_add?
       remove_player user
     
+      @players[user] = []
       cs.each do |c|
         temp = c.downcase
-        (@players[user] ||= []) << temp if @team_classes.key? temp and not (@players.key? user and @players[user].include? temp)
+        @players[user] << temp if @team_classes.key? temp and not @players[user].include? temp
+      end
+      
+      if @players[user].empty?
+        @players.delete user
+        priv user, "Invalid classes, was not added."
       end
       
       @players.key? user
     else
-      priv user, "You cannot add at this time, picking is underway."
+      priv user, "You cannot add at this time, please wait."
     end
   end
 
   def remove_player user
-    (@players.delete user) != nil
+    if can_remove?
+      @players.delete user
+    else
+      priv user, "You cannot remove at this time."
+    end
   end
   
   def list_players
-    msg make_title("#{@players.length} users added:") + " #{ @players.keys.join("` ") + "`" unless @players.keys.empty? } "
+    msg make_title("#{@players.length} users added:") + " #{ @players.keys.join(", ") } "
   end
 
   def list_players_detailed
     @players.invert_arr.each do |k, v|
-      msg make_title("#{ k }:") + " #{ v.join("` ") + "`" unless v.empty? } "
+      msg make_title("#{ k }:", 2) + " #{ v.join(", ") } "
     end
   end
   
@@ -37,7 +47,7 @@ module PlayersLogic
   def list_classes_needed
     if can_add?
       output = remaining_classes(@players.invert_arr_size, @team_count)
-      msg "Required classes: #{ output.keys.join(", ") }" unless output.empty?
+      msg make_title("Required classes:", 2) + " #{ output.keys.join(", ") }" unless output.empty?
     end
   end
 
