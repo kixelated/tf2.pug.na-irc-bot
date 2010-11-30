@@ -2,17 +2,15 @@ require 'rcon'
 
 module ServerLogic
   def start_server
-    conn = RCon::Query::Source.new(current_server[0], current_server[1])
-    if conn.auth current_server[3]
-      conn.command("changelevel #{current_map}")
-    end
-  
+    current_server.connect
+    current_server.clvl
+
     @servers.push @servers.shift
     @maps.push @maps.shift
   end
   
   def connect_info
-    "connect #{ current_server[0] }:#{ current_server[1] }; password #{ current_server[2] }"
+    "connect #{ current_server.ip }:#{ current_server.port }; password #{ current_server.pswd }"
   end
   
   def list_server

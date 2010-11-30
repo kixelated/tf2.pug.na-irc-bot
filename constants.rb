@@ -1,3 +1,4 @@
+require './server.rb'
 module Constants
   afk_threshold = 60 * 10
   afk_delay = 45
@@ -7,5 +8,5 @@ module Constants
   team_names = ["Red team", "Blue team"]
   team_colours = [4, 10]
   
-  chicago1 = ["chicago1.tf2pug.org", 27015, "tf2pug", "squid"]
+  chicago1 = Server.new("chicago1.tf2pug.org", 27015, "tf2pug")
 end
