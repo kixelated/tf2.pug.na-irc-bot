@@ -1,11 +1,19 @@
 class Team
-	attr_accessor: :name, :captain, :players
+  attr_accessor: :captain, :players
+	attr_accessor: :name, :colour
   
-	def initialize name, captain
-    @name = name
+  # constants
+  size = 6
+  classes = { "scout" => 2, "soldier" => 2, "demo" => 1, "medic" => 1, "captain" => 1 }
+
+	def initialize captain
     @captain = captain
 		@players = { @captain => "captain" }
 	end
+  
+  def add_player user
+    @players << user
+  end
 	
 	def to_s
     temp = []

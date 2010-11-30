@@ -13,23 +13,23 @@ module PickingLogic
       output << team_colour(captain.nick, i)
     end
 
-    msg "Captains are #{ output.join(", ") }"
+    message "Captains are #{ output.join(", ") }"
   end
 
   def tell_captain
     # Displays the classes that are not yet full for this team
-    priv current_captain, "It is your turn to pick."
+    notice current_captain, "It is your turn to pick."
     
     temp = @players.invert_arr
     remaining_classes(current_team.invert_pro_size).each do |k, v|
-      priv current_captain, "#{ v } #{ k }: #{ temp[k].join(", ") if temp[k] }"
+      notice current_captain, "#{ v } #{ k }: #{ temp[k].join(", ") if temp[k] }"
     end
   end
   
   def list_captain user
-    return priv(user, "Picking has not started.") unless picking?
+    return notice(user, "Picking has not started.") unless picking?
  
-    msg "It is #{ current_captain.to_s }'s turn to pick"
+    message "It is #{ current_captain.to_s }'s turn to pick"
   end
   
   def can_pick? user
@@ -45,15 +45,15 @@ module PickingLogic
   end
   
   def pick_player user, pick
-    return priv(user, "Picking has not started.") unless picking?
-    return priv(user, "It is not your turn to pick.") unless can_pick? user
-    return priv(user, "Invalid pick format. !pick user class") unless pick.size == 2
+    return notice(user, "Picking has not started.") unless picking?
+    return notice(user, "It is not your turn to pick.") unless can_pick? user
+    return notice(user, "Invalid pick format. !pick user class") unless pick.size == 2
   
     player = User(pick[0])
     player_class = pick[1]
 
-    return priv(user, "Invalid pick #{player} as #{player_class}.") unless pick_player_valid? player, player_class
-    return priv(user, "That class is full.") unless pick_player_avaliable? player_class
+    return notice(user, "Invalid pick #{player} as #{player_class}.") unless pick_player_valid? player, player_class
+    return notice(user, "That class is full.") unless pick_player_avaliable? player_class
 
     current_team[player] = player_class
     @players.delete player
@@ -77,11 +77,11 @@ module PickingLogic
     @teams.each_with_index do |team, i|
       temp = []
       team.each do |k, v| 
-        priv k, "You have been picked for #{ @team_names[i] } as #{ v }. The server info is: #{ connect_info }" 
+        message k, "You have been picked for #{ @team_names[i] } as #{ v }. The server info is: #{ connect_info }" 
         temp << "#{ k } as #{ team_colour(v.to_s, i) }"
       end
       
-      msg "#{ team_colour(@team_names[i], i) }:" + " #{ temp.join(", ") }"
+      message "#{ team_colour(@team_names[i], i) }:" + " #{ temp.join(", ") }"
     end
   end
   

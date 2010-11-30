@@ -36,8 +36,8 @@ class Pug
   def setup
     @channel = "#tf2.pug.na.beta"
     
-    @servers = [["chicago1.tf2pug.org", 27015, "tf2pug", "squid"]]
-    @maps = ["cp_badlands", "cp_granary"]
+    @servers = [ Constants::chicago1 ]
+    @maps = [ "cp_badlands", "cp_granary" ]
   
     @players = {}
     @afk = []
@@ -94,8 +94,8 @@ class Pug
   
   # !mumble
   def mumble m
-    msg "The Mumble IP is 'tf2pug.commandchannel.com:30153' (password 'tf2pug')"
-    msg "Download Mumble here: http://mumble.sourceforge.net/"
+    message "The Mumble IP is 'tf2pug.commandchannel.com:30153' (password 'tf2pug')"
+    message "Download Mumble here: http://mumble.sourceforge.net/"
   end
   
   # !map
@@ -120,15 +120,17 @@ class Pug
     colour_start(0, 2)
   end
   
-  def make_title message, background = 1
-    colour_start(0, background) + (" " + message).rjust(15) + colour_end
+  def make_title msg, background = 1
+    colour_start(0, background) + (" " + msg).rjust(15) + colour_end
   end
 
   def message channel = @channel, msg
-    bot.msg channel, msg
+    bot.message channel, msg
+    false
   end
   
   def notice channel = @channel, msg
     bot.notice user, msg
+    false
   end
 end
