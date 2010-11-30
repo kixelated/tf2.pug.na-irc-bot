@@ -1,28 +1,27 @@
 module PickingLogic
   def choose_captains
-    output = []
     possible_captains = @players.invert_arr["captain"]
-    
     @team_count.times do |i|
       captain = possible_captains.delete_at rand(possible_captains.length)
-      
-      @teams << { captain => "captain" }
-      @captains << captain
+
+      @teams << Team.new captain, Constants::team_names[i], Constants::team_colours[i]
       @players.delete captain
-      
-      output << team_colour(captain.nick, i)
     end
 
+    output = []
+    @teams.each do |team|
+      output << team.my_colourize team.captain
+    end
+    
     message "Captains are #{ output.join(", ") }"
   end
 
   def tell_captain
-    # Displays the classes that are not yet full for this team
     notice current_captain, "It is your turn to pick."
-    
-    temp = @players.invert_arr
-    remaining_classes(current_team.invert_pro_size).each do |k, v|
-      notice current_captain, "#{ v } #{ k }: #{ temp[k].join(", ") if temp[k] }"
+
+    # Displays the classes that are not yet full for this team
+    team.remaining_classes.each do |k, v|
+      notice current_captain, "#{ v } #{ k }: #{ @players.invert_arr[k].join(", ") }"
     end
   end
   
@@ -41,7 +40,7 @@ module PickingLogic
   end
   
   def pick_player_avaliable? player_class
-    remaining_classes(current_team).key? player_class
+    current_team.remaining_classes.key? player_class
   end
   
   def pick_player user, pick
@@ -50,17 +49,17 @@ module PickingLogic
     return notice(user, "Invalid pick format. !pick user class") unless pick.size == 2
   
     player = User(pick[0])
-    player_class = pick[1]
+    player_class = pick[1].downcase
 
-    return notice(user, "Invalid pick #{player} as #{player_class}.") unless pick_player_valid? player, player_class
+    return notice(user, "Invalid pick #{ player } as #{ player_class }.") unless pick_player_valid? player, player_class
     return notice(user, "That class is full.") unless pick_player_avaliable? player_class
 
-    current_team[player] = player_class
+    current_team.add player, player_class
     @players.delete player
         
     @pick += 1
     
-    if @pick + @team_count >= @team_size * @team_count
+    if @pick + Constants::team_count >= Team::max_size * Constants::team_count
       announce_teams
       start_server
       end_picking
@@ -68,25 +67,19 @@ module PickingLogic
       tell_captain
     end
   end
-  
-  def team_colour msg, id
-    colour_end + colour_start(@team_colours[id], 1) + msg + colour_end + colour_default
-  end
 
   def announce_teams
     @teams.each_with_index do |team, i|
-      temp = []
-      team.each do |k, v| 
-        message k, "You have been picked for #{ @team_names[i] } as #{ v }. The server info is: #{ connect_info }" 
-        temp << "#{ k } as #{ team_colour(v.to_s, i) }"
+      team.players.each do |user, v| 
+        message user, "You have been picked for #{ team.my_colourize team.name } as #{ v }. The server info is: #{ connect_info }" 
       end
       
-      message "#{ team_colour(@team_names[i], i) }:" + " #{ temp.join(", ") }"
+      message team.to_s
     end
   end
   
   def current_captain
-    @captains[pick_format @pick]
+    current_team.captain
   end
   
   def current_team
