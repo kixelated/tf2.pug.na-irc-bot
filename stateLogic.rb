@@ -9,7 +9,6 @@ module StateLogic
   
   # attempt_afk -> start_afk || attempt_picking
   # start_afk -> attempt_picking (delay)
-  # check_afk -> attempt_picking (channel)
   # attempt_picking -> start_delay, start_picking
   # start_delay -> nil
   # start_picking -> nil
@@ -40,30 +39,19 @@ module StateLogic
     end
   end
 
-  def check_afk user
-    if @state == 1 and @afk.delete user
-      if @afk.empty?
-        @state = 0
-        attempt_picking
-      end
-    end
-  end
-  
   def start_afk
     @state = 1
     msg "The following players are considered afk: [#{ @afk.join(", ") }]"
     
     sleep(@afk_delay)
-    
-    if !@afk.empty?
-      @afk.each do |p|
-        p.refresh
-        @players.delete p if p.idle > @afk_threshold
-      end
 
-      list_players
-      attempt_picking 
+    @afk.each do |p|
+      p.refresh
+      @players.delete p if p.idle > @afk_threshold
     end
+
+    list_players
+    attempt_picking 
   end
   
   def start_delay

@@ -19,12 +19,12 @@ module PlayersLogic
   end
   
   def list_players
-    msg "#{ @players.length } users added: [#{ @players.keys.join(", ") }]"
+    msg make_title("#{@players.length} users added:") + " #{ @players.keys.join("` ") + "`" unless @players.keys.empty? } "
   end
 
   def list_players_detailed
     @players.invert_arr.each do |k, v|
-      msg "#{ k.capitalize }: [#{ v.join(", ") }]"
+      msg make_title("#{ k }:") + " #{ v.join("` ") + "`" unless v.empty? } "
     end
   end
   
@@ -37,7 +37,7 @@ module PlayersLogic
   def list_classes_needed
     if can_add?
       output = remaining_classes(@players.invert_arr_size, @team_count)
-      msg "Required classes: [#{ output.keys.join(", ") }]" unless output.empty?
+      msg "Required classes: #{ output.keys.join(", ") }" unless output.empty?
     end
   end
 
