@@ -12,7 +12,7 @@ class Server
 		#establish connection to server and auth
 		def connect 
 			conn = RCon::Query::Source.new(@ip, @port)
-			conn.auth @pswd
+			conn.auth rcon
 		end
 		
 		#change map
