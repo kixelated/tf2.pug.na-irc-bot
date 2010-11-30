@@ -2,10 +2,14 @@ require './playersLogic.rb'
 require './pickingLogic.rb'
 require './stateLogic.rb'
 require './serverLogic.rb'
+
 require './util.rb'
 
 class Pug
   include Cinch::Plugin
+  
+  include Utilities
+  
   include PlayersLogic
   include PickingLogic
   include StateLogic
@@ -106,22 +110,6 @@ class Pug
   # !server
   def server m
     list_server
-  end
-  
-  def colour_start foreground, background = 0
-    "\x03#{ foreground.to_s.rjust(2, "0") },#{ background.to_s.rjust(2, "0") }"
-  end
-  
-  def colour_end
-    "\x03"
-  end
-  
-  def colour_default
-    colour_start(0, 2)
-  end
-  
-  def make_title msg, background = 1
-    colour_start(0, background) + (" " + msg).rjust(15) + colour_end
   end
 
   def message channel = @channel, msg

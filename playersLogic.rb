@@ -12,38 +12,34 @@ module PlayersLogic
 
   def remove_player user
     return notice user, "You cannot remove at this time." unless can_remove?
-  
+    
     @players.delete user
   end
-  
+
   def list_players
-    message make_title("#{@players.length} users added:") + " #{ @players.keys.join(", ") } "
+    message "#{ @players.size } #{ @players.keys.join(", ") }"
   end
 
   def list_players_detailed
     @players.invert_arr.each do |k, v|
-      message make_title("#{ k }:", 2) + " #{ v.join(", ") } "
-    end
-  end
-  
-  def remaining_classes hash, multiplier = 1
-    @team_classes.reject do |k, v| 
-      v * multiplier <= (hash[k] || 0)
+      message "#{ k }: #{ v.join(", ") }"
     end
   end
 
   def list_classes_needed
-    if can_add?
-      output = remaining_classes(@players.invert_arr_size, @team_count)
-      message make_title("Required classes:", 2) + " #{ output.keys.join(", ") }" unless output.empty?
+    temp = @players.invert_arr.collect { |clss| clss.size }
+    temp = (Team::minimum * Team::max_size - temp).reject { |x| x < 0 } 
+  
+    output = []
+    temp.each do |k, v|
+      output << "#{ v } #{ k }"
     end
+    
+    message "Required classes: #{ output.join(", ") }" unless output.empty?
   end
 
   def minimum_players?
-    # false if the total number of players is not enough
-    return false if @players.size < @team_size * @team_count
-    
-    # false if any of the classes do not meet the requirements
-    remaining_classes(@players.invert_arr_size, @team_count).empty?
+    return false if @players.size < Team::max_size * Constants::team_count
+    return remaining_classes(Team::minimum * Constants::team_count, @players.invert_arr).empty?
   end
 end
