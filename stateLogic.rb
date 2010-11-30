@@ -46,10 +46,10 @@ module StateLogic
   end
 
   def start_afk
-    msg "Warning, the following players are afk and will be removed unless they respond within #{ @afk_delay } seconds: #{ @afk.join(", ") }"
+    message "Warning, the following players are afk and will be removed unless they respond within #{ @afk_delay } seconds: #{ @afk.join(", ") }"
     
     @afk.each do |p|
-      priv p, "Warning, you are considered afk by the bot. Say anything in the channel within the next #{ @afk_delay } seconds to avoid being removed."
+      message p, "Warning, you are considered afk by the bot. Say anything in the channel within the next #{ @afk_delay } seconds to avoid being removed."
     end
     
     sleep(@afk_delay)
@@ -66,7 +66,7 @@ module StateLogic
   def start_delay
     @state = 2
     
-    msg "Teams are being drafted, captains will be selected in #{@picking_delay} seconds"
+    message "Teams are being drafted, captains will be selected in #{@picking_delay} seconds"
     sleep(@picking_delay)
   end
   
@@ -79,6 +79,6 @@ module StateLogic
   
   def end_picking
     start_game
-    msg "Game started. Add to the pug using the !add command."
+    message "Game started. Add to the pug using the !add command."
   end
 end

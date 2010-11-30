@@ -16,11 +16,11 @@ module ServerLogic
   end
   
   def list_server
-    msg connect_info
+    message connect_info
   end  
   
   def list_map
-    msg "The current map is #{ current_map }"
+    message "The current map is #{ current_map }"
   end
 
   def current_server
