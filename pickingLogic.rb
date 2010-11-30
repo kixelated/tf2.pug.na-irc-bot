@@ -54,7 +54,7 @@ module PickingLogic
     return notice(user, "Invalid pick #{ player } as #{ player_class }.") unless pick_player_valid? player, player_class
     return notice(user, "That class is full.") unless pick_player_avaliable? player_class
 
-    current_team.add player, player_class
+    current_team.players[player] = player_class
     @players.delete player
         
     @pick += 1

@@ -2,19 +2,14 @@ require 'rcon'
 
 module ServerLogic
   def start_server
-    current_server.connect
-    current_server.clvl
+    current_server.clvl current_map
 
     @servers.push @servers.shift
     @maps.push @maps.shift
   end
-  
-  def connect_info
-    "connect #{ current_server.ip }:#{ current_server.port }; password #{ current_server.pswd }"
-  end
-  
+
   def list_server
-    message connect_info
+    message current_server.to_s
   end  
   
   def list_map

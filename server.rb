@@ -1,28 +1,37 @@
 class Server
-	attr_accessor :ip, :port, :pswd
+	attr_accessor :ip, :port, :pswd, :rcon
 		
-		rcon = "squid"
-		
-		def initialize ip, port, pswd
-			@ip = ip
-			@port = port
-			@pswd = pswd
-		end
-		
-		#establish connection to server and auth
-		def connect 
-			conn = RCon::Query::Source.new(@ip, @port)
-			conn.auth rcon
-		end
-		
-		#change map
-		def clvl
-			conn.command("changelevel #{ServerLogic::current_map}")
-		end
-		
-		#execute any command passed
-		def command cmd
-			conn.command(cmd)
-		end
-	
+  def initialize ip, port, pswd, rcon
+    @ip = ip
+    @port = port
+    @pswd = pswd
+    @rcon = rcon
+    
+    @connected = false
+  end
+  
+  #establish connection to server and auth
+  def connect 
+    @conn = RCon::Query::Source.new(@ip, @port)
+    @connected = conn.auth rcon
+  end
+  
+  #execute any command passed
+  def command cmd
+    connect unless connected?
+    @conn.command cmd
+  end
+
+  #change map
+  def clvl map
+    command "changelevel #{ map }"
+  end
+  
+  def connected?
+    @connected
+  end
+  
+  def to_s
+    "connect #{ @ip }:#{ @port }; password #{ @pswd }"
+  end
 end
