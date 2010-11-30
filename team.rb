@@ -17,11 +17,7 @@ class Team
     @name = name
     @colour = colour
 	end
-  
-  def add user, clss
-    @players[user] = clss
-  end
-  
+
   def remaining_classes
     temp = @players.invert_proper.collect { |clss| clss.size }
     (Team::minimum - temp).reject { |x| x < 0 } 

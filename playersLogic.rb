@@ -27,6 +27,8 @@ module PlayersLogic
   end
 
   def list_classes_needed
+    # The number of remaining players required is the difference between, the total number needed times the number of teams, and the number of players currently amassed
+    # Negative values are thrown out, as that indicates a surplus
     temp = @players.invert_arr.collect { |clss| clss.size }
     temp = (Team::minimum * Team::max_size - temp).reject { |x| x < 0 } 
   
