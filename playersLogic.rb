@@ -1,7 +1,7 @@
 module PlayersLogic
   def add_player user, classes
     return notice user, "You cannot add at this time, please wait for picking to end." unless can_add?
-    return notice user, "You must be authorized with ChanServ in order to play in this channel. http://www.gamesurge.net/createaccount/" unless user.authed?
+    return notice user, "You must be authorized with GameSurge in order to play in this channel. http://www.gamesurge.net/newuser/" unless user.authed?
     
     classes.collect! { |clss| clss.downcase }
     classes.reject! { |clss| not Team::Minimum.key? clss }
