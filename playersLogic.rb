@@ -38,10 +38,11 @@ module PlayersLogic
     
     required.collect! { |a| [ a[0], a[1] * multiplier - (players[a[0]] ||= []).size ] } # players = { scout => [a, b], soldier => [b] }
     required.reject! { |a| a[1] <= 0 } # Remove any negative or zero values
+    Hash[required]
   end
 
   def list_classes_needed
-    output = classes_needed get_classes, Constants::Team_count
+    output = classes_needed(get_classes, Constants::Team_count).to_a
     output.collect! { |a| "#{ a[1] } #{ a[0] }" } # Format the output
 
     message "Required classes: #{ output.join(", ") }"
