@@ -100,10 +100,12 @@ class Pug
   
   # !force
   def admin_force m, args
-    return if require_admin m.user
+    return unless require_admin m.user
     
-    user = User(args.split!(/ /).shift)
-    if add_player user, args
+    temp = args.split(/ /)
+    user = User(temp.shift)
+
+    if add_player user, temp
       list_players
       attempt_afk
     end
