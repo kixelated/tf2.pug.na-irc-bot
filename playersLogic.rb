@@ -43,14 +43,14 @@ module PlayersLogic
   end
 
   def list_classes_needed
-    output = classes_needed(get_classes, Constants::Team_count).to_a
+    output = classes_needed(get_classes, Team_count).to_a
     output.collect! { |a| "#{ a[1] } #{ a[0] }" } # Format the output
 
     message "#{ make_title "Required classes:" } #{ output.join(", ") }"
   end
 
   def minimum_players?
-    return false if @players.size < Team::Max_size * Constants::Team_count
-    return classes_needed(get_classes, Constants::Team_count).empty?
+    return false if @players.size < Team::Max_size * Team_count
+    return classes_needed(get_classes, Team_count).empty?
   end
 end

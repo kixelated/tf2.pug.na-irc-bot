@@ -6,8 +6,8 @@ module StateLogic
   # start_picking -> nil
   
   def attempt_afk
-    if @state == Constants::state_waiting and minimum_players?
-      @state = Constants::State_afk
+    if @state == state_waiting and minimum_players?
+      @state = State_afk
       
       @afk = check_afk @afk # may take a while
       start_afk unless @afk.empty?
@@ -21,14 +21,14 @@ module StateLogic
       start_delay # pause for x seconds
       start_picking
     else
-      @state = Constants::State_waiting
+      @state = State_waiting
     end
   end
   
   def check_afk list
     list.reject do |user|
       user.refresh
-      !user.unknown? and p.idle <= Constants::Afk_threshold # user is found and not idle
+      !user.unknown? and p.idle <= Afk_threshold # user is found and not idle
     end
   end
 
@@ -36,10 +36,10 @@ module StateLogic
     message "The following players are considered afk: #{ @afk.join(", ") }"
     
     @afk.each do |p|
-      private p, "Warning, you are considered afk by the bot. Say anything in the channel within the next #{ Constants::Afk_delay } seconds to avoid being removed."
+      private p, "Warning, you are considered afk by the bot. Say anything in the channel within the next #{ Afk_delay } seconds to avoid being removed."
     end
     
-    sleep Constants::Afk_delay
+    sleep Afk_delay
 
     # check again if users are afk, this time removing the ones who are
     check_afk(@afk).each_key { |k| @players.delete k }
@@ -49,15 +49,16 @@ module StateLogic
   end
   
   def start_delay
-    @state = Constants::State_delay
+    @state = State_delay
     
-    message "Teams are being drafted, captains will be selected in #{ Constants::Picking_delay } seconds"
-    sleep Constants::Picking_delay
+    message "Teams are being drafted, captains will be selected in #{ Picking_delay } seconds"
+    sleep Picking_delay
   end
   
   def start_picking
-    @state = Constants::State_picking
+    @state = State_picking
     
+    update_lookup
     choose_captains
     tell_captain
   end
@@ -66,21 +67,21 @@ module StateLogic
     @teams.clear
     @loopup.clear
 
-    @state = Constants::State_waiting
+    @state = State_waiting
     @pick = 0
     
     message "Game started. Add to the pug using the !add command."
   end
   
   def picking? 
-    @state == Constants::State_picking
+    @state == State_picking
   end
 
   def can_add?
-    @state < Constants::State_picking
+    @state < State_picking
   end
   
   def can_remove?
-    @state < Constants::State_picking
+    @state < State_picking
   end
 end

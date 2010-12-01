@@ -1,10 +1,23 @@
-include './constants.rb'
-
 module Variables
+  Afk_threshold = 60 * 10
+  Afk_delay = 45
+  Picking_delay = 45
+
+  Team_count = 2
+  Team_names = [ "Red team", "Blue team" ]
+  Team_colours = [ 4, 10 ]
+  
+  Chicago1 = Server.new("chicago1.tf2pug.org", 27015, "tf2pug", "squid")
+  
+  State_waiting = 0
+  State_afk = 1
+  State_delay = 2
+  State_picking = 3
+
   def setup
     @channel = "#tf2.pug.na.beta"
     
-    @servers = [ Constants::Chicago1 ]
+    @servers = [ Chicago1 ]
     @maps = [ "cp_badlands", "cp_granary" ]
   
     @players = {}
@@ -13,7 +26,7 @@ module Variables
     @teams = []
     @lookup = {}
 
-    @state = Constants::State_waiting
+    @state = State_waiting
     @pick = 0
   end
 end

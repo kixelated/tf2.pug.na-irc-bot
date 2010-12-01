@@ -1,4 +1,6 @@
 class Quitter
+  include Cinch::Plugin
+
   match /quit/, method: :quit
   
   def quit m
