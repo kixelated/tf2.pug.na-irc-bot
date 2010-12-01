@@ -18,12 +18,12 @@ module PlayersLogic
   end
   
   def list_players
-    message "#{ @players.size } users added: #{ @players.keys.join(", ") }"
+    message "#{ make_title "#{ @players.size } users added:" } #{ @players.keys.join(", ") }"
   end
 
   def list_players_detailed
     get_classes.each do |k, v|
-      message "#{ k }: #{ v.join(", ") }"
+      message "#{ make_title "#{ k }:", 2 } #{ v.join(", ") }"
     end
   end
   
@@ -31,6 +31,7 @@ module PlayersLogic
     @players.invert_proper_arr
   end
   
+  # I hate this function, but it is so important
   def classes_needed players, multiplier = 1
     # Team::Minimum = { scout => 4, soldier => 4 }
     # required = [[scout, 4], [soldier, 4]]
@@ -45,7 +46,7 @@ module PlayersLogic
     output = classes_needed(get_classes, Constants::Team_count).to_a
     output.collect! { |a| "#{ a[1] } #{ a[0] }" } # Format the output
 
-    message "Required classes: #{ output.join(", ") }"
+    message "#{ make_title "Required classes:" } #{ output.join(", ") }"
   end
 
   def minimum_players?
