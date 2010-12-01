@@ -126,7 +126,7 @@ class Pug
   end
   
   def notice channel = @channel, msg
-    #bot.notice channel, msg
+    bot.notice channel, msg
     false
   end
 end
