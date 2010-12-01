@@ -35,6 +35,8 @@ class Pug
   match /mumble/, method: :mumble
   match /map/, method: :map
   match /server/, method: :server
+  
+  match /force (.+)/, method: :admin_force
 
   def initialize *args
     super
@@ -96,6 +98,22 @@ class Pug
     list_server
   end
   
+  # !force
+  def admin_force m, args
+    return if require_admin m.user
+    
+    user = User(args.split!(/ /).shift)
+    if add_player user, args
+      list_players
+      attempt_afk
+    end
+  end
+  
+  def require_admin user
+    return notice user, "That is an admin-only command." unless Channel(@channel).opped? user
+    true
+  end
+
   def message msg
     bot.msg @channel, colour_start(0) + msg + colour_end
     false
