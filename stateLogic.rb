@@ -10,15 +10,14 @@ module StateLogic
       @state = 1
       
       @afk = check_afk @afk # may take a while
-      return start_afk unless @afk.empty?
+      start_afk unless @afk.empty?
       
-      attempt_picking true
+      attempt_picking
     end
   end
   
-  def attempt_picking override = false
-    # override is called if no players are afk as to avoid a redundant check
-    if override or minimum_players?
+  def attempt_picking
+    if minimum_players?
       start_delay # pause for x seconds
       start_picking
     else
@@ -47,7 +46,6 @@ module StateLogic
     @afk.clear
 
     list_players
-    attempt_picking 
   end
   
   def start_delay
