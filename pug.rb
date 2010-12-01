@@ -11,6 +11,7 @@ require './util.rb'
 class Pug
   include Cinch::Plugin
   
+  include Variables
   include Utilities
   
   include PlayersLogic
@@ -36,31 +37,10 @@ class Pug
 
   def initialize *args
     super
-    setup
-  end
-  
-  # variables that do not reset between pugs
-  def setup
-    @channel = "#tf2.pug.na.beta"
-    
-    @servers = [ Constants::Chicago1 ]
-    @maps = [ "cp_badlands", "cp_granary" ]
-  
-    @players = {}
-    @afk = []
-
-    start_game
-  end
-  
-  # variables that reset between pugs
-  def start_game
-    @captains = []
-    @teams = []
-
-    @state = 0 # 0 = add/remove, 1 = afk check, 2 = delay, 3 = picking
-    @pick = 0
+    setup # variables.setup
   end
 
+  # (quit)
   def part m
     list_players if remove_player m.user
   end

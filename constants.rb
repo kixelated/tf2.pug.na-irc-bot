@@ -11,4 +11,9 @@ module Constants
   Team_colours = [ 4, 10 ]
   
   Chicago1 = Server.new("chicago1.tf2pug.org", 27015, "tf2pug", "squid")
+  
+  State_waiting = 0
+  State_afk = 1
+  State_delay = 2
+  State_picking = 3
 end

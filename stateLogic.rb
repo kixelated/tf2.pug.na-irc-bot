@@ -6,8 +6,8 @@ module StateLogic
   # start_picking -> nil
   
   def attempt_afk
-    if waiting? and minimum_players?
-      @state = 1
+    if @state == Constants::state_waiting and minimum_players?
+      @state = Constants::State_afk
       
       @afk = check_afk @afk # may take a while
       start_afk unless @afk.empty?
@@ -21,7 +21,7 @@ module StateLogic
       start_delay # pause for x seconds
       start_picking
     else
-      @state = 0
+      @state = Constants::State_waiting
     end
   end
   
@@ -49,37 +49,38 @@ module StateLogic
   end
   
   def start_delay
-    @state = 2
+    @state = Constants::State_delay
     
     message "Teams are being drafted, captains will be selected in #{ Constants::Picking_delay } seconds"
     sleep Constants::Picking_delay
   end
   
   def start_picking
-    @state = 3
+    @state = Constants::State_picking
     
     choose_captains
     tell_captain
   end
   
   def end_picking
-    start_game
+    @teams.clear
+    @loopup.clear
+
+    @state = Constants::State_waiting
+    @pick = 0
+    
     message "Game started. Add to the pug using the !add command."
   end
   
-  def waiting?
-    @state == 0
-  end
-
   def picking? 
-    @state == 3
+    @state == Constants::State_picking
   end
 
   def can_add?
-    !picking?
+    @state < Constants::State_picking
   end
   
   def can_remove?
-    !picking?
+    @state < Constants::State_picking
   end
 end
