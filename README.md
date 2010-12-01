@@ -1,5 +1,5 @@
-#tf2.pug.na - A TF2 pug bot in Ruby
-===================================
+tf2.pug.na - A TF2 pug bot in Ruby
+==================================
 
 Installation
 ------------
