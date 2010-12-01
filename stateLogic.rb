@@ -29,7 +29,7 @@ module StateLogic
   def check_afk list
     list.reject do |user|
       user.refresh
-      !user.unknown? and p.idle <= Constants::afk_threshold # user is found and not idle
+      !user.unknown? and p.idle <= Constants::Afk_threshold # user is found and not idle
     end
   end
 
@@ -37,10 +37,10 @@ module StateLogic
     message "The following players are considered afk: #{ @afk.join(", ") }"
     
     @afk.each do |p|
-      message p, "Warning, you are considered afk by the bot. Say anything in the channel within the next #{ Constants::afk_delay } seconds to avoid being removed."
+      private p, "Warning, you are considered afk by the bot. Say anything in the channel within the next #{ Constants::Afk_delay } seconds to avoid being removed."
     end
     
-    sleep Constants::afk_delay
+    sleep Constants::Afk_delay
 
     # check again if users are afk, this time removing the ones who are
     check_afk(@afk).each_key { |k| @players.delete k }
@@ -53,8 +53,8 @@ module StateLogic
   def start_delay
     @state = 2
     
-    message "Teams are being drafted, captains will be selected in #{ Constants::picking_delay } seconds"
-    sleep Constants::picking_delay
+    message "Teams are being drafted, captains will be selected in #{ Constants::Picking_delay } seconds"
+    sleep Constants::Picking_delay
   end
   
   def start_picking

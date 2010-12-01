@@ -1,9 +1,10 @@
 module PlayersLogic
   def add_player user, classes
     return notice user, "You cannot add at this time, please wait for picking to end." unless can_add?
+    #return notice user, "You must be authorized with ChanServ in order to play in this channel. http://www.gamesurge.net/createaccount/" unless user.authed?
     
     classes.collect! { |clss| clss.downcase }
-    classes.reject! { |clss| not Team::classes.key? clss }
+    classes.reject! { |clss| not Team::Minimum.key? clss }
   
     return notice user, "Invalid classes, you have not been added." if classes.empty?
     
@@ -15,33 +16,39 @@ module PlayersLogic
     
     @players.delete user
   end
-
+  
   def list_players
-    message "#{ @players.size } #{ @players.keys.join(", ") }"
+    message "#{ @players.size } users added: #{ @players.keys.join(", ") }"
   end
 
   def list_players_detailed
-    @players.invert_arr.each do |k, v|
+    get_classes.each do |k, v|
       message "#{ k }: #{ v.join(", ") }"
     end
   end
+  
+  def get_classes
+    @players.invert_proper_arr
+  end
+  
+  def classes_needed players, multiplier = 1
+    # Team::Minimum = { scout => 4, soldier => 4 }
+    # required = [[scout, 4], [soldier, 4]]
+    required = Team::Minimum.to_a
+    
+    required.collect! { |a| [ a[0], a[1] * multiplier - (players[a[0]] ||= []).size ] } # players = { scout => [a, b], soldier => [b] }
+    required.reject! { |a| a[1] <= 0 } # Remove any negative or zero values
+  end
 
   def list_classes_needed
-    # The number of remaining players required is the difference between, the total number needed times the number of teams, and the number of players currently amassed
-    # Negative values are thrown out, as that indicates a surplus
-    temp = @players.invert_arr.collect { |clss| clss.size }
-    temp = (Team::minimum * Team::max_size - temp).reject { |x| x < 0 } 
-  
-    output = []
-    temp.each do |k, v|
-      output << "#{ v } #{ k }"
-    end
-    
-    message "Required classes: #{ output.join(", ") }" unless output.empty?
+    output = classes_needed get_classes, Constants::Team_count
+    output.collect! { |a| "#{ a[1] } #{ a[0] }" } # Format the output
+
+    message "Required classes: #{ output.join(", ") }"
   end
 
   def minimum_players?
-    return false if @players.size < Team::max_size * Constants::team_count
-    return remaining_classes(Team::minimum * Constants::team_count, @players.invert_arr).empty?
+    return false if @players.size < Team::Max_size * Constants::Team_count
+    return classes_needed(get_classes, Constants::Team_count).empty?
   end
 end

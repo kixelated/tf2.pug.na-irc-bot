@@ -3,6 +3,9 @@ require './pickingLogic.rb'
 require './stateLogic.rb'
 require './serverLogic.rb'
 
+require './team.rb'
+
+require './constants.rb'
 require './util.rb'
 
 class Pug
@@ -40,7 +43,7 @@ class Pug
   def setup
     @channel = "#tf2.pug.na.beta"
     
-    @servers = [ Constants::chicago1 ]
+    @servers = [ Constants::Chicago1 ]
     @maps = [ "cp_badlands", "cp_granary" ]
   
     @players = {}
@@ -112,13 +115,18 @@ class Pug
     list_server
   end
 
-  def message channel = @channel, msg
-    bot.message channel, msg
+  def message msg
+    bot.msg @channel, colour_start(0) + msg + colour_end
+    false
+  end
+  
+  def private user, msg
+    bot.msg user, msg
     false
   end
   
   def notice channel = @channel, msg
-    bot.notice user, msg
+    #bot.notice channel, msg
     false
   end
 end
