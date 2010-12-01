@@ -2,15 +2,20 @@ module PickingLogic
   def choose_captains
     possible_captains = get_classes["captain"]
     
-    Constants::Team_count.times do |i|
+    Team_count.times do |i|
       captain = possible_captains.delete_at rand(possible_captains.length)
 
-      @teams << Team.new(captain, Constants::Team_names[i], Constants::Team_colours[i])
+      @teams << Team.new(captain, Team_names[i], Team_colours[i])
       @players.delete captain
     end
 
     output = @teams.collect { |team| team.my_colourize team.captain.to_s }
     message "Captains are #{ output.join(", ") }"
+  end
+  
+  def update_lookup
+    @lookup.clear
+    @players.to_a.each_with_index { |a, i| @lookup[i + 1] = a[0] }
   end
 
   def tell_captain
@@ -47,16 +52,21 @@ module PickingLogic
   
     player = User(pick[0])
     player_class = pick[1].downcase
-
-    return notice(user, "Invalid pick #{ player } as #{ player_class }.") unless pick_player_valid? player, player_class
+    
+    unless pick_player_valid? player, player_class
+      player = @lookup[pick[0].to_i] if pick[0].to_i
+      
+      return notice(user, "Invalid pick #{ player } as #{ player_class }.") unless pick_player_valid? player, player_class
+    end
+    
     return notice(user, "That class is full.") unless pick_player_avaliable? player_class
 
     current_team.players[player] = player_class
     @players.delete player
-        
+    
     @pick += 1
     
-    if @pick + Constants::Team_count >= Team::Max_size * Constants::Team_count
+    if @pick + Team_count >= Team::Max_size * Team_count
       announce_teams
       start_server
       end_picking
@@ -89,12 +99,12 @@ module PickingLogic
   
   def sequential num
     # 0 1 0 1 0 1 0 1 ...
-    num % Constants::Team_count
+    num % Team_count
   end
   
   def staggered num
     # 0 1 1 0 0 1 1 0 ...
     # won't work as expected when @Team_count > 2
-    ((num + Constants::Team_count / 2) / Constants::Team_count) % Constants::Team_count
+    ((num + Team_count / 2) / Team_count) % Team_count
   end
 end

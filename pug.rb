@@ -4,8 +4,9 @@ require './stateLogic.rb'
 require './serverLogic.rb'
 
 require './team.rb'
+require './server.rb'
 
-require './constants.rb'
+require './variables.rb'
 require './util.rb'
 
 class Pug

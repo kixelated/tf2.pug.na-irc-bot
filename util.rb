@@ -1,5 +1,3 @@
-require './constants.rb'
-
 module Utilities
   def make_title msg, colour = 1
     colourize msg.rjust(15), 0, colour
