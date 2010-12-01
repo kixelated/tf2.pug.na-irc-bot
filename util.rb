@@ -1,6 +1,10 @@
 require './constants.rb'
 
 module Utilities
+  def make_title msg, colour = 1
+    colourize msg.rjust(15), 0, colour
+  end
+
   def colour_start fore, back = 1
     "\x03#{ fore.to_s.rjust(2, "0") },#{ back.to_s.rjust(2, "0") }"
   end

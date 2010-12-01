@@ -7,8 +7,8 @@ class Team
 	attr_accessor :name, :colour
   
   # constants
-  max_size = 6
-  minimum = { "scout" => 2, "soldier" => 2, "demo" => 1, "medic" => 1, "captain" => 1 }
+  Max_size = 6
+  Minimum = { "scout" => 2, "soldier" => 2, "demo" => 1, "medic" => 1, "captain" => 1 }
 
 	def initialize captain, name, colour
     @captain = captain

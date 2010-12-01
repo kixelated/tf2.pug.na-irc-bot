@@ -3,10 +3,9 @@ require './pug.rb'
 
 bot = Cinch::Bot.new do
   configure do |c|
-    c.nick = "PugBotBeta"
     c.nick = "IRCCompanionBot"
     c.server = "irc.gamesurge.net"
-    c.plugins.plugins = [Pug]
+    c.plugins.plugins = [ Pug ]
     c.channels = ["#tf2.pug.na.beta"]
   end
   
