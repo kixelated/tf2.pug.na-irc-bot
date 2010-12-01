@@ -1,6 +1,6 @@
 class Server
-	attr_accessor :ip, :port, :pswd, :rcon
-		
+  attr_accessor :ip, :port, :pswd, :rcon
+  
   def initialize ip, port, pswd, rcon
     @ip = ip
     @port = port

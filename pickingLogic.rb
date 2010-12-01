@@ -1,18 +1,14 @@
 module PickingLogic
   def choose_captains
-    possible_captains = @players.invert_arr["captain"]
-    @team_count.times do |i|
+    possible_captains = get_classes["captain"]
+    Constants::Team_count.times do |i|
       captain = possible_captains.delete_at rand(possible_captains.length)
 
-      @teams << Team.new captain, Constants::team_names[i], Constants::team_colours[i]
+      @teams << Team.new(captain, Constants::Team_names[i], Constants::Team_colours[i])
       @players.delete captain
     end
 
-    output = []
-    @teams.each do |team|
-      output << team.my_colourize team.captain
-    end
-    
+    output = @teams.collect { |team| team.my_colourize team.captain.nick }
     message "Captains are #{ output.join(", ") }"
   end
 
@@ -20,8 +16,8 @@ module PickingLogic
     notice current_captain, "It is your turn to pick."
 
     # Displays the classes that are not yet full for this team
-    team.remaining_classes.each do |k, v|
-      notice current_captain, "#{ v } #{ k }: #{ @players.invert_arr[k].join(", ") }"
+    classes_needed(current_team.get_classes).each do |k, v|
+      notice current_captain, "#{ v } #{ k }: #{ get_classes[k].join(", ") }"
     end
   end
   
@@ -36,11 +32,11 @@ module PickingLogic
   end
   
   def pick_player_valid? player, player_class
-    @players.key? player and @team_classes.key? player_class
+    @players.key? player and Team::Minimum.key? player_class
   end
   
   def pick_player_avaliable? player_class
-    current_team.remaining_classes.key? player_class
+    classes_needed(current_team.get_classes).key? player_class
   end
   
   def pick_player user, pick
@@ -59,7 +55,7 @@ module PickingLogic
         
     @pick += 1
     
-    if @pick + Constants::team_count >= Team::max_size * Constants::team_count
+    if @pick + Constants::Team_count >= Team::Max_size * Constants::Team_count
       announce_teams
       start_server
       end_picking
@@ -71,7 +67,7 @@ module PickingLogic
   def announce_teams
     @teams.each_with_index do |team, i|
       team.players.each do |user, v| 
-        message user, "You have been picked for #{ team.my_colourize team.name } as #{ v }. The server info is: #{ connect_info }" 
+        private user, "You have been picked for #{ team.name } as #{ v }. The server info is: #{ connect_info }" 
       end
       
       message team.to_s
@@ -92,12 +88,12 @@ module PickingLogic
   
   def sequential num
     # 0 1 0 1 0 1 0 1 ...
-    num % @team_count
+    num % Constants::Team_count
   end
   
   def staggered num
     # 0 1 1 0 0 1 1 0 ...
-    # won't work as expected when @team_count > 2
-    ((num + @team_count / 2) / @team_count) % @team_count
+    # won't work as expected when @Team_count > 2
+    ((num + Constants::Team_count / 2) / Constants::Team_count) % Constants::Team_count
   end
 end

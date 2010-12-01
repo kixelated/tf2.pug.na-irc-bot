@@ -1,14 +1,16 @@
+require './constants.rb'
+
 module Utilities
-  def colour_start foreground, background = 0
-    "\x03#{ foreground.to_s.rjust(2, "0") },#{ background.to_s.rjust(2, "0") }"
+  def colour_start fore, back = 1
+    "\x03#{ fore.to_s.rjust(2, "0") },#{ back.to_s.rjust(2, "0") }"
   end
   
   def colour_end
     "\x03"
   end
 
-  def colourize msg, colour = 1
-    colour_end + colour_start(0, colour) + msg + colour_end + colour_start(0, 1)
+  def colourize msg, fore, back = 1
+    colour_end + colour_start(fore, back) + msg + colour_end + colour_start(0)
   end
 end
 
@@ -32,38 +34,6 @@ class Hash
         v.each do |w| 
           (hash[w] ||= []) << k
         end
-      end
-    end
-  end
-  
-  def + num
-    self.class.new.tap do |hash|
-      self.each do |k, v|
-        hash[k] = v + num
-      end
-    end
-  end
-  
-  def - num
-    self.class.new.tap do |hash|
-      self.each do |k, v|
-        hash[k] = v - num
-      end
-    end
-  end
-  
-  def * num
-    self.class.new.tap do |hash|
-      self.each do |k, v|
-        hash[k] = v * num
-      end
-    end
-  end
-  
-  def / num
-    self.class.new.tap do |hash|
-      self.each do |k, v|
-        hash[k] = v / num
       end
     end
   end

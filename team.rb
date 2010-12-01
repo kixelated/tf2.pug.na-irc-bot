@@ -3,8 +3,8 @@ require './util.rb'
 class Team
   include Utilities
 
-  attr_accessor: :captain, :players
-	attr_accessor: :name, :colour
+  attr_accessor :captain, :players
+	attr_accessor :name, :colour
   
   # constants
   max_size = 6
@@ -18,9 +18,8 @@ class Team
     @colour = colour
 	end
 
-  def remaining_classes
-    temp = @players.invert_proper.collect { |clss| clss.size }
-    (Team::minimum - temp).reject { |x| x < 0 } 
+  def get_classes
+    @players.invert_proper
   end
   
   def my_colourize msg
