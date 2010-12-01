@@ -10,7 +10,7 @@ class Team
   Max_size = 6
   Minimum = { "scout" => 2, "soldier" => 2, "demo" => 1, "medic" => 1, "captain" => 1 }
 
-	def initialize captain, name, colour
+  def initialize captain, name, colour
     @captain = captain
 		@players = { @captain => "captain" }
     
