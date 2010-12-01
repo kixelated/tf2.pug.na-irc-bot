@@ -17,7 +17,7 @@ module Variables
   def setup
     @channel = "#tf2.pug.na.beta"
     
-    @servers = [ Chicago1 ]
+    @servers = [ Variables::Chicago1 ]
     @maps = [ "cp_badlands", "cp_granary" ]
   
     @players = {}
@@ -26,7 +26,7 @@ module Variables
     @teams = []
     @lookup = {}
 
-    @state = State_waiting
+    @state = Variables::State_waiting
     @pick = 0
   end
 end

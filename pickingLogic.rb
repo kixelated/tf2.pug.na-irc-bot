@@ -2,10 +2,10 @@ module PickingLogic
   def choose_captains
     possible_captains = get_classes["captain"]
     
-    Team_count.times do |i|
+    Variables::Team_count.times do |i|
       captain = possible_captains.delete_at rand(possible_captains.length)
 
-      @teams << Team.new(captain, Team_names[i], Team_colours[i])
+      @teams << Team.new(captain, Variables::Team_names[i], Variables::Team_colours[i])
       @players.delete captain
     end
 
@@ -23,7 +23,8 @@ module PickingLogic
 
     # Displays the classes that are not yet full for this team
     classes_needed(current_team.get_classes).each do |k, v|
-      notice current_captain, "#{ v } #{ k }: #{ get_classes[k].join(", ") }"
+      output = get_classes[k].collect { |player| "(#{ @lookup.invert[player] }) #{ player.to_s }" }
+      notice current_captain, "#{ v } #{ k }: #{ output.join(", ") }"
     end
   end
   
@@ -66,7 +67,7 @@ module PickingLogic
     
     @pick += 1
     
-    if @pick + Team_count >= Team::Max_size * Team_count
+    if @pick + Variables::Team_count >= Team::Max_size * Variables::Team_count
       announce_teams
       start_server
       end_picking
@@ -99,12 +100,12 @@ module PickingLogic
   
   def sequential num
     # 0 1 0 1 0 1 0 1 ...
-    num % Team_count
+    num % Variables::Team_count
   end
   
   def staggered num
     # 0 1 1 0 0 1 1 0 ...
-    # won't work as expected when @Team_count > 2
-    ((num + Team_count / 2) / Team_count) % Team_count
+    # won't work as expected when @Variables::Team_count > 2
+    ((num + Variables::Team_count / 2) / Variables::Team_count) % Variables::Team_count
   end
 end
