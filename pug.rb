@@ -114,7 +114,7 @@ class Pug
   def server m
     list_server
   end
-
+  
   def message msg
     bot.msg @channel, colour_start(0) + msg + colour_end
     false

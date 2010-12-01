@@ -1,6 +1,7 @@
 module PickingLogic
   def choose_captains
     possible_captains = get_classes["captain"]
+    
     Constants::Team_count.times do |i|
       captain = possible_captains.delete_at rand(possible_captains.length)
 
@@ -8,7 +9,7 @@ module PickingLogic
       @players.delete captain
     end
 
-    output = @teams.collect { |team| team.my_colourize team.captain.nick }
+    output = @teams.collect { |team| team.my_colourize team.captain.to_s }
     message "Captains are #{ output.join(", ") }"
   end
 

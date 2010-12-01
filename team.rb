@@ -12,7 +12,7 @@ class Team
 
   def initialize captain, name, colour
     @captain = captain
-		@players = { @captain => "captain" }
+		@players = { captain => "captain" }
     
     @name = name
     @colour = colour
