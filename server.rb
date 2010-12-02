@@ -27,8 +27,18 @@ class Server
     command "changelevel #{ map }"
   end
   
+  def cpswd pswd
+	command "password #{ pswd }"
+  end
+  
   def connected?
     @connected
+  end
+  
+  def inuse?
+	status = @conn.command "status"
+	playercount = status[/players : (.*) \(/, 1]
+	playercount > 0
   end
   
   def to_s
