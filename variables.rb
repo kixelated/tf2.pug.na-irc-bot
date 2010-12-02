@@ -22,7 +22,7 @@ module Variables
     @channel = "#tf2.pug.na.beta"
     
     @servers = [ Variables::Chicago1 ]
-    @maps = [ "cp_badlands", "cp_granary" ]
+    @maps = [ "cp_badlands", "cp_coldfront", "cp_gullywash_imp3", "cp_freight_final1", "cp_granary", "koth_viaduct" ]
   
     @players = {}
     @afk = []
