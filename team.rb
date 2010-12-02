@@ -27,8 +27,9 @@ class Team
   end
   
   def to_s
+    output = []
     players.each do |k, v|
-      (output ||= []) << "#{ k } as #{ my_colourize v }"
+      output << "#{ k } as #{ my_colourize v }"
     end
   
     "#{ my_colourize @name }: #{ output.join(", ") if output }"
