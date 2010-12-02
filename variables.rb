@@ -1,7 +1,7 @@
 module Variables
   Afk_threshold = 60 * 10
   Afk_delay = 45
-  Inuse_delay 60
+  Server_delay = 60
   Picking_delay = 45
 
   Team_count = 2
@@ -10,11 +10,13 @@ module Variables
   
   Chicago1 = Server.new("chicago1.tf2pug.org", 27015, "tf2pug", "squid")
   
+  Server_used = 8
+  
   State_waiting = 0
   State_afk = 1
   State_delay = 2
   State_picking = 3
-  State_serverinuse = 4
+  State_server = 4
 
   def setup
     @channel = "#tf2.pug.na.beta"
