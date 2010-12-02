@@ -23,7 +23,7 @@ module PickingLogic
 
     # Displays the classes that are not yet full for this team
     classes_needed(current_team.get_classes).each do |k, v| # playersLogic.rb
-      output = get_classes[k].collect { |player| "(#{ @lookup.invert[player] }) #{ player.to_s }" }
+      output = (get_classes[k] ||= []).collect { |player| "(#{ @lookup.invert[player] }) #{ player.to_s }" }
       notice current_captain, "#{ v } #{ k }: #{ output.join(", ") }"
     end
   end
@@ -46,17 +46,13 @@ module PickingLogic
     classes_needed(current_team.get_classes).key? player_class # playersLogic.rb
   end
   
-  def pick_player user, pick
+  def pick_player user, player, player_class
     return notice(user, "Picking has not started.") unless picking? # stateLogic.rb
     return notice(user, "It is not your turn to pick.") unless can_pick? user
-    return notice(user, "Invalid pick format. !pick user class") unless pick.size == 2
-  
-    player = User(pick[0])
-    player_class = pick[1].downcase
+
+    player_class.downcase!
     
-    looked_up = false
     unless pick_player_valid? player, player_class
-      looked_up = true
       player = @lookup[pick[0].to_i] if pick[0].to_i
 
       return notice(user, "Invalid pick #{ player } as #{ player_class }.") unless pick_player_valid? player, player_class
@@ -67,7 +63,7 @@ module PickingLogic
     current_team.players[player] = player_class
     @players.delete player
     
-    message "#{ user.to_s } picked #{ player.to_s } as #{ player_class }" if looked_up
+    message "#{ user.to_s } picked #{ player.to_s } as #{ player_class }" if pick[0].to_i
     
     @pick += 1
     
@@ -77,6 +73,13 @@ module PickingLogic
       end_picking # stateLogic.rb
     else 
       tell_captain
+    end
+  end
+  
+  def replace_player user, replacement
+    @players[replacement] = @players.delete(user) if @players.key? user
+    @teams.each do |team|
+      team.players[replacement] = team.players.delete(user) if team.players.key? user
     end
   end
 

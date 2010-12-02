@@ -29,14 +29,15 @@ class Pug
   match /players/, method: :list
   match /need/, method: :need
   
-  match /pick (.+)/, method: :pick
+  match /pick ([\S]+) ([\S]+)/, method: :pick
   match /captain/, method: :captain
   
   match /mumble/, method: :mumble
   match /map/, method: :map
   match /server/, method: :server
   
-  match /force (.+)/, method: :admin_force
+  match /force ([\S]+) (.+)/, method: :admin_force
+  match /replace ([\S]+) ([\S]+)/, method: :admin_replace
 
   def initialize *args
     super
@@ -73,8 +74,8 @@ class Pug
   end
   
   # !pick
-  def pick m, args
-    pick_player m.user, args.split(/ /) # pickingLogic.rb
+  def pick m, player, player_class
+    pick_player m.user, User(player), player_class # pickingLogic.rb
   end
   
   # !captain
@@ -99,16 +100,19 @@ class Pug
   end
   
   # !force
-  def admin_force m, args
+  def admin_force m, player, args
     return unless require_admin m
     
-    temp = args.split(/ /)
-    user = User(temp.shift)
-
-    if add_player user, temp # playersLogic.rb
+    if add_player User(player), args.split(/ /) # playersLogic.rb
       list_players # playersLogic.rb
       attempt_afk # stateLogic.rb
     end
+  end
+  
+  def admin_replace m, user, replacement
+    return unless require_admin m
+    
+    replace_player User(user), User(replacement) # pickingLogic.rb
   end
   
   def require_admin m
