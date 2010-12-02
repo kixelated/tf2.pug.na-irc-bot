@@ -17,6 +17,12 @@ module ServerLogic
     
     @maps.push @maps.shift
   end
+  
+  def change_map user, map
+    return notice user, "That map is not in the rotation. Valid maps are: #{ @maps.join(", ") }" unless @maps.include? map
+    
+    @maps.unshift @maps.delete(map)
+  end
 
   def list_server
     message current_server.to_s

@@ -38,6 +38,7 @@ class Pug
   
   match /force ([\S]+) (.+)/, method: :admin_force
   match /replace ([\S]+) ([\S]+)/, method: :admin_replace
+  match /changemap ([\S]+)/, method: :admin_map
 
   def initialize *args
     super
@@ -98,7 +99,14 @@ class Pug
   def server m
     list_server # serverLogic.rb
   end
-  
+
+  # !changemap
+  def admin_map m, map
+    return unless require_admin m
+    
+    list_map if change_map m.user, map
+  end
+
   # !force
   def admin_force m, player, args
     return unless require_admin m
