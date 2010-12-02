@@ -13,7 +13,7 @@ class Server
   #establish connection to server and auth
   def connect 
     @conn = RCon::Query::Source.new(@ip, @port)
-    @connected = conn.auth rcon
+    @connected = @conn.auth rcon
   end
   
   #execute any command passed

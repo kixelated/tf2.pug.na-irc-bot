@@ -53,7 +53,7 @@ module PickingLogic
     player_class.downcase!
     
     unless pick_player_valid? player, player_class
-      player = @lookup[pick[0].to_i] if pick[0].to_i
+      player = @lookup[player.nick.to_i] if player.nick.to_i
 
       return notice(user, "Invalid pick #{ player } as #{ player_class }.") unless pick_player_valid? player, player_class
     end
@@ -63,7 +63,7 @@ module PickingLogic
     current_team.players[player] = player_class
     @players.delete player
     
-    message "#{ user.to_s } picked #{ player.to_s } as #{ player_class }" if pick[0].to_i
+    message "#{ user.to_s } picked #{ player.to_s } as #{ player_class }" if player.nick.to_i
     
     @pick += 1
     
@@ -76,17 +76,10 @@ module PickingLogic
     end
   end
   
-  def replace_player user, replacement
-    @players[replacement] = @players.delete(user) if @players.key? user
-    @teams.each do |team|
-      team.players[replacement] = team.players.delete(user) if team.players.key? user
-    end
-  end
-
   def announce_teams
     @teams.each_with_index do |team, i|
       team.players.each do |user, v| 
-        private user, "You have been picked for #{ team.name } as #{ v }. The server info is: #{ connect_info }" 
+        private user, "You have been picked for #{ team.name } as #{ v }. The server info is: #{ current_server.to_s }" 
       end
       
       message team.to_s

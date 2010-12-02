@@ -22,8 +22,16 @@ module PlayersLogic
   end
 
   def list_players_detailed
-    get_classes.each do |k, v|
-      message "#{ make_title "#{ k }:", 2 } #{ v.join(", ") }"
+    temp = get_classes
+    Team::Minimum.each_key do |k|
+      message "#{ make_title "#{ k }:", 2 } #{ temp[k].join(", ") }" if temp[k]
+    end
+  end
+  
+  def replace_player user, replacement
+    @players[replacement] = @players.delete(user) if @players.key? user
+    @teams.each do |team|
+      team.players[replacement] = team.players.delete(user) if team.players.key? user
     end
   end
   
@@ -44,6 +52,7 @@ module PlayersLogic
 
   def list_classes_needed
     output = classes_needed(get_classes, Variables::Team_count).to_a
+    output.unshift [ "players" , (Team::Max_size * Variables::Team_count - @players.size)] if @players.size < Team::Max_size * Variables::Team_count
     output.collect! { |a| "#{ a[1] } #{ a[0] }" } # Format the output
 
     message "#{ make_title "Required classes:" } #{ output.join(", ") }"

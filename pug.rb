@@ -113,6 +113,7 @@ class Pug
     return unless require_admin m
     
     replace_player User(user), User(replacement) # pickingLogic.rb
+    list_players # playersLogic.rb
   end
   
   def require_admin m

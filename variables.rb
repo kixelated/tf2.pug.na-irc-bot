@@ -1,5 +1,5 @@
 module Variables
-  Afk_threshold = 60 * 10
+  Afk_threshold = 60 * 5
   Afk_delay = 45
   Server_delay = 60
   Picking_delay = 45
