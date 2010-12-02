@@ -28,17 +28,17 @@ class Server
   end
   
   def cpswd pswd
-	command "password #{ pswd }"
+    command "password #{ pswd }"
   end
   
   def connected?
     @connected
   end
   
-  def inuse?
-	status = @conn.command "status"
-	playercount = status[/players : (.*) \(/, 1]
-	playercount > 0
+  def used?
+    status = command "status"
+    playercount = status[/players : (.*) \(/, 1]
+    playercount > Variables::Server_used
   end
   
   def to_s

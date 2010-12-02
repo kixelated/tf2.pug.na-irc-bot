@@ -2,18 +2,19 @@ require 'rcon'
 
 module ServerLogic
   def start_server
-		
-	while current_server.inuse?
-	  @state = Variables::State_serverinuse
-	  message "Server  #{ current_server.ip } is in use. Waiting #{ Variables::Inuse_delay } seconds to try the next server."
-      @servers.push @servers.shift
-	  sleep Variables::Inuse_delay
-    end
-	
-	current_server.cpswd current_server.pswd
-	current_server.clvl current_map
-
+    @state = Variables::State_server
     @servers.push @servers.shift
+
+    while current_server.used?
+      message "Server #{ current_server.ip } is in use. Trying the next server in #{ Variables::Server_delay } seconds."
+      
+      @servers.push @servers.shift
+      sleep Variables::Server_delay
+    end 
+
+    current_server.cpswd current_server.pswd
+    current_server.clvl current_map
+    
     @maps.push @maps.shift
   end
 
