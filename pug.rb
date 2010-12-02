@@ -36,6 +36,7 @@ class Pug
   match /map/, method: :map
   match /server/, method: :server
   
+  match /changemap (.+)/, method: :change_map
   match /force (.+)/, method: :admin_force
 
   def initialize *args
@@ -97,7 +98,19 @@ class Pug
   def server m
     list_server
   end
-  
+
+  # !changemap
+  def change_map m, new_map
+    return unless require_admin m.user
+    
+	return notice m.user, "That map does not exist or is not in the rotation. Valid maps are: " + @maps.join(", ") if not @maps.index(new_map)
+	
+	@maps.delete new_map
+	@maps.insert(0, new_map)
+	
+	list_map
+  end
+
   # !force
   def admin_force m, args
     return unless require_admin m.user
