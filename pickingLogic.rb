@@ -22,14 +22,14 @@ module PickingLogic
     notice current_captain, "It is your turn to pick."
 
     # Displays the classes that are not yet full for this team
-    classes_needed(current_team.get_classes).each do |k, v|
+    classes_needed(current_team.get_classes).each do |k, v| # playersLogic.rb
       output = get_classes[k].collect { |player| "(#{ @lookup.invert[player] }) #{ player.to_s }" }
       notice current_captain, "#{ v } #{ k }: #{ output.join(", ") }"
     end
   end
   
   def list_captain user
-    return notice(user, "Picking has not started.") unless picking?
+    return notice(user, "Picking has not started.") unless picking? # stateLogic.rb
  
     message "It is #{ current_captain.to_s }'s turn to pick"
   end
@@ -43,20 +43,22 @@ module PickingLogic
   end
   
   def pick_player_avaliable? player_class
-    classes_needed(current_team.get_classes).key? player_class
+    classes_needed(current_team.get_classes).key? player_class # playersLogic.rb
   end
   
   def pick_player user, pick
-    return notice(user, "Picking has not started.") unless picking?
+    return notice(user, "Picking has not started.") unless picking? # stateLogic.rb
     return notice(user, "It is not your turn to pick.") unless can_pick? user
     return notice(user, "Invalid pick format. !pick user class") unless pick.size == 2
   
     player = User(pick[0])
     player_class = pick[1].downcase
     
+    looked_up = false
     unless pick_player_valid? player, player_class
+      looked_up = true
       player = @lookup[pick[0].to_i] if pick[0].to_i
-      
+
       return notice(user, "Invalid pick #{ player } as #{ player_class }.") unless pick_player_valid? player, player_class
     end
     
@@ -65,12 +67,14 @@ module PickingLogic
     current_team.players[player] = player_class
     @players.delete player
     
+    message "#{ user.to_s } picked #{ player.to_s } as #{ player_class }" if looked_up
+    
     @pick += 1
     
     if @pick + Variables::Team_count >= Team::Max_size * Variables::Team_count
       announce_teams
-      start_server
-      end_picking
+      start_server # serverLogic.rb
+      end_picking # stateLogic.rb
     else 
       tell_captain
     end

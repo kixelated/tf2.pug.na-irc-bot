@@ -45,7 +45,7 @@ module StateLogic
     check_afk(@afk).each_key { |k| @players.delete k }
     @afk.clear
 
-    list_players
+    list_players # playersLogic.rb
   end
   
   def start_delay
@@ -58,14 +58,14 @@ module StateLogic
   def start_picking
     @state = Variables::State_picking
     
-    update_lookup
-    choose_captains
-    tell_captain
+    update_lookup # pickingLogic.rb
+    choose_captains # pickingLogic.rb
+    tell_captain # pickingLogic.rb
   end
   
   def end_picking
     @teams.clear
-    @loopup.clear
+    @lookup.clear
 
     @state = Variables::State_waiting
     @pick = 0

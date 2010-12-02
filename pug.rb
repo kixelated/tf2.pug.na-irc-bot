@@ -40,46 +40,46 @@ class Pug
 
   def initialize *args
     super
-    setup # variables.setup
+    setup # variables.rb
   end
 
   # (quit)
   def part m
-    list_players if remove_player m.user
+    list_players if remove_player m.user # playersLogic.rb
   end
 
   # !add
   def add m, args
-    if add_player m.user, args.split(/ /)
-      list_players
-      attempt_afk # checks if minimum requirements are met
+    if add_player m.user, args.split(/ /) # playersLogic.rb
+      list_players # playersLogic.rb
+      attempt_afk # stateLogic.rb
     end
   end
 
   # !remove
   def remove m
-    list_players if remove_player m.user
+    list_players if remove_player m.user # playersLogic.rb
   end
   
   # !list
   def list m
-    list_players
+    list_players # playersLogic.rb
     list_players_detailed
   end
   
   # !need
   def need m
-    list_classes_needed
+    list_classes_needed # playersLogic.rb
   end
   
   # !pick
   def pick m, args
-    pick_player m.user, args.split(/ /)
+    pick_player m.user, args.split(/ /) # pickingLogic.rb
   end
   
   # !captain
   def captain m
-    list_captain m.user
+    list_captain m.user # pickingLogic.rb
   end
   
   # !mumble
@@ -90,34 +90,34 @@ class Pug
   
   # !map
   def map m
-    list_map
+    list_map # serverLogic.rb
   end
   
   # !server
   def server m
-    list_server
+    list_server # serverLogic.rb
   end
   
   # !force
   def admin_force m, args
-    return unless require_admin m.user
+    return unless require_admin m
     
     temp = args.split(/ /)
     user = User(temp.shift)
 
-    if add_player user, temp
-      list_players
-      attempt_afk
+    if add_player user, temp # playersLogic.rb
+      list_players # playersLogic.rb
+      attempt_afk # stateLogic.rb
     end
   end
   
-  def require_admin user
-    return notice user, "That is an admin-only command." unless Channel(@channel).opped? user
+  def require_admin m
+    return notice m.user, "That is an admin-only command." unless m.channel.opped? m.user
     true
   end
 
   def message msg
-    bot.msg @channel, colour_start(0) + msg + colour_end
+    bot.msg @channel, colour_start(0) + msg + colour_end # util.rb
     false
   end
   
