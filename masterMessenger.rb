@@ -17,9 +17,11 @@ class MasterMessenger
   
   def msg channel, msg
     select.msg channel, msg
+    sleep(0.1)
   end
   
   def notice channel, msg
     select.notice channel, msg
+    sleep(0.1)
   end
 end
