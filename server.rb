@@ -21,6 +21,11 @@ class Server
     connect unless connected?
     @conn.command cmd
   end
+  
+  def cvar name
+    connect unless connected?
+    @conn.cvar name
+  end
 
   #change map
   def clvl map
@@ -35,12 +40,16 @@ class Server
     @connected
   end
   
-  def used?
-    status = command "status"
-    return status[/players : (.*) \(/, 1] > Variables::Server_used
+  def in_use?
+    command("status") =~ /players : (\S+) /
+    return $1.to_i > Variables::Server_used
+  end
+  
+  def connect_info
+    "connect #{ @ip }:#{ @port }; password #{ @pswd }"
   end
   
   def to_s
-    "connect #{ @ip }:#{ @port }; password #{ @pswd }"
+    "#{ @ip }:#{ @port }"
   end
 end

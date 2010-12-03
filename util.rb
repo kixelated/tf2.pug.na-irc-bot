@@ -17,6 +17,34 @@ module Utilities
 end
 
 class Hash
+  def collect
+    self.class.new.tap do |hash|
+      self.each do |k, v|
+        hash[k] = yield k, v
+      end
+    end
+  end
+  
+  def collect!
+    self.each do |k, v|
+      self[k] = yield k, v
+    end
+  end
+  
+  def reject
+    self.class.new.tap do |hash|
+      self.each do |k, v|
+        hash[k] = v if yield k, v
+      end
+    end
+  end
+  
+  def reject!
+    self.each do |k, v|
+      delete k if yield k, v
+    end
+  end
+
   # Proper invert, values are not always unique.
   # Input: a => b, c => b, d => e
   # Output: b => [a, c], e => [d]

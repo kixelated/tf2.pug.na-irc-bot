@@ -72,7 +72,7 @@ module PickingLogic
     if @pick + Variables::Team_count >= Team::Max_size * Variables::Team_count
       announce_teams
       start_server # serverLogic.rb
-      end_picking # stateLogic.rb
+      end_game # stateLogic.rb
     else 
       tell_captain
     end
@@ -81,7 +81,7 @@ module PickingLogic
   def announce_teams
     @teams.each_with_index do |team, i|
       team.players.each do |user, v| 
-        private user, "You have been picked for #{ team.name } as #{ v }. The server info is: #{ current_server.to_s }" 
+        private user, "You have been picked for #{ team.name } as #{ v }. The server info is: #{ current_server.connect_info }" 
       end
       
       message team.to_s
