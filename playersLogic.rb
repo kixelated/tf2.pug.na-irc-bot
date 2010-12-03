@@ -5,6 +5,7 @@ module PlayersLogic
     
     classes.collect! { |clss| clss.downcase }
     classes.reject! { |clss| not Team::Minimum.key? clss }
+    classes.uniq!
   
     return notice user, "Invalid classes, you have not been added." if classes.empty?
     
