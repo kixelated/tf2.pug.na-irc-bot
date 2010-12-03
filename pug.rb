@@ -42,9 +42,7 @@ class Pug
 
   def initialize *args
     super
-    setup # variables.rb
-    
-    MasterMessenger.instance.add self
+    setup # variables.rb 
   end
 
   # (quit)
@@ -132,17 +130,17 @@ class Pug
   end
 
   def message msg
-    bot.msg @channel, colour_start(0) + msg + colour_end # util.rb
+    MasterMessenger.instance.msg @channel, colour_start(0) + msg + colour_end # util.rb
     false
   end
   
   def private user, msg
-    bot.msg user, msg
+    MasterMessenger.instance.msg user, msg
     false
   end
   
   def notice channel = @channel, msg
-    bot.notice channel, msg
+    MasterMessenger.instance.notice channel, msg
     false
   end
 end
