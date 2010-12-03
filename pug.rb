@@ -43,6 +43,8 @@ class Pug
   def initialize *args
     super
     setup # variables.rb
+    
+    MasterMessenger.instance.add self
   end
 
   # (quit)

@@ -2,6 +2,7 @@ require 'cinch'
 
 require './pug.rb'
 require './quitter.rb'
+require './masterMessenger.rb'
 
 bot = Cinch::Bot.new do
   configure do |c|
