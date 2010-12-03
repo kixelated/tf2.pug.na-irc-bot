@@ -8,15 +8,15 @@ class MasterMessenger
   end
   
   def add bot
-    @bots << bot unless @bots.includes? bot
+    @bots << bot unless @bots.include? bot
   end
   
   def select
-    @bots.push @bots.shift
+    @bots.push(@bots.shift).first
   end
   
-  def message channel, msg
-    select.message channel, msg
+  def msg channel, msg
+    select.msg channel, msg
   end
   
   def notice channel, msg
