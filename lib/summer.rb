@@ -31,7 +31,16 @@ module Summer
       loop do
         startup! if @ready && !@started
         parse(@connection.gets)
+        if @connection.eof?
+          puts "Connection lost for message bot #{ @config[:nick] } Reconnecting in 60 seconds."
+          sleep(60)
+          puts "Attempting to reconnect message bot #{ @config[:nick] } Reconnecting in 60 seconds."
+          @ready = false
+          @started = false
+          connect!
+        end
       end
+
     end
 
     def msg(to, message)
