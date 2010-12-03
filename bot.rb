@@ -1,3 +1,5 @@
+require 'rubygems'
+
 require 'cinch'
 require 'summer'
 
@@ -12,7 +14,7 @@ mainbot = Thread.new do
       c.server = "irc.gamesurge.net"
       c.plugins.plugins = [ Pug, Quitter ]
       c.channels = [ "#tf2.pug.na.beta" ]
-      c.verbose = false
+      c.verbose = true
     end
   end
 

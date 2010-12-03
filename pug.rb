@@ -20,8 +20,8 @@ class Pug
   include StateLogic
   include ServerLogic
   
-  listen_to :part, method: :part
-  listen_to :quit, method: :part
+  listen_to :part, method: :remove
+  listen_to :quit, method: :remove
   
   match /add (.+)/, method: :add
   match /remove/, method: :remove
@@ -32,9 +32,14 @@ class Pug
   match /pick ([\S]+) ([\S]+)/, method: :pick
   match /captain/, method: :captain
   
-  match /mumble/, method: :mumble
+  match /add/, method: :help # fail
+  match /pick/, method: :help # fail
+
   match /map/, method: :map
   match /server/, method: :server
+  
+  match /help/, method: :help
+  match /mumble/, method: :mumble
   
   match /force ([\S]+) (.+)/, method: :admin_force
   match /replace ([\S]+) ([\S]+)/, method: :admin_replace
@@ -45,11 +50,6 @@ class Pug
     setup # variables.rb 
   end
 
-  # (quit)
-  def part m
-    list_players if remove_player m.user # playersLogic.rb
-  end
-
   # !add
   def add m, args
     if add_player m.user, args.split(/ /) # playersLogic.rb
@@ -58,12 +58,12 @@ class Pug
     end
   end
 
-  # !remove
+  # !remove, (quit), (part)
   def remove m
     list_players if remove_player m.user # playersLogic.rb
   end
   
-  # !list
+  # !list, !players
   def list m
     list_players # playersLogic.rb
     list_players_detailed
@@ -89,7 +89,7 @@ class Pug
     message "The Mumble IP is 'tf2pug.commandchannel.com:30153' (password 'tf2pug')"
     message "Download Mumble here: http://mumble.sourceforge.net/"
   end
-  
+
   # !map
   def map m
     list_map # serverLogic.rb
@@ -98,6 +98,14 @@ class Pug
   # !server
   def server m
     list_server # serverLogic.rb
+  end
+  
+  # !man
+  def help m
+    return notice m.user, "Syntax: '!add class1 class2 classn'" if m.message =~ /add/
+    return notice m.user, "Syntax: '!pick name class' or '!pick num class'" if m.message =~ /pick/
+  
+    message "The avaliable commands are: !add, !remove, !list, !need, !pick, !captain, !mumble, !map, !server"
   end
 
   # !changemap

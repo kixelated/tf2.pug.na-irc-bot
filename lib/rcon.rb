@@ -5,10 +5,10 @@ require 'socket'
 # 2 (Source Engine) RCon (Remote Console) protocols.
 #
 # Version:: 0.2.0
+#
 # Author:: Erik Hollensbe <erik@hollensbe.org>
+#
 # License:: BSD
-# Contact:: erik@hollensbe.org
-# Copyright:: Copyright (c) 2005-2006 Erik Hollensbe
 #
 # The relevant modules to query RCon are in the RCon::Query namespace,
 # under RCon::Query::Original (for Quake 1/2/3 and Half-Life), and
@@ -29,7 +29,7 @@ require 'socket'
 #
 # rcon.cvar("mp_friendlyfire") => 1
 #
-#--
+# ================================================================
 #
 # The compilation of software known as rcon.rb is distributed under the
 # following terms:
@@ -52,7 +52,6 @@ require 'socket'
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 #
-#++
 
 
 class RCon
@@ -285,9 +284,10 @@ class RCon::Query::Original < RCon::Query
     return "" if @socket.nil?
 
     retval = ""
+    packet = ""
     loop do 
       break unless IO.select([@socket], nil, nil, 10)
-      packet = @socket.recv(8192)
+      packet << @socket.recv(8192)
       retval << packet
       break if packet.length < 8192
     end
@@ -445,14 +445,8 @@ class RCon::Query::Source < RCon::Query
     response = ""
     message = ""
     
-
     loop do
-      break unless IO.select([@socket], nil, nil, 10)
-
-      #
-      # TODO: clean this up - read everything and then unpack.
-      #
-
+      break unless IO.select([@socket], nil, nil, 1)
       tmp = @socket.recv(14)
       if tmp.nil?
         return nil
