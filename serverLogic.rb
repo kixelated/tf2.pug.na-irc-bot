@@ -3,19 +3,18 @@ require 'rcon'
 module ServerLogic
   def start_server
     @state = Variables::State_server
-    @servers.push @servers.shift
 
-    while current_server.used?
-      message "Server #{ current_server.ip } is in use. Trying the next server in #{ Variables::Server_delay } seconds."
+    while current_server.in_use?
+      message "Server #{ current_server.to_s } is in use. Trying the next server in #{ Variables::Server_delay } seconds."
       
       @servers.push @servers.shift
       sleep Variables::Server_delay
-    end 
+    end
 
     current_server.cpswd current_server.pswd
     current_server.clvl current_map
     
-    @maps.push @maps.shift
+    message "The pug will take place on #{ current_server.to_s } with the map #{ current_map }"
   end
   
   def change_map user, map
@@ -25,7 +24,8 @@ module ServerLogic
   end
 
   def list_server
-    message current_server.to_s
+    message "#{ current_server.connect_info }"
+    message "Servers are provided by Apoplexy Industries: http://aigaming.com"
   end  
   
   def list_map
