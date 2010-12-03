@@ -37,8 +37,7 @@ class Server
   
   def used?
     status = command "status"
-    playercount = status[/players : (.*) \(/, 1]
-    playercount > Variables::Server_used
+    return status[/players : (.*) \(/, 1] > Variables::Server_used
   end
   
   def to_s

@@ -55,7 +55,7 @@ module PickingLogic
     unless pick_player_valid? player, player_class
       return notice(user, "Invalid pick #{ player } as #{ player_class }.") unless player.nick.to_i
       
-      player = player_lookup = @lookup[player.nick.to_i]
+      player = @lookup[player.nick.to_i]
 
       return notice(user, "Invalid pick #{ player } as #{ player_class }.") unless pick_player_valid? player, player_class
     end
@@ -65,7 +65,7 @@ module PickingLogic
     current_team.players[player] = player_class
     @players.delete player
     
-    message "#{ user.to_s } picked #{ player.to_s } as #{ player_class }" if player_lookup
+    message "#{ current_team.my_colourize user.to_s } picked #{ player.to_s } as #{ player_class }"
     
     @pick += 1
     
