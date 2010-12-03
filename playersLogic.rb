@@ -32,6 +32,7 @@ module PlayersLogic
   def replace_player user, replacement
     @players[replacement] = @players.delete(user) if @players.key? user
     @teams.each do |team|
+      team.captain = replacement if team.captain == user
       team.players[replacement] = team.players.delete(user) if team.players.key? user
     end
   end
@@ -42,13 +43,9 @@ module PlayersLogic
   
   # I hate this function, but it is so important
   def classes_needed players, multiplier = 1
-    # Team::Minimum = { scout => 4, soldier => 4 }
-    # required = [[scout, 4], [soldier, 4]]
-    required = Team::Minimum.to_a
-    
-    required.collect! { |a| [ a[0], a[1] * multiplier - (players[a[0]] ||= []).size ] } # players = { scout => [a, b], soldier => [b] }
-    required.reject! { |a| a[1] <= 0 } # Remove any negative or zero values
-    Hash[required]
+    required = Team::Minimum.collect { |k, v| v * multiplier - (players[k] ||= []).size }
+    required.reject! { |k, v| v <= 0 } # Remove any negative or zero values
+    required
   end
 
   def list_classes_needed

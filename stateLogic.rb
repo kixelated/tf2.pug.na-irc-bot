@@ -63,12 +63,15 @@ module StateLogic
     tell_captain # pickingLogic.rb
   end
   
-  def end_picking
+  def end_game
     @teams.clear
     @lookup.clear
 
     @state = Variables::State_waiting
     @pick = 0
+    
+    @servers.push @servers.shift
+    @maps.push @maps.shift
     
     message "Game started. Add to the pug using the !add command."
   end
