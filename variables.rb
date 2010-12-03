@@ -17,6 +17,8 @@ module Variables
   State_delay = 2
   State_picking = 3
   State_server = 4
+  
+  Messenger_count = 5
 
   def setup
     @channel = "#tf2.pug.na.beta"
