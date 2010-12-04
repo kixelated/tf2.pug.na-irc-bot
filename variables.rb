@@ -6,11 +6,11 @@ module Variables
   Irc_vhost = nil
   Irc_channel = "#tf2.pug.na.beta"
   
-  Messenger_count = 1
+  Messenger_count = 0
   Nick_bot = "IRCCompanionBot"
   Nick_messenger = "IRCMessengerBot"
 
-  Afk_threshold = 60 * 5
+  Afk_threshold = 10 * 60
   Afk_delay = 45
   Server_delay = 60
   Picking_delay = 45
@@ -21,6 +21,9 @@ module Variables
   Team_colours = [ 4, 10 ]
   
   Chicago1 = Server.new("chicago1.tf2pug.org", 27015, "tf2pug", "squid")
+  
+  Server_rotation = [ Chicago1 ]
+  Map_rotation = [ "cp_badlands", "cp_coldfront", "cp_gullywash_imp3", "cp_freight_final1", "cp_granary", "koth_viaduct" ]
 
   Server_used = 8
   
@@ -30,11 +33,9 @@ module Variables
   State_picking = 3
   State_server = 4
   
-  
-
   def setup
-    @servers = [ Variables::Chicago1 ]
-    @maps = [ "cp_badlands", "cp_coldfront", "cp_gullywash_imp3", "cp_freight_final1", "cp_granary", "koth_viaduct" ]
+    @server = Variables::Server_rotation.first
+    @map = Variables::Map_rotation.first
   
     @players = {}
     @afk = []

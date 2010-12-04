@@ -106,7 +106,8 @@ class Pug
   def admin_map m, map
     return unless require_admin m
     
-    list_map if change_map m.user, map
+    change_map map
+    list_map
   end
 
   # !force

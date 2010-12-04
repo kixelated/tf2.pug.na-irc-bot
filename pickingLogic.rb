@@ -81,7 +81,7 @@ module PickingLogic
   def announce_teams
     @teams.each_with_index do |team, i|
       team.players.each do |user, v| 
-        private user, "You have been picked for #{ team.name } as #{ v }. The server info is: #{ current_server.connect_info }" 
+        private user, "You have been picked for #{ team.name } as #{ v }. The server info is: #{ @server.connect_info }" 
       end
       
       message team.to_s
