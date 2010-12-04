@@ -1,7 +1,7 @@
 module PickingLogic
   def choose_captains
     possible_captains = get_classes["captain"]
-    
+
     #signups = {}
     Const::Team_count.times do |i|
       captain = possible_captains.delete_at rand(possible_captains.length)
@@ -12,6 +12,7 @@ module PickingLogic
 
       notice captain, "You have been selected as a captain. When it is your turn to pick, you can choose players with the '!pick num' or '!pick name' command."
     end
+    
 =begin
     @captains.each { |k, v| signups[k] = @players.delete k }
     
@@ -26,6 +27,7 @@ module PickingLogic
       end
     end
 =end
+
     output = @teams.collect { |team| team.my_colourize team.captain.to_s }
     message "Captains are #{ output.join(", ") }"
   end
@@ -56,7 +58,7 @@ module PickingLogic
   end
   
   def pick_player_valid? player, player_class
-    @players.key? player and Const::Team_classes.key? player_class# and player_class != "captain"
+    @players.key? player and Const::Team_classes.key? player_class and player_class != "captain"
   end
   
   def pick_player_avaliable? player_class
