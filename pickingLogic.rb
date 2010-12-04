@@ -39,7 +39,7 @@ module PickingLogic
   end
   
   def pick_player_valid? player, player_class
-    @players.key? player and Team::Minimum.key? player_class
+    @players.key? player and Variables::Team_classes.key? player_class
   end
   
   def pick_player_avaliable? player_class
@@ -69,7 +69,7 @@ module PickingLogic
     
     @pick += 1
     
-    if @pick + Variables::Team_count >= Team::Max_size * Variables::Team_count
+    if @pick + Variables::Team_count >= Variables::Team_size * Variables::Team_count
       announce_teams
       start_server # serverLogic.rb
       end_game # stateLogic.rb
