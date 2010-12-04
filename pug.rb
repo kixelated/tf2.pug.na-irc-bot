@@ -31,11 +31,11 @@ class Pug
   
   match /pick ([\S]+) ([\S]+)/, method: :pick
   match /captain/, method: :captain
- 
+  
   match /map/, method: :map
   match /server/, method: :server
   
-  match /help/, method: :help
+  match /man/, method: :help
   match /mumble/, method: :mumble
   
   match /force ([\S]+) (.+)/, method: :admin_force
@@ -87,7 +87,7 @@ class Pug
   
   # !mumble
   def mumble m
-    message "The Mumble IP is 'chi6.eoreality.net:64746' (password 'tf2pug')"
+    message "The Mumble IP is: chi6.eoreality.net:64746 password: tf2pug"
     message "Download Mumble here: http://mumble.sourceforge.net/"
   end
 
