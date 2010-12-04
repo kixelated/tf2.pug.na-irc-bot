@@ -30,20 +30,6 @@ class Hash
       self[k] = yield k, v
     end
   end
-  
-  def reject
-    self.class.new.tap do |hash|
-      self.each do |k, v|
-        hash[k] = v if yield k, v
-      end
-    end
-  end
-  
-  def reject!
-    self.each do |k, v|
-      delete k if yield k, v
-    end
-  end
 
   # Proper invert, values are not always unique.
   # Input: a => b, c => b, d => e

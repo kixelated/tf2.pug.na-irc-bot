@@ -3,7 +3,7 @@ require './server.rb'
 module Const
   Irc_server = "irc.gamesurge.net"
   Irc_port = 6667
-  Irc_vhost = nil
+  Irc_vhost = nil # "zomgbbq.com"
   Irc_channel = "#tf2.pug.na.beta"
   
   Messenger_count = 0
@@ -44,6 +44,7 @@ module Variables
     @players = {}
     @afk = []
 
+    @captains = []
     @teams = []
     @lookup = {}
 
