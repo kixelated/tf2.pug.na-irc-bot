@@ -68,8 +68,6 @@ module StateLogic
     
     next_server
     next_map
-    
-    message "Game started. Add to the pug using the !add command."
   end
   
   def picking? 

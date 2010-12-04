@@ -2,17 +2,30 @@ module PickingLogic
   def choose_captains
     possible_captains = get_classes["captain"]
     
+    #signups = {}
     Const::Team_count.times do |i|
       captain = possible_captains.delete_at rand(possible_captains.length)
-
+      
+      @captains << captain
       @teams << Team.new(captain, Const::Team_names[i], Const::Team_colours[i])
       @players.delete captain
-    end
-    
-    @captains.each do |captain|
+
       notice captain, "You have been selected as a captain. When it is your turn to pick, you can choose players with the '!pick num' or '!pick name' command."
     end
-
+=begin
+    @captains.each { |k, v| signups[k] = @players.delete k }
+    
+    classes_needed(get_classes, Const::Team_count).each do |k, v|
+      if k == "medic"
+        @teams.each do |team|
+          if signups[team.captain].include? "medic"
+            notice team.captain, "You have been designated as a medic due to the low avaliability of medics."
+            team.players.each { |k, v| team.players[k] = "medic" if k == team.captain } 
+          end
+        end
+      end
+    end
+=end
     output = @teams.collect { |team| team.my_colourize team.captain.to_s }
     message "Captains are #{ output.join(", ") }"
   end
@@ -43,12 +56,26 @@ module PickingLogic
   end
   
   def pick_player_valid? player, player_class
-    @players.key? player and Const::Team_classes.key? player_class
+    @players.key? player and Const::Team_classes.key? player_class# and player_class != "captain"
   end
   
   def pick_player_avaliable? player_class
     classes_needed(current_team.get_classes).key? player_class # playersLogic.rb
   end
+  
+=begin
+  def pick_medic? player, player_class
+    if player_class != "medic" and @players[player].include? "medic"
+      medics = 0
+      @teams.each { |team| medics = medics + 1 if (team.get_classes["medic"] ||= []).size > 0 }
+      message "#{ medics } medics have been picked already, #{ (Const::Team_size * Const::Team_classes["medic"] - medics) } medics still needed."
+      message "There are #{ (get_classes["medic"] ||= []).size } medics left, and you would take one of them?"
+      
+      return true if Const::Team_size * Const::Team_classes["medic"] - medics >= (get_classes["medic"] ||= []).size - 1
+    end
+    false
+  end
+=end
 
   def pick_player user, player, player_class
     return notice(user, "Picking has not started.") unless picking? # stateLogic.rb
@@ -65,6 +92,7 @@ module PickingLogic
     end
     
     return notice(user, "That class is full.") unless pick_player_avaliable? player_class
+    #return notice(user, "That pick is unavaliable, as that player is needed to play medic.") if pick_medic? player, player_class
 
     current_team.players[player] = player_class
     @players.delete player
