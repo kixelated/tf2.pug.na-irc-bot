@@ -42,7 +42,7 @@ class Server
   
   def in_use?
     command("status") =~ /players : (\S+) /
-    return $1.to_i > Variables::Server_used
+    return $1.to_i > Const::Server_used
   end
   
   def connect_info

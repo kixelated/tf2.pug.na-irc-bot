@@ -2,13 +2,13 @@ require 'rcon'
 
 module ServerLogic
   def start_server
-    @state = Variables::State_server
+    @state = Const::State_server
 
     while @server.in_use?
-      message "Server #{ @server.to_s } is in use. Trying the next server in #{ Variables::Server_delay } seconds."
+      message "Server #{ @server.to_s } is in use. Trying the next server in #{ Const::Server_delay } seconds."
       
       next_server
-      sleep Variables::Server_delay
+      sleep Const::Server_delay
     end
 
     @server.cpswd @server.pswd
@@ -21,6 +21,10 @@ module ServerLogic
   def change_map map
     @map = map
   end
+  
+  def change_server ip, port, pass, rcon
+    @server = Server.new(ip, port, pass, rcon)
+  end
 
   def list_server
     message "#{ @server.connect_info }"
@@ -32,14 +36,16 @@ module ServerLogic
   end
   
   def next_server
-
+    return @server = Const::Servers.first unless Const::Servers.include? @server
+    @server = Const::Servers[(Const::Servers.index(@server) + 1) % Const::Servers.size]
   end
   
   def next_map
-  
+    return @map = Const::Maps.first unless Const::Maps.include? @map
+    @map = Const::Maps[(Const::Maps.index(@map) + 1) % Const::Maps.size]
   end
   
   def advertisement
-    "Servers are provided by #{ colourize "EoReality", 7 }: #{ colourize "http://eoreality.net", 7 }"
+    "Servers are provided by #{ colourize "EoReality", 7 }: #{ colourize "http://eoreality.net", 7 } #eoreality"
   end
 end
