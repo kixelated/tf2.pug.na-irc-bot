@@ -3,8 +3,6 @@ module StateLogic
     if @state == Const::State_waiting and minimum_players?
       @state = Const::State_afk
       
-      message "Checking for afk players, please wait."
-      
       @afk = check_afk @players.keys # will take a long time
       start_afk unless @afk.empty?
       
@@ -23,8 +21,8 @@ module StateLogic
   
   def check_afk list
     list.reject do |user|
-      user.refresh
-      !user.unknown? and user.idle <= Const::Afk_threshold # user is found and not idle
+      return true unless @spoken[user]
+      (Time.now - @spoken[user]).to_i <= Const::Afk_threshold
     end
   end
 
@@ -68,6 +66,10 @@ module StateLogic
     
     next_server
     next_map
+  end
+  
+  def list_afk
+    message "The following players are afk: #{ check_afk(@players.keys).join(", ") }"
   end
   
   def picking? 

@@ -20,6 +20,7 @@ class Pug
   include StateLogic
   include ServerLogic
   
+  listen_to :channel, method: :channel
   listen_to :part, method: :remove
   listen_to :quit, method: :remove
   
@@ -41,6 +42,7 @@ class Pug
   match /force ([\S]+) (.+)/, method: :admin_force
   match /replace ([\S]+) ([\S]+)/, method: :admin_replace
   
+  match /afk/, method: :admin_afk
   match /changemap ([\S]+)/, method: :admin_changemap
   match /changeserver ([\S]+) ([\S]+) ([\S]+) ([\S]+)/, method: :admin_changeserver
   match /nextmap/, method: :admin_nextmap
@@ -49,6 +51,10 @@ class Pug
   def initialize *args
     super
     setup # variables.rb 
+  end
+  
+  def channel m
+    @spoken[m.user] = Time.now
   end
 
   # !add
@@ -74,7 +80,7 @@ class Pug
   def need m
     list_classes_needed # playersLogic.rb
   end
-  
+
   # !pick
   def pick m, player, player_class
     pick_player m.user, User(player), player_class # pickingLogic.rb
@@ -104,6 +110,12 @@ class Pug
   # !man
   def help m
     message "The avaliable commands are: !add, !remove, !list, !need, !pick, !captain, !mumble, !map, !server"
+  end
+  
+  def admin_afk m
+    return unless require_admin m
+  
+    list_afk # stateLogic.rb
   end
 
   # !changemap

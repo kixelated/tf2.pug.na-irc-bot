@@ -42,6 +42,7 @@ module Variables
     @map = Const::Maps.first
   
     @players = {}
+    @spoken = {}
     @afk = []
 
     @captains = []
