@@ -3,6 +3,8 @@ require 'rubygems'
 require 'cinch'
 require 'summer'
 
+require './variables.rb'
+
 require './pug.rb'
 require './quitter.rb'
 require './masterMessenger.rb'
@@ -10,12 +12,14 @@ require './masterMessenger.rb'
 mainbot = Thread.new do
   bot = Cinch::Bot.new do
     configure do |c|
-      c.nick = "IRCCompanionBot"
-      c.server = "irc.gamesurge.net"
-      c.vhost = "zomgbbq.com"
+      c.server = Variables::Irc_server
+      c.port = Variables::Irc_port
+      c.vhost = Variables::Irc_vhost
+      c.nick = Variables::Nick_bot
+      c.channels = [ Variables::Irc_channel ]
+      
       c.plugins.plugins = [ Pug, Quitter ]
-      c.channels = [ "#tf2.pug.na.beta" ]
-      c.verbose = true
+      c.verbose = false
     end
   end
   
@@ -23,11 +27,11 @@ mainbot = Thread.new do
   bot.start
 end
 
-0.times do |i|
+Variables::Messenger_count.times do |i|
   sleep(30)
 
   Thread.new do
-    bot = Summer::Connection.new("irc.gamesurge.net", 6667, "IRCMessengerBot#{i}", "#tf2.pug.na.beta")
+    bot = Summer::Connection.new(Variables::Irc_server, Variables::Irc_port, "#{ Variables::Nick_messenger }#{ i }", Variables::Irc_channel, Variables::Irc_vhost)
       
     MasterMessenger.instance.add bot
     bot.start
