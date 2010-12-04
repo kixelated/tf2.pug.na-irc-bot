@@ -1,15 +1,9 @@
 module StateLogic
-  # attempt_afk -> start_afk || attempt_picking
-  # start_afk -> attempt_picking (delay)
-  # attempt_picking -> start_delay, start_picking
-  # start_delay -> nil
-  # start_picking -> nil
-  
   def attempt_afk
     if @state == Variables::State_waiting and minimum_players?
       @state = Variables::State_afk
       
-      @afk = check_afk @afk # may take a while
+      @afk = check_afk @players.keys
       start_afk unless @afk.empty?
       
       attempt_picking
@@ -28,7 +22,7 @@ module StateLogic
   def check_afk list
     list.reject do |user|
       user.refresh
-      !user.unknown? and p.idle <= Variables::Afk_threshold # user is found and not idle
+      !user.unknown? and user.idle <= Variables::Afk_threshold # user is found and not idle
     end
   end
 
@@ -42,7 +36,7 @@ module StateLogic
     sleep Variables::Afk_delay
 
     # check again if users are afk, this time removing the ones who are
-    check_afk(@afk).each_key { |k| @players.delete k }
+    check_afk(@afk).each { |user| @players.delete user }
     @afk.clear
 
     list_players # playersLogic.rb
@@ -70,8 +64,8 @@ module StateLogic
     @state = Variables::State_waiting
     @pick = 0
     
-    @servers.push @servers.shift
-    @maps.push @maps.shift
+    next_server
+    next_map
     
     message "Game started. Add to the pug using the !add command."
   end
