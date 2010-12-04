@@ -6,7 +6,7 @@ module Const
   Irc_vhost = nil # "zomgbbq.com"
   Irc_channel = "#tf2.pug.na.beta"
   
-  Messenger_count = 0
+  Messenger_count = 2
   Nick_bot = "IRCCompanionBot"
   Nick_messenger = "IRCMessengerBot"
 
@@ -22,10 +22,11 @@ module Const
   Team_size = 6
   Team_classes = { "scout" => 2, "soldier" => 2, "demo" => 1, "medic" => 1, "captain" => 1 }
   
-  Chicago1 = Server.new("chicago1.tf2pug.org", 27015, "tf2pug", "squid")
-  
-  Servers = [ Chicago1 ]
-  Maps = [ "cp_badlands", "cp_coldfront", "cp_gullywash_imp3", "cp_freight_final1", "cp_granary", "koth_viaduct" ]
+  Dallas1 = Server.new("dallas1.tf2pug.eoreality.net", 27015, "tf2pug", "secret")
+  Chicago1 = Server.new("chicago1.tf2pug.eoreality.net", 27015, "tf2pug", "secret")
+
+  Servers = [ Chicago1, Dallas1 ]
+  Maps = [ "cp_badlands", "cp_granary", "koth_viaduct", "cp_coldfront", "cp_freight_final1" ] # cp_gullywash_imp3
 
   Server_used = 8
   
