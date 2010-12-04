@@ -9,7 +9,7 @@ module Variables
   Team_colours = [ 4, 10 ]
   
   Chicago1 = Server.new("chicago1.tf2pug.org", 27015, "tf2pug", "squid")
-  
+
   Server_used = 8
   
   State_waiting = 0
