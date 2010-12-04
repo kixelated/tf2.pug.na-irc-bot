@@ -31,10 +31,7 @@ class Pug
   
   match /pick ([\S]+) ([\S]+)/, method: :pick
   match /captain/, method: :captain
-  
-  match /add/, method: :help # fail
-  match /pick/, method: :help # fail
-
+ 
   match /map/, method: :map
   match /server/, method: :server
   
@@ -43,7 +40,11 @@ class Pug
   
   match /force ([\S]+) (.+)/, method: :admin_force
   match /replace ([\S]+) ([\S]+)/, method: :admin_replace
-  match /changemap ([\S]+)/, method: :admin_map
+  
+  match /changemap ([\S]+)/, method: :admin_changemap
+  match /changeserver ([\S]+) ([\S]+) ([\S]+) ([\S]+)/, method: :admin_changeserver
+  match /nextmap/, method: :admin_nextmap
+  match /nextserver/, method: :admin_nextserver
 
   def initialize *args
     super
@@ -86,7 +87,7 @@ class Pug
   
   # !mumble
   def mumble m
-    message "The Mumble IP is 'tf2pug.commandchannel.com:30153' (password 'tf2pug')"
+    message "The Mumble IP is 'chi6.eoreality.net:64746' (password 'tf2pug')"
     message "Download Mumble here: http://mumble.sourceforge.net/"
   end
 
@@ -102,17 +103,39 @@ class Pug
   
   # !man
   def help m
-    return notice m.user, "Syntax: '!add class1 class2 classn'" if m.message =~ /add/
-    return notice m.user, "Syntax: '!pick name class' or '!pick num class'" if m.message =~ /pick/
-  
     message "The avaliable commands are: !add, !remove, !list, !need, !pick, !captain, !mumble, !map, !server"
   end
 
   # !changemap
-  def admin_map m, map
+  def admin_changemap m, map
     return unless require_admin m
     
-    list_map if change_map m.user, map
+    change_map map
+    list_map
+  end
+  
+  # changeserver
+  def admin_changeserver m, ip, port, pass, rcon
+    return unless require_admin m
+    
+    change_server ip, port, pass, rcon
+    list_server
+  end
+  
+  # !nextmap
+  def admin_nextmap m
+    return unless require_admin m
+    
+    next_map
+    list_map
+  end
+  
+  # !nextserver
+  def admin_nextserver m
+    return unless require_admin m
+    
+    next_server
+    list_server
   end
 
   # !force
@@ -138,7 +161,7 @@ class Pug
   end
 
   def message msg
-    MasterMessenger.instance.queuemsg Variables::Main_Channel, colour_start(0) + msg + colour_end # util.rb
+    MasterMessenger.instance.queuemsg Const::Irc_channel, colour_start(0) + msg + colour_end # util.rb
     false
   end
   
@@ -146,8 +169,8 @@ class Pug
     MasterMessenger.instance.queuemsg user, msg
     false
   end
-  
-  def notice channel = Variables::Main_Channel, msg
+
+  def notice channel = Const::Irc_channel, msg
     MasterMessenger.instance.queuenotice channel, msg
     false
   end

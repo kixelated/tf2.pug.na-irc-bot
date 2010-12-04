@@ -1,15 +1,9 @@
 module StateLogic
-  # attempt_afk -> start_afk || attempt_picking
-  # start_afk -> attempt_picking (delay)
-  # attempt_picking -> start_delay, start_picking
-  # start_delay -> nil
-  # start_picking -> nil
-  
   def attempt_afk
-    if @state == Variables::State_waiting and minimum_players?
-      @state = Variables::State_afk
+    if @state == Const::State_waiting and minimum_players?
+      @state = Const::State_afk
       
-      @afk = check_afk @afk # may take a while
+      @afk = check_afk @players.keys
       start_afk unless @afk.empty?
       
       attempt_picking
@@ -21,14 +15,14 @@ module StateLogic
       start_delay # pause for x seconds
       start_picking
     else
-      @state = Variables::State_waiting
+      @state = Const::State_waiting
     end
   end
   
   def check_afk list
     list.reject do |user|
       user.refresh
-      !user.unknown? and p.idle <= Variables::Afk_threshold # user is found and not idle
+      !user.unknown? and user.idle <= Const::Afk_threshold # user is found and not idle
     end
   end
 
@@ -36,27 +30,27 @@ module StateLogic
     message "The following players are considered afk: #{ @afk.join(", ") }"
     
     @afk.each do |p|
-      private p, "Warning, you are considered afk by the bot. Say anything in the channel within the next #{ Variables::Afk_delay } seconds to avoid being removed."
+      private p, "Warning, you are considered afk by the bot. Say anything in the channel within the next #{ Const::Afk_delay } seconds to avoid being removed."
     end
     
-    sleep Variables::Afk_delay
+    sleep Const::Afk_delay
 
     # check again if users are afk, this time removing the ones who are
-    check_afk(@afk).each_key { |k| @players.delete k }
+    check_afk(@afk).each { |user| @players.delete user }
     @afk.clear
 
     list_players # playersLogic.rb
   end
   
   def start_delay
-    @state = Variables::State_delay
+    @state = Const::State_delay
     
-    message "Teams are being drafted, captains will be selected in #{ Variables::Picking_delay } seconds"
-    sleep Variables::Picking_delay
+    message "Teams are being drafted, captains will be selected in #{ Const::Picking_delay } seconds"
+    sleep Const::Picking_delay
   end
   
   def start_picking
-    @state = Variables::State_picking
+    @state = Const::State_picking
     
     update_lookup # pickingLogic.rb
     choose_captains # pickingLogic.rb
@@ -67,24 +61,24 @@ module StateLogic
     @teams.clear
     @lookup.clear
 
-    @state = Variables::State_waiting
+    @state = Const::State_waiting
     @pick = 0
     
-    @servers.push @servers.shift
-    @maps.push @maps.shift
+    next_server
+    next_map
     
     message "Game started. Add to the pug using the !add command."
   end
   
   def picking? 
-    @state == Variables::State_picking
+    @state == Const::State_picking
   end
 
   def can_add?
-    @state < Variables::State_picking
+    @state < Const::State_picking
   end
   
   def can_remove?
-    @state < Variables::State_picking
+    @state < Const::State_picking
   end
 end
