@@ -6,10 +6,6 @@ class Team
   attr_accessor :captain, :players
 	attr_accessor :name, :colour
   
-  # constants
-  Max_size = 2
-  Minimum = { "scout" => 1, "soldier" => 1, "demo" => 0, "medic" => 0, "captain" => 1 }
-
   def initialize captain, name, colour
     @captain = captain
 		@players = { captain => "captain" }
