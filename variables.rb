@@ -1,3 +1,5 @@
+require './server.rb'
+
 module Variables
   Irc_server = "irc.gamesurge.net"
   Irc_port = 6667
