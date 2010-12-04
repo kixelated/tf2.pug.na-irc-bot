@@ -21,8 +21,11 @@ module StateLogic
   
   def check_afk list
     list.reject do |user|
-      return true unless @spoken[user]
-      (Time.now - @spoken[user]).to_i <= Const::Afk_threshold
+      if @spoken[user]
+        (Time.now - @spoken[user]).to_i <= Const::Afk_threshold
+      else
+        true
+      end
     end
   end
 
