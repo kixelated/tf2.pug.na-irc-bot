@@ -2,10 +2,10 @@ module PickingLogic
   def choose_captains
     possible_captains = get_classes["captain"]
     
-    Variables::Team_count.times do |i|
+    Const::Team_count.times do |i|
       captain = possible_captains.delete_at rand(possible_captains.length)
 
-      @teams << Team.new(captain, Variables::Team_names[i], Variables::Team_colours[i])
+      @teams << Team.new(captain, Const::Team_names[i], Const::Team_colours[i])
       @players.delete captain
     end
 
@@ -39,7 +39,7 @@ module PickingLogic
   end
   
   def pick_player_valid? player, player_class
-    @players.key? player and Team::Minimum.key? player_class
+    @players.key? player and Const::Team_classes.key? player_class
   end
   
   def pick_player_avaliable? player_class
@@ -69,7 +69,7 @@ module PickingLogic
     
     @pick += 1
     
-    if @pick + Variables::Team_count >= Team::Max_size * Variables::Team_count
+    if @pick + Const::Team_count >= Const::Team_size * Const::Team_count
       announce_teams
       start_server # serverLogic.rb
       end_game # stateLogic.rb
@@ -81,7 +81,7 @@ module PickingLogic
   def announce_teams
     @teams.each_with_index do |team, i|
       team.players.each do |user, v| 
-        private user, "You have been picked for #{ team.name } as #{ v }. The server info is: #{ current_server.connect_info }" 
+        private user, "You have been picked for #{ team.name } as #{ v }. The server info is: #{ @server.connect_info }" 
       end
       
       message team.to_s
@@ -102,12 +102,12 @@ module PickingLogic
   
   def sequential num
     # 0 1 0 1 0 1 0 1 ...
-    num % Variables::Team_count
+    num % Const::Team_count
   end
   
   def staggered num
     # 0 1 1 0 0 1 1 0 ...
-    # won't work as expected when @Variables::Team_count > 2
-    ((num + Variables::Team_count / 2) / Variables::Team_count) % Variables::Team_count
+    # won't work as expected when @Const::Team_count > 2
+    ((num + Const::Team_count / 2) / Const::Team_count) % Const::Team_count
   end
 end

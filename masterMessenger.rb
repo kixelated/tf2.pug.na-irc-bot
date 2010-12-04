@@ -1,6 +1,8 @@
 require 'singleton'
 require 'thread'
 
+require './variables.rb'
+
 class MasterMessenger
   include Singleton
   
@@ -26,12 +28,18 @@ class MasterMessenger
     addqueue "notice", channel, msg
   end
 
+  def quitall!
+    @bots.each do |bot|
+      bot.quit
+    end
+    @bots.clear
+  end
   
   def processqueue!
     while true
     
-      mps            = Variables::Messenger_count  # 1 message per bot per second
-      max_queue_size = Variables::Messenger_count * 5 # 5 consecutive lines per bot before putting in a throttle
+      mps            = Const::Messenger_count  # 1 message per bot per second
+      max_queue_size = Const::Messenger_count * 5 # 5 consecutive lines per bot before putting in a throttle
 
       if @log.size > 1
         time_passed = 0
@@ -50,7 +58,7 @@ class MasterMessenger
         elsif effective_size >= max_queue_size
           sleep 1.0/mps
         else
-          sleep 0.1
+          sleep Const::Message_delay
         end
       end
  

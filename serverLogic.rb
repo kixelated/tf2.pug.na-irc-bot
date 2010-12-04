@@ -2,41 +2,50 @@ require 'rcon'
 
 module ServerLogic
   def start_server
-    @state = Variables::State_server
+    @state = Const::State_server
 
-    while current_server.in_use?
-      message "Server #{ current_server.to_s } is in use. Trying the next server in #{ Variables::Server_delay } seconds."
+    while @server.in_use?
+      message "Server #{ @server.to_s } is in use. Trying the next server in #{ Const::Server_delay } seconds."
       
-      @servers.push @servers.shift
-      sleep Variables::Server_delay
+      next_server
+      sleep Const::Server_delay
     end
 
-    current_server.cpswd current_server.pswd
-    current_server.clvl current_map
+    @server.cpswd @server.pswd
+    @server.clvl @map
     
-    message "The pug will take place on #{ current_server.to_s } with the map #{ current_map }"
+    message "The pug will take place on #{ @server.to_s } with the map #{ @map }"
+    message advertisement
   end
   
-  def change_map user, map
-    return notice user, "That map is not in the rotation. Valid maps are: #{ @maps.join(", ") }" unless @maps.include? map
-    
-    @maps.unshift @maps.delete(map)
+  def change_map map
+    @map = map
+  end
+  
+  def change_server ip, port, pass, rcon
+    @server = Server.new(ip, port, pass, rcon)
   end
 
   def list_server
-    message "#{ current_server.connect_info }"
-    message "Servers are provided by Apoplexy Industries: http://aigaming.com"
+    message "#{ @server.connect_info }"
+    message advertisement
   end  
   
   def list_map
-    message "The current map is #{ current_map }"
-  end
-
-  def current_server
-    @servers.first
+    message "The current map is #{ @map }"
   end
   
-  def current_map
-    @maps.first
+  def next_server
+    return @server = Const::Servers.first unless Const::Servers.include? @server
+    @server = Const::Servers[(Const::Servers.index(@server) + 1) % Const::Servers.size]
+  end
+  
+  def next_map
+    return @map = Const::Maps.first unless Const::Maps.include? @map
+    @map = Const::Maps[(Const::Maps.index(@map) + 1) % Const::Maps.size]
+  end
+  
+  def advertisement
+    "Servers are provided by #{ colourize "EoReality", 7 }: #{ colourize "http://eoreality.net", 7 } #eoreality"
   end
 end
