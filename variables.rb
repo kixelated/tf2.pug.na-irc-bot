@@ -22,6 +22,7 @@ module Const
   Team_size = 6
   Team_classes = { "scout" => 2, "soldier" => 2, "demo" => 1, "medic" => 1, "captain" => 1 }
   
+
   Dallas1 = Server.new("dallas1.tf2pug.eoreality.net", 27015, "tf2pug", "secret")
   Chicago1 = Server.new("chicago1.tf2pug.eoreality.net", 27015, "tf2pug", "secret")
 
