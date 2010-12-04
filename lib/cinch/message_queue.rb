@@ -26,7 +26,7 @@ module Cinch
 
     # @return [void]
     def process!
-      while true
+      while !@quit
         mps            = @bot.config.messages_per_second
         max_queue_size = @bot.config.server_queue_size
 

@@ -19,7 +19,7 @@ mainbot = Thread.new do
       c.channels = [ Const::Irc_channel ]
       
       c.plugins.plugins = [ Pug, Quitter ]
-      c.verbose = false
+      c.verbose = true
     end
   end
   

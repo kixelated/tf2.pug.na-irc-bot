@@ -3,7 +3,9 @@ module StateLogic
     if @state == Const::State_waiting and minimum_players?
       @state = Const::State_afk
       
-      @afk = check_afk @players.keys
+      message "Checking for afk players, please wait."
+      
+      @afk = check_afk @players.keys # will take a long time
       start_afk unless @afk.empty?
       
       attempt_picking

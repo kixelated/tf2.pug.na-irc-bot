@@ -10,7 +10,7 @@ module Const
   Nick_bot = "IRCCompanionBot"
   Nick_messenger = "IRCMessengerBot"
 
-  Afk_threshold = 10 * 60
+  Afk_threshold = 15 * 60
   Afk_delay = 45
   Server_delay = 60
   Picking_delay = 45

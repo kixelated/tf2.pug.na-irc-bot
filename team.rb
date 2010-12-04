@@ -24,6 +24,6 @@ class Team
   
   def to_s
     output = players.collect { |k, v| "#{ k } as #{ my_colourize v }" }
-    "#{ my_colourize @name }: #{ output.join(", ") if output }"
+    "#{ my_colourize @name }: #{ output.values.join(", ") if output }"
   end
 end

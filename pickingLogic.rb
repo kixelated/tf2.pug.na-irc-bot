@@ -8,6 +8,10 @@ module PickingLogic
       @teams << Team.new(captain, Const::Team_names[i], Const::Team_colours[i])
       @players.delete captain
     end
+    
+    @captains.each do |captain|
+      notice captain, "You have been selected as a captain. When it is your turn to pick, you can choose players with the '!pick num' or '!pick name' command."
+    end
 
     output = @teams.collect { |team| team.my_colourize team.captain.to_s }
     message "Captains are #{ output.join(", ") }"
@@ -33,7 +37,7 @@ module PickingLogic
  
     message "It is #{ current_captain.to_s }'s turn to pick"
   end
-  
+
   def can_pick? user
     current_captain == user
   end
@@ -45,7 +49,7 @@ module PickingLogic
   def pick_player_avaliable? player_class
     classes_needed(current_team.get_classes).key? player_class # playersLogic.rb
   end
-  
+
   def pick_player user, player, player_class
     return notice(user, "Picking has not started.") unless picking? # stateLogic.rb
     return notice(user, "It is not your turn to pick.") unless can_pick? user
