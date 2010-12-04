@@ -2,7 +2,6 @@ require 'socket'
 
 module Summer
   class Connection
-    include Handlers
     attr_accessor :connection, :ready, :started, :config, :server, :port
     def initialize(server, port=6667, nick="TestBot", channel="#test.bot")
       @ready = false
@@ -16,7 +15,6 @@ module Summer
     
     def start
       connect!
-
       loop do
         startup! if @ready && !@started
         parse(@connection.gets)
