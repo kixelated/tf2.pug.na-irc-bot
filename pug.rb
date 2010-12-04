@@ -31,10 +31,7 @@ class Pug
   
   match /pick ([\S]+) ([\S]+)/, method: :pick
   match /captain/, method: :captain
-  
-  match /add/, method: :help # fail
-  match /pick/, method: :help # fail
-
+ 
   match /map/, method: :map
   match /server/, method: :server
   
@@ -86,7 +83,7 @@ class Pug
   
   # !mumble
   def mumble m
-    message "The Mumble IP is 'tf2pug.commandchannel.com:30153' (password 'tf2pug')"
+    message "The Mumble IP is 'chi6.eoreality.net:64746' (password 'tf2pug')"
     message "Download Mumble here: http://mumble.sourceforge.net/"
   end
 
@@ -102,9 +99,6 @@ class Pug
   
   # !man
   def help m
-    return notice m.user, "Syntax: '!add class1 class2 classn'" if m.message =~ /add/
-    return notice m.user, "Syntax: '!pick name class' or '!pick num class'" if m.message =~ /pick/
-  
     message "The avaliable commands are: !add, !remove, !list, !need, !pick, !captain, !mumble, !map, !server"
   end
 
