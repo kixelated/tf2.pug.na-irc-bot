@@ -1,8 +1,18 @@
 module Variables
+  Irc_server = "irc.gamesurge.net"
+  Irc_port = 6667
+  Irc_vhost = nil
+  Irc_channel = "#tf2.pug.na.beta"
+  
+  Messenger_count = 1
+  Nick_bot = "IRCCompanionBot"
+  Nick_messenger = "IRCMessengerBot"
+
   Afk_threshold = 60 * 5
   Afk_delay = 45
   Server_delay = 60
   Picking_delay = 45
+  Message_delay = 0.1
 
   Team_count = 2
   Team_names = [ "Red team", "Blue team" ]
@@ -18,11 +28,9 @@ module Variables
   State_picking = 3
   State_server = 4
   
-  Messenger_count = 5
+  
 
   def setup
-    @channel = "#tf2.pug.na.beta"
-    
     @servers = [ Variables::Chicago1 ]
     @maps = [ "cp_badlands", "cp_coldfront", "cp_gullywash_imp3", "cp_freight_final1", "cp_granary", "koth_viaduct" ]
   

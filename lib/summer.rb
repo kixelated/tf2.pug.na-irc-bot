@@ -2,8 +2,10 @@ require 'socket'
 
 module Summer
   class Connection
-    attr_accessor :connection, :ready, :started, :config, :server, :port
-    def initialize(server, port=6667, nick="TestBot", channel="#test.bot")
+    attr_accessor :server, :port, :nick, :channel, :vhost
+    attr_accessor :connection, :ready, :started
+    
+    def initialize(server, port=6667, nick="TestBot", channel="#test.bot", vhost=nil)
       @ready = false
       @started = false
 
@@ -11,6 +13,7 @@ module Summer
       @port = port
       @nick = nick
       @channel = channel
+      @vhost = vhost
     end
     
     def start
@@ -40,7 +43,7 @@ module Summer
     
     private
     def connect!
-      @connection = TCPSocket.open(server, port)      
+      @connection = TCPSocket.open(server, port, vhost)      
       response("USER #{@nick} #{@nick} #{@nick} #{@nick}")
       response("NICK #{@nick}")
     end

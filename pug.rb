@@ -132,7 +132,7 @@ class Pug
   end
 
   def message msg
-    MasterMessenger.instance.msg @channel, colour_start(0) + msg + colour_end # util.rb
+    MasterMessenger.instance.msg Variables::Irc_channel, colour_start(0) + msg + colour_end # util.rb
     false
   end
   
@@ -141,7 +141,7 @@ class Pug
     false
   end
   
-  def notice channel = @channel, msg
+  def notice channel = Variables::Irc_channel, msg
     MasterMessenger.instance.notice channel, msg
     false
   end
