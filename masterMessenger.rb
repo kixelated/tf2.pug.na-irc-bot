@@ -19,11 +19,11 @@ class MasterMessenger
   
   def msg channel, msg
     select.msg channel, msg
-    sleep(Variables::Message_delay)
+    sleep(Const::Message_delay)
   end
   
   def notice channel, msg
     select.notice channel, msg
-    sleep(Variables::Message_delay)
+    sleep(Const::Message_delay)
   end
 end

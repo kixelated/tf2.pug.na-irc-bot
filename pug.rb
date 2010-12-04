@@ -40,7 +40,11 @@ class Pug
   
   match /force ([\S]+) (.+)/, method: :admin_force
   match /replace ([\S]+) ([\S]+)/, method: :admin_replace
-  match /changemap ([\S]+)/, method: :admin_map
+  
+  match /changemap ([\S]+)/, method: :admin_changemap
+  match /changeserver ([\S]+) ([\S]+) ([\S]+) ([\S]+)/, method: :admin_changeserver
+  match /nextmap/, method: :admin_nextmap
+  match /nextserver/, method: :admin_nextserver
 
   def initialize *args
     super
@@ -103,11 +107,35 @@ class Pug
   end
 
   # !changemap
-  def admin_map m, map
+  def admin_changemap m, map
     return unless require_admin m
     
     change_map map
     list_map
+  end
+  
+  # changeserver
+  def admin_changeserver m, ip, port, pass, rcon
+    return unless require_admin m
+    
+    change_server ip, port, pass, rcon
+    list_server
+  end
+  
+  # !nextmap
+  def admin_nextmap m
+    return unless require_admin m
+    
+    next_map
+    list_map
+  end
+  
+  # !nextserver
+  def admin_nextserver m
+    return unless require_admin m
+    
+    next_server
+    list_server
   end
 
   # !force
@@ -133,7 +161,7 @@ class Pug
   end
 
   def message msg
-    MasterMessenger.instance.msg Variables::Irc_channel, colour_start(0) + msg + colour_end # util.rb
+    MasterMessenger.instance.msg Const::Irc_channel, colour_start(0) + msg + colour_end # util.rb
     false
   end
   
@@ -142,7 +170,7 @@ class Pug
     false
   end
   
-  def notice channel = Variables::Irc_channel, msg
+  def notice channel = Const::Irc_channel, msg
     MasterMessenger.instance.notice channel, msg
     false
   end
