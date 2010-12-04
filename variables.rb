@@ -24,8 +24,8 @@ module Const
   
   Chicago1 = Server.new("chicago1.tf2pug.org", 27015, "tf2pug", "squid")
   
-  Server_rotation = [ Chicago1 ]
-  Map_rotation = [ "cp_badlands", "cp_coldfront", "cp_gullywash_imp3", "cp_freight_final1", "cp_granary", "koth_viaduct" ]
+  Servers = [ Chicago1 ]
+  Maps = [ "cp_badlands", "cp_coldfront", "cp_gullywash_imp3", "cp_freight_final1", "cp_granary", "koth_viaduct" ]
 
   Server_used = 8
   
@@ -38,8 +38,8 @@ end
 
 module Variables
   def setup
-    @server = Variables::Server_rotation.first
-    @map = Variables::Map_rotation.first
+    @server = Const::Servers.first
+    @map = Const::Maps.first
   
     @players = {}
     @afk = []
@@ -47,7 +47,7 @@ module Variables
     @teams = []
     @lookup = {}
 
-    @state = Variables::State_waiting
+    @state = Const::State_waiting
     @pick = 0
   end
 end
