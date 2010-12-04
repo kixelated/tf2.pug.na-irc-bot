@@ -15,6 +15,7 @@ module ServerLogic
     current_server.clvl current_map
     
     message "The pug will take place on #{ current_server.to_s } with the map #{ current_map }"
+    message advertisement
   end
   
   def change_map user, map
@@ -25,11 +26,15 @@ module ServerLogic
 
   def list_server
     message "#{ current_server.connect_info }"
-    message "Servers are provided by Apoplexy Industries: http://aigaming.com"
+    message advertisement
   end  
   
   def list_map
     message "The current map is #{ current_map }"
+  end
+  
+  def advertisement
+    "Servers are provided by #{ colourize "EoReality", 5 }: #{ colourize "http://eoreality.net", 5 } (#eoreality)"
   end
 
   def current_server
