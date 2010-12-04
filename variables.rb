@@ -18,10 +18,12 @@ module Variables
   State_picking = 3
   State_server = 4
   
-  Messenger_count = 5
+  Messenger_count = 2
+  
+  Main_Channel = "#tf2.pug.na.beta"
+  Bot_Nick = "IrcCompanionBot"
 
   def setup
-    @channel = "#tf2.pug.na.beta"
     
     @servers = [ Variables::Chicago1 ]
     @maps = [ "cp_badlands", "cp_coldfront", "cp_gullywash_imp3", "cp_freight_final1", "cp_granary", "koth_viaduct" ]

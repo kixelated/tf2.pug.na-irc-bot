@@ -21,7 +21,6 @@ module Summer
         if @connection.eof?
           puts "Connection lost for message bot #{ @nick } Reconnecting in 60 seconds."
           sleep(60)
-          puts "Attempting to reconnect message bot #{ @nick } Reconnecting in 60 seconds."
           @ready = false
           @started = false
           connect!
@@ -36,6 +35,10 @@ module Summer
     
     def notice(to, message)
       response("NOTICE #{to} :#{message}")
+    end
+	
+    def started?
+      @started
     end
     
     private
