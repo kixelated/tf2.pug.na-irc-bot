@@ -68,7 +68,7 @@ module StateLogic
     @state = Const::State_waiting
     @pick = 0
     
-    @spoken.reject! { |user| !@players.key? user }
+    @spoken.reject! { |k, v| !@players.key? k }
     
     next_server
     next_map
@@ -87,6 +87,6 @@ module StateLogic
   end
   
   def can_remove?
-    @state < Const::State_picking
+    @state < Const::State_delay
   end
 end
