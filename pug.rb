@@ -29,12 +29,14 @@ class Pug
   match /list/, method: :list
   match /players/, method: :list
   match /need/, method: :need
+  match /afk/, method: :afk
   
   match /pick ([\S]+) ([\S]+)/, method: :pick
   match /captain/, method: :captain
   
   match /map/, method: :map
   match /server/, method: :server
+  match /last/, method: :last
   
   match /man/, method: :help
   match /mumble/, method: :mumble
@@ -42,7 +44,6 @@ class Pug
   match /force ([\S]+) (.+)/, method: :admin_force
   match /replace ([\S]+) ([\S]+)/, method: :admin_replace
   
-  match /afk/, method: :admin_afk
   match /changemap ([\S]+)/, method: :admin_changemap
   match /changeserver ([\S]+) ([\S]+) ([\S]+) ([\S]+)/, method: :admin_changeserver
   match /nextmap/, method: :admin_nextmap
@@ -54,7 +55,7 @@ class Pug
   end
   
   def channel m
-    @spoken[m.user] = Time.now
+    @spoken[m.user] = Time.now if @players.key? m.user
   end
 
   # !add
@@ -94,7 +95,7 @@ class Pug
   # !mumble
   def mumble m
     message "The Mumble IP is: chi6.eoreality.net:64746 password: tf2pug"
-    message "Download Mumble here: http://mumble.sourceforge.net/"
+    message advertisement
   end
 
   # !map
@@ -107,14 +108,18 @@ class Pug
     list_server # serverLogic.rb
   end
   
+  # !last
+  def last m
+    list_last # serverLogic.rb
+  end
+  
   # !man
   def help m
     message "The avaliable commands are: !add, !remove, !list, !need, !pick, !captain, !mumble, !map, !server"
   end
   
-  def admin_afk m
-    return unless require_admin m
-  
+  # !afk
+  def afk m
     list_afk # stateLogic.rb
   end
 
@@ -160,6 +165,7 @@ class Pug
     end
   end
   
+  # !replace
   def admin_replace m, user, replacement
     return unless require_admin m
     

@@ -30,7 +30,7 @@ module StateLogic
   end
 
   def start_afk
-    message "The following players are considered afk: #{ @afk.join(", ") }"
+    message colourize "The following players are considered afk: #{ @afk.join(", ") }", Const::Colour_yellow
     
     @afk.each do |p|
       private p, "Warning, you are considered afk by the bot. Say anything in the channel within the next #{ Const::Afk_delay } seconds to avoid being removed."
@@ -48,7 +48,7 @@ module StateLogic
   def start_delay
     @state = Const::State_delay
     
-    message "Teams are being drafted, captains will be selected in #{ Const::Picking_delay } seconds"
+    message colourize "Teams are being drafted, captains will be selected in #{ Const::Picking_delay } seconds", Const::Colour_yellow
     sleep Const::Picking_delay
   end
   
@@ -64,8 +64,11 @@ module StateLogic
     @teams.clear
     @lookup.clear
 
+    @last = Time.now
     @state = Const::State_waiting
     @pick = 0
+    
+    @spoken.reject! { |user| !@players.key? user }
     
     next_server
     next_map
