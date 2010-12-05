@@ -6,9 +6,9 @@ module Const
   Irc_vhost = nil # "zomgbbq.com"
   Irc_channel = "#tf2.pug.na.beta"
   
-  Messenger_count = 2
+  Messenger_count = 0
   Nick_bot = "IRCCompanionBot"
-  Nick_messenger = "IRCMessengerBot"
+  Nick_messenger = "IRCMessengerBo"
 
   Afk_threshold = 15 * 60
   Afk_delay = 45
@@ -18,7 +18,7 @@ module Const
 
   Team_count = 2
   Team_names = [ "Red team", "Blue team" ]
-  Team_colours = [ 4, 10 ]
+  Team_colours = [ 4, 11 ]
   Team_size = 6
   Team_classes = { "scout" => 2, "soldier" => 2, "demo" => 1, "medic" => 1, "captain" => 1 }
   
@@ -29,13 +29,30 @@ module Const
   Servers = [ Chicago1, Dallas1 ]
   Maps = [ "cp_badlands", "cp_granary", "koth_viaduct", "cp_coldfront", "cp_freight_final1" ] # cp_gullywash_imp3
 
-  Server_used = 8
+  Server_used = 6
   
   State_waiting = 0
   State_afk = 1
   State_delay = 2
   State_picking = 3
   State_server = 4
+  
+  Colour_white = 0
+  Colour_black = 1
+  Colour_navy = 2
+  Colour_green = 3
+  Colour_red = 4
+  Colour_brown = 5
+  Colour_purple = 6
+  Colour_olive = 7
+  Colour_yellow = 8
+  Colour_lime = 9
+  Colour_teal = 10
+  Colour_aqua = 11
+  Colour_royal = 12
+  Colour_pink = 13
+  Colour_darkgrey = 14
+  Colour_lightgrey = 15
 end
 
 module Variables
@@ -50,7 +67,8 @@ module Variables
     @captains = []
     @teams = []
     @lookup = {}
-
+    
+    @last = nil
     @state = Const::State_waiting
     @pick = 0
   end
