@@ -39,7 +39,7 @@ module ServerLogic
     return message "A match has not been played since the bot was restarted." unless @last
     time = (Time.now - @last).to_i
     
-    return message "The last match was started #{ time / 3600 } hours and #{ time / 60 % 3600 } minutes ago"
+    return message "The last match was started #{ time / 3600 } hours and #{ time / 60 % 60 } minutes ago"
   end
   
   def next_server

@@ -24,30 +24,31 @@ class Pug
   listen_to :part, method: :remove
   listen_to :quit, method: :remove
   
-  match /add (.+)/, method: :add
-  match /remove/, method: :remove
-  match /list/, method: :list
-  match /players/, method: :list
-  match /need/, method: :need
-  match /afk/, method: :afk
+  match /add (.+)/i, method: :add
+  match /remove/i, method: :remove
+  match /list/i, method: :list
+  match /players/i, method: :list
+  match /need/i, method: :need
+  match /afk/i, method: :afk
   
-  match /pick ([\S]+) ([\S]+)/, method: :pick
-  match /captain/, method: :captain
+  match /pick ([\S]+) ([\S]+)/i, method: :pick
+  match /captain/i, method: :captain
   
-  match /map/, method: :map
-  match /server/, method: :server
-  match /last/, method: :last
+  match /map/i, method: :map
+  match /server/i, method: :server
+  match /last/i, method: :last
   
-  match /man/, method: :help
-  match /mumble/, method: :mumble
+  match /man/i, method: :help
+  match /mumble/i, method: :mumble
+  match /stats/i, method: :stats
   
-  match /force ([\S]+) (.+)/, method: :admin_force
-  match /replace ([\S]+) ([\S]+)/, method: :admin_replace
+  match /force ([\S]+) (.+)/i, method: :admin_force
+  match /replace ([\S]+) ([\S]+)/i, method: :admin_replace
   
-  match /changemap ([\S]+)/, method: :admin_changemap
-  match /changeserver ([\S]+) ([\S]+) ([\S]+) ([\S]+)/, method: :admin_changeserver
-  match /nextmap/, method: :admin_nextmap
-  match /nextserver/, method: :admin_nextserver
+  match /changemap ([\S]+)/i, method: :admin_changemap
+  match /changeserver ([\S]+) ([\S]+) ([\S]+) ([\S]+)/i, method: :admin_changeserver
+  match /nextmap/i, method: :admin_nextmap
+  match /nextserver/i, method: :admin_nextserver
 
   def initialize *args
     super
@@ -116,6 +117,10 @@ class Pug
   # !man
   def help m
     message "The avaliable commands are: !add, !remove, !list, !need, !pick, !captain, !mumble, !map, !server"
+  end
+  
+  def stats m
+    notice m.user, "Stats have not yet been implemented."
   end
   
   # !afk

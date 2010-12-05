@@ -27,7 +27,7 @@ module Const
   Chicago1 = Server.new("chicago1.tf2pug.eoreality.net", 27015, "tf2pug", "secret")
 
   Servers = [ Chicago1, Dallas1 ]
-  Maps = [ "cp_badlands", "cp_granary", "koth_viaduct", "cp_coldfront", "cp_freight_final1" ] # cp_gullywash_imp3
+  Maps = [ "cp_badlands", "cp_granary", "koth_viaduct", "cp_coldfront", "cp_gullywash_imp3" ]
 
   Server_used = 6
   
