@@ -50,6 +50,8 @@ module Cinch
     attr_reader :signed_on_at
     # @return [Array<Plugin>] All registered plugins
     attr_reader :plugins
+    
+    attr_reader :quit
 
     # Helper method for turning a String into a {Channel} object.
     #
@@ -123,6 +125,7 @@ module Cinch
       @plugins = []
       @callback = Callback.new(self)
       @channels = []
+      @quit = false
 
       on :connect do
         bot.config.channels.each do |channel|
@@ -434,6 +437,7 @@ module Cinch
     def quit(message = nil)
       command = message ? "QUIT :#{message}" : "QUIT"
       raw command
+      @quit = true
     end
 
     # Connects the bot to a server.

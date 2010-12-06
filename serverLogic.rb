@@ -35,6 +35,13 @@ module ServerLogic
     message "The current map is #{ @map }"
   end
   
+  def list_last
+    return message "A match has not been played since the bot was restarted." unless @last
+    time = (Time.now - @last).to_i
+    
+    return message "The last match was started #{ time / 3600 } hours and #{ time / 60 % 60 } minutes ago"
+  end
+  
   def next_server
     return @server = Const::Servers.first unless Const::Servers.include? @server
     @server = Const::Servers[(Const::Servers.index(@server) + 1) % Const::Servers.size]
@@ -46,6 +53,6 @@ module ServerLogic
   end
   
   def advertisement
-    "Servers are provided by #{ colourize "EoReality", 7 }: #{ colourize "http://eoreality.net", 7 } #eoreality"
+    "Servers are provided by #{ colourize "End", Const::Colour_brown } of #{ colourize "Reality", Const::Colour_brown }: #{ colourize "http://eoreality.net", 7 } #eoreality"
   end
 end

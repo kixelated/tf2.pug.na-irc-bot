@@ -3,7 +3,7 @@ module StateLogic
     if @state == Const::State_waiting and minimum_players?
       @state = Const::State_afk
       
-      @afk = check_afk @players.keys
+      @afk = check_afk @players.keys # will take a long time
       start_afk unless @afk.empty?
       
       attempt_picking
@@ -21,13 +21,16 @@ module StateLogic
   
   def check_afk list
     list.reject do |user|
-      user.refresh
-      !user.unknown? and user.idle <= Const::Afk_threshold # user is found and not idle
+      if @spoken[user]
+        (Time.now - @spoken[user]).to_i <= Const::Afk_threshold
+      else
+        true
+      end
     end
   end
 
   def start_afk
-    message "The following players are considered afk: #{ @afk.join(", ") }"
+    message colourize "The following players are considered afk: #{ @afk.join(", ") }", Const::Colour_yellow
     
     @afk.each do |p|
       private p, "Warning, you are considered afk by the bot. Say anything in the channel within the next #{ Const::Afk_delay } seconds to avoid being removed."
@@ -45,7 +48,7 @@ module StateLogic
   def start_delay
     @state = Const::State_delay
     
-    message "Teams are being drafted, captains will be selected in #{ Const::Picking_delay } seconds"
+    message colourize "Teams are being drafted, captains will be selected in #{ Const::Picking_delay } seconds", Const::Colour_yellow
     sleep Const::Picking_delay
   end
   
@@ -61,13 +64,18 @@ module StateLogic
     @teams.clear
     @lookup.clear
 
+    @last = Time.now
     @state = Const::State_waiting
     @pick = 0
     
+    @spoken.reject! { |k, v| !@players.key? k }
+    
     next_server
     next_map
-    
-    message "Game started. Add to the pug using the !add command."
+  end
+  
+  def list_afk
+    message "The following players are afk: #{ check_afk(@players.keys).join(", ") }"
   end
   
   def picking? 
@@ -79,6 +87,6 @@ module StateLogic
   end
   
   def can_remove?
-    @state < Const::State_picking
+    @state < Const::State_delay
   end
 end

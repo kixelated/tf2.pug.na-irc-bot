@@ -22,15 +22,7 @@ module Summer
       while !@quit
         startup! if @ready && !@started
         parse(@connection.gets)
-        if @connection.eof? and !quit
-          puts "Connection lost for message bot #{ @nick } Reconnecting in 60 seconds."
-          sleep(60)
-          @ready = false
-          @started = false
-          connect!
-        end
       end
-
     end
 
     def msg(to, message)
@@ -86,7 +78,6 @@ module Summer
       elsif /\d+/.match(raw)
         send("handle_#{raw}", message) if raws_to_handle.include?(raw)
       end
-
     end
 
     # These are the raws we care about.
@@ -108,7 +99,5 @@ module Summer
     def me
       @nick
     end
-
   end
-
 end

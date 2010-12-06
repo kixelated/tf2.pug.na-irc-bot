@@ -1,11 +1,11 @@
 require 'open-uri'
 
 module Utilities
-  def make_title msg, colour = 1
-    colourize msg.rjust(15), 0, colour
+  def make_title msg, fore = 0, back = 1
+    colourize msg.rjust(15), fore, back
   end
 
-  def colour_start fore, back = 1
+  def colour_start fore = 0, back = 1
     "\x03#{ fore.to_s.rjust(2, "0") },#{ back.to_s.rjust(2, "0") }"
   end
   
@@ -13,7 +13,7 @@ module Utilities
     "\x03"
   end
 
-  def colourize msg, fore, back = 1
+  def colourize msg, fore = 0, back = 1
     colour_end + colour_start(fore, back) + msg + colour_end + colour_start(0)
   end
   
@@ -51,20 +51,6 @@ class Hash
   def collect!
     self.each do |k, v|
       self[k] = yield k, v
-    end
-  end
-  
-  def reject
-    self.class.new.tap do |hash|
-      self.each do |k, v|
-        hash[k] = v if yield k, v
-      end
-    end
-  end
-  
-  def reject!
-    self.each do |k, v|
-      delete k if yield k, v
     end
   end
 

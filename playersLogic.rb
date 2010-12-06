@@ -1,7 +1,7 @@
 module PlayersLogic
   def add_player user, classes
     return notice user, "You cannot add at this time, please wait for picking to end." unless can_add? # stateLogic.rb
-    return notice user, "You must be authorized with GameSurge in order to play in this channel. http://www.gamesurge.net/newuser/" unless user.authed?
+    notice user, "You must be authorized with GameSurge in order to play in this channel, but consider this a warning. http://www.gamesurge.net/newuser/" unless user.authed?
     
     classes.collect! { |clss| clss.downcase }
     classes.reject! { |clss| not Const::Team_classes.key? clss }
@@ -19,13 +19,18 @@ module PlayersLogic
   end
   
   def list_players
-    message "#{ make_title "#{ @players.size } users added:" } #{ @players.keys.join(", ") }"
+    output = @players.keys.collect do |user|
+      medic, captain = @players[user].include?("medic"), @players[user].include?("captain")
+      special = ":#{ colourize "m", Const::Colour_red if medic }#{ colourize "c", Const::Colour_yellow if captain }" if medic or captain
+      "#{ user.to_s }#{ special }"
+    end
+    message "#{ make_title "#{ @players.size } users added:" } #{ output.join(", ") }"
   end
 
   def list_players_detailed
     temp = get_classes
     Const::Team_classes.each_key do |k|
-      message "#{ make_title "#{ k }:", 2 } #{ temp[k].join(", ") }" if temp[k]
+      message "#{ make_title "#{ k }:", Const::Colour_black, Const::Colour_lightgrey } #{ temp[k].join(", ") }" if temp[k]
     end
   end
   
@@ -53,7 +58,7 @@ module PlayersLogic
     output.unshift [ "players" , (Const::Team_size * Const::Team_count - @players.size)] if @players.size < Const::Team_size * Const::Team_count
     output.collect! { |a| "#{ a[1] } #{ a[0] }" } # Format the output
 
-    message "#{ make_title "Required classes:" } #{ output.join(", ") }"
+    message "Required classes: #{ output.join(", ") }"
   end
 
   def minimum_players?
