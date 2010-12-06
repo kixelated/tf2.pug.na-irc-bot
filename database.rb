@@ -18,8 +18,12 @@ class Database
   end
   
   #player table
+  def get_player playerid
+    @database.get_first_row("SELECT * FROM Player WHERE PlayerID = ?;",  playerid)
+  end
+  
   def insert_player email, password, steamid, accesslevel, registrationcode
-      @database.execute("INSERT INTO Player (PlayerID, Email, Password, SteamID, AccessLevel, RegistrationCode, IsActivated) VALUES (?,?,?,?,?,?,?);", "NULL", email, password, steamid, accesslevel, registrationcode, 1)
+    @database.execute("INSERT INTO Player (PlayerID, Email, Password, SteamID, AccessLevel, RegistrationCode, IsActivated) VALUES (?,?,?,?,?,?,?);", "NULL", email, password, steamid, accesslevel, registrationcode, 1)
   end
   
   def update_player_activate playerid
@@ -35,10 +39,14 @@ class Database
   end
   
   
-  #pug table
+  #pug table  
+  def get_pug pugid
+    @database.get_first_row("SELECT * FROM Pug WHERE PugID = ?;",  pugid)
+  end
+  
   def insert_pug serverid, type, map #returns pugid
     @database.execute("INSERT INTO Pug (PugID, ServerID, Type, Map, CreatedDateTime) VALUES (?,?,?,?,?);", "NULL", serverid, type, map, Time.now.to_s)
-	@database.get_first_value("SELECT last_insert_rowid() FROM Pug;")
+    @database.get_first_value("SELECT last_insert_rowid() FROM Pug;")
   end
   
   def update_pug_map pugid, map
@@ -55,6 +63,14 @@ class Database
   
   
   #team table
+  def get_team_player pugid, playerid
+    @database.execute("SELECT * FROM Team WHERE PugID = ? AND PlayerID = ?;", pugid, playerid)
+  end
+ 
+  def get_team pugid, team
+    @database.execute("SELECT * FROM Team WHERE PugID = ? AND Team = ?", pugid, team)
+  end
+  
   def insert_team_player pugid, playerid, team, classname, iscaptain
     @database.execute("INSERT INTO Team (PugID, PlayerID, Team, Class, IsCaptain) VALUES (?,?,?,?,?);", pugid, playerid, team, classname, iscaptain)
   end
