@@ -1,3 +1,5 @@
+require 'open-uri'
+
 module Utilities
   def make_title msg, colour = 1
     colourize msg.rjust(15), 0, colour
@@ -14,6 +16,27 @@ module Utilities
   def colourize msg, fore, back = 1
     colour_end + colour_start(fore, back) + msg + colour_end + colour_start(0)
   end
+  
+  def isvalidsteamid? steamid
+    steamid =~ /^STEAM_0:[01]:[0-9]{7,8}$/
+  end
+  
+  def isvalidprofileurl? url
+    url =~ /^(http:\/\/)?(www.)?steamcommunity.com\/id\/.*\/?$/
+  end
+  
+  def get_steam_profile_url steamid
+    return "" unless isvalidsteamid? steamid
+    id = steamid.split(":") 
+    "http://steamcommunity.com/id/#{ (id[2] * 2) + 76561197960265728 + id[1] }"
+  end
+  
+  def profilecontainscode? profileurl, code
+    file = open(profileurl)
+    content = file.read
+    content.include?(code)
+  end
+  
 end
 
 class Hash
