@@ -9,9 +9,17 @@ class Database
     @database = SQLite3::Database.new("./dat/pugdata.db")
   end
   
+  def execute! sql
+    @database.execute( sql )
+  end
+  
+  def getvalue! sql
+    @database.get_first_value( sql )
+  end
+  
   #player table
   def insert_player email, password, steamid, accesslevel, registrationcode
-      @database.execute("INSERT INTO Player (Email, Password, SteamID, AccessLevel, RegistrationCode, IsActivated) VALUES (?,?,?,?,?);", email, password, steamid, accesslevel, registrationcode, "False")
+      @database.execute("INSERT INTO Player (PlayerID, Email, Password, SteamID, AccessLevel, RegistrationCode, IsActivated) VALUES (?,?,?,?,?,?,?);", "NULL", email, password, steamid, accesslevel, registrationcode, 1)
   end
   
   def update_player_activate playerid
@@ -28,8 +36,9 @@ class Database
   
   
   #pug table
-  def insert_pug? serverid, type, map #returns pugid
-    return @database.get_first_value("INSERT INTO Pug (ServerID, Type, Map, CreatedDateTime) VALUES (?,?,?,?); SELECT last_insert_rowid() FROM Pug;", serverid, type, map, Time.now.to_s)
+  def insert_pug serverid, type, map #returns pugid
+    @database.execute("INSERT INTO Pug (PugID, ServerID, Type, Map, CreatedDateTime) VALUES (?,?,?,?,?);", "NULL", serverid, type, map, Time.now.to_s)
+	@database.get_first_value("SELECT last_insert_rowid() FROM Pug;")
   end
   
   def update_pug_map pugid, map
@@ -46,8 +55,8 @@ class Database
   
   
   #team table
-  def insert_team_player pugid, playerid, team, classs, iscaptain
-    @database.execute("INSERT INTO Team (PugID, PlayerID, Team, Class) VALUES (?,?,?,?);", pugid, playerid, team, classs)
+  def insert_team_player pugid, playerid, team, classname, iscaptain
+    @database.execute("INSERT INTO Team (PugID, PlayerID, Team, Class, IsCaptain) VALUES (?,?,?,?,?);", pugid, playerid, team, classname, iscaptain)
   end
   
   def delete_team_player pugid, playerid
