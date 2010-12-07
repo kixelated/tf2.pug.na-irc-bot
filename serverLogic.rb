@@ -14,10 +14,13 @@ module ServerLogic
 
       @server.cpswd @server.pswd
       @server.clvl @map
-      message "The pug will take place on #{ @server.to_s } with the map #{ @map }."
     rescue
-      message "The pug will take place on #{ @server.to_s }, but could not be connected to with rcon."
+      message "Could not connect to #{ @server.to_s }, it may be down."
     end
+  end
+  
+  def announce_server
+    message "The pug will take place on #{ @server.to_s } with the map #{ @map }."
     message advertisement
   end
   

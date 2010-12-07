@@ -63,6 +63,13 @@ module StateLogic
     end
   end
   
+  def end_picking
+    start_server # serverLogic.rb
+    announce_teams # pickingLogic.rb
+    announce_server # serverLogic.rb
+    end_game
+  end
+  
   def end_game
     @teams.clear
     @captains.clear

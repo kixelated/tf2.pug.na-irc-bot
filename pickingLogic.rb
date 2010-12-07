@@ -105,9 +105,7 @@ module PickingLogic
     @pick += 1
     
     if @pick + Const::Team_count >= Const::Team_size * Const::Team_count
-      start_server # serverLogic.rb
-      announce_teams
-      end_game # stateLogic.rb
+      end_picking
     else 
       tell_captain
     end
@@ -127,8 +125,8 @@ module PickingLogic
   
   def list_format
     output = []
-    (Const::Team_size * Const::Team_count).times { |i| output << pick_format i }
-    message output.join " "
+    (Const::Team_size * Const::Team_count).times { |i| output << pick_format(i) }
+    message "The picking format is: #{output.join(" ") }"
   end
   
   def current_captain
