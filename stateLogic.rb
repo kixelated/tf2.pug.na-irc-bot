@@ -11,10 +11,7 @@ module StateLogic
   end
   
   def attempt_picking
-    if minimum_players?
-      start_delay # pause for x seconds
-      start_picking
-    else
+    unless start_delay and start_picking 
       @state = Const::State_waiting
     end
   end
@@ -46,22 +43,29 @@ module StateLogic
   end
   
   def start_delay
-    @state = Const::State_delay
-    
-    message colourize "Teams are being drafted, captains will be selected in #{ Const::Picking_delay } seconds", Const::Colour_yellow
-    sleep Const::Picking_delay
+    if minimum_players?
+      @state = Const::State_delay
+      
+      message colourize "Teams are being drafted, captains will be selected in #{ Const::Picking_delay } seconds", Const::Colour_yellow
+      sleep Const::Picking_delay
+      true
+    end
   end
   
   def start_picking
-    @state = Const::State_picking
-    
-    update_lookup # pickingLogic.rb
-    choose_captains # pickingLogic.rb
-    tell_captain # pickingLogic.rb
+    if minimum_players?
+      @state = Const::State_picking
+      
+      update_lookup # pickingLogic.rb
+      choose_captains # pickingLogic.rb
+      tell_captain # pickingLogic.rb
+      true
+    end
   end
   
   def end_game
     @teams.clear
+    @captains.clear
     @lookup.clear
 
     @last = Time.now
@@ -72,6 +76,10 @@ module StateLogic
     
     next_server
     next_map
+  end
+  
+  def reset_game
+    setup
   end
   
   def list_afk
@@ -87,6 +95,6 @@ module StateLogic
   end
   
   def can_remove?
-    @state < Const::State_delay
+    @state < Const::State_picking
   end
 end
