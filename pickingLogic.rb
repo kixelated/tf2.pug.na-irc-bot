@@ -11,6 +11,7 @@ module PickingLogic
       @players.delete captain
 
       notice captain, "You have been selected as a captain. When it is your turn to pick, you can choose players with the '!pick num' or '!pick name' command."
+      notice captain, "Remember, you will play the class that you do not pick, so be sure to pick a medic if you do not wish to play medic."
     end
     
 =begin
@@ -104,8 +105,8 @@ module PickingLogic
     @pick += 1
     
     if @pick + Const::Team_count >= Const::Team_size * Const::Team_count
-      announce_teams
       start_server # serverLogic.rb
+      announce_teams
       end_game # stateLogic.rb
     else 
       tell_captain
@@ -122,6 +123,12 @@ module PickingLogic
         private user, "You have been picked for #{ team.name } as #{ clss }. The server info is: #{ @server.connect_info }" 
       end
     end
+  end
+  
+  def list_format
+    output = []
+    (Const::Team_size * Const::Team_count).times { |i| output << pick_format i }
+    message output.join " "
   end
   
   def current_captain
@@ -145,5 +152,11 @@ module PickingLogic
     # 0 1 1 0 0 1 1 0 ...
     # won't work as expected when @Const::Team_count > 2
     ((num + Const::Team_count / 2) / Const::Team_count) % Const::Team_count
+  end
+  
+  def hybrid num
+    # 0 1 0 1 1 0 0 1 ...
+    return sequential if num < 4
+    staggered num
   end
 end

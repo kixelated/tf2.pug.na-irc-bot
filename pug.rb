@@ -33,6 +33,7 @@ class Pug
   
   match /pick ([\S]+) ([\S]+)/i, method: :pick
   match /captain/i, method: :captain
+  match /format/i, method: :format
   
   match /map/i, method: :map
   match /server/i, method: :server
@@ -49,6 +50,8 @@ class Pug
   match /changeserver ([\S]+) ([\S]+) ([\S]+) ([\S]+)/i, method: :admin_changeserver
   match /nextmap/i, method: :admin_nextmap
   match /nextserver/i, method: :admin_nextserver
+  match /reset/i, method: :admin_reset
+  match /endgame/i, method: :admin_endgame
 
   def initialize *args
     super
@@ -91,6 +94,11 @@ class Pug
   # !captain
   def captain m
     list_captain m.user # pickingLogic.rb
+  end
+  
+  # !format
+  def format m
+    list_format # pickingLogic.rb
   end
   
   # !mumble
@@ -176,6 +184,22 @@ class Pug
     
     replace_player User(user), User(replacement) # pickingLogic.rb
     list_players # playersLogic.rb
+  end
+  
+  # !endgame
+  def admin_endgame m
+    return unless require_admin m
+    
+    end_game
+    message "Game has been ended, please add up again."
+  end
+  
+  # !reset
+  def admin_reset m
+    return unless require_admin m
+    
+    reset_game
+    message "Game has been reset, please add up again."
   end
   
   def require_admin m

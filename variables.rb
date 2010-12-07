@@ -10,15 +10,15 @@ module Const
   Nick_bot = "IRCCompanionBot"
   Nick_messenger = "IRCMessengerBo"
 
-  Afk_threshold = 15 * 60
+  Afk_threshold = 10 * 60
   Afk_delay = 45
   Server_delay = 60
   Picking_delay = 45
   Message_delay = 0.1
 
   Team_count = 2
-  Team_names = [ "Red team", "Blue team" ]
-  Team_colours = [ 4, 11 ]
+  Team_names = [ "Blue team", "Red team" ]
+  Team_colours = [ 11, 4 ]
   Team_size = 6
   Team_classes = { "scout" => 2, "soldier" => 2, "demo" => 1, "medic" => 1, "captain" => 1 }
   

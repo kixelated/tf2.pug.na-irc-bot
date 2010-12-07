@@ -4,17 +4,20 @@ module ServerLogic
   def start_server
     @state = Const::State_server
 
-    while @server.in_use?
-      message "Server #{ @server.to_s } is in use. Trying the next server in #{ Const::Server_delay } seconds."
-      
-      next_server
-      sleep Const::Server_delay
-    end
+    begin
+      while @server.in_use?
+        message "Server #{ @server.to_s } is in use. Trying the next server in #{ Const::Server_delay } seconds."
+        
+        next_server
+        sleep Const::Server_delay
+      end
 
-    @server.cpswd @server.pswd
-    @server.clvl @map
-    
-    message "The pug will take place on #{ @server.to_s } with the map #{ @map }"
+      @server.cpswd @server.pswd
+      @server.clvl @map
+      message "The pug will take place on #{ @server.to_s } with the map #{ @map }."
+    rescue
+      message "The pug will take place on #{ @server.to_s }, but could not be connected to with rcon."
+    end
     message advertisement
   end
   
