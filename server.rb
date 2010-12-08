@@ -18,12 +18,12 @@ class Server
   
   #execute any command passed
   def command cmd
-    connect unless connected?
+    return unless connected? 
     @conn.command cmd
   end
   
   def cvar name
-    connect unless connected?
+    return unless connected?
     @conn.cvar name
   end
 
