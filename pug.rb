@@ -23,6 +23,7 @@ class Pug
   listen_to :channel, method: :channel
   listen_to :part, method: :remove
   listen_to :quit, method: :remove
+  listen_to :nick, method: :nick
   
   match /add (.+)/i, method: :add
   match /remove/i, method: :remove
@@ -37,6 +38,7 @@ class Pug
   
   match /map/i, method: :map
   match /server/i, method: :server
+  match /ip/i, method: :server
   match /last/i, method: :last
   
   match /man/i, method: :help
@@ -60,6 +62,9 @@ class Pug
   
   def channel m
     @spoken[m.user] = Time.now if @players.key? m.user
+  end
+  
+  def nick m
   end
 
   # !add
@@ -201,14 +206,14 @@ class Pug
     reset_game
     message "Game has been reset, please add up again."
   end
-  
+
   def require_admin m
     return notice m.user, "That is an admin-only command." unless m.channel.opped? m.user
     true
   end
 
   def message msg
-    MasterMessenger.instance.msg Const::Irc_channel, colour_start(0) + msg + colour_end # util.rb
+    MasterMessenger.instance.msg Const::Irc_channel, colour_start(0) + msg.to_s + colour_end # util.rb
     false
   end
   

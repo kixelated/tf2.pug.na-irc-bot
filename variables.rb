@@ -12,7 +12,7 @@ module Const
 
   Afk_threshold = 10 * 60
   Afk_delay = 45
-  Server_delay = 60
+  Server_delay = 30
   Picking_delay = 45
   Message_delay = 0.1
 
