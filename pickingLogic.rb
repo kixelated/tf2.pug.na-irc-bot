@@ -2,7 +2,6 @@ module PickingLogic
   def choose_captains
     possible_captains = get_classes["captain"]
 
-    #signups = {}
     Const::Team_count.times do |i|
       captain = possible_captains.delete_at rand(possible_captains.length)
       
@@ -14,28 +13,13 @@ module PickingLogic
       notice captain, "Remember, you will play the class that you do not pick, so be sure to pick a medic if you do not wish to play medic."
     end
     
-=begin
-    @captains.each { |k, v| signups[k] = @players.delete k }
-    
-    classes_needed(get_classes, Const::Team_count).each do |k, v|
-      if k == "medic"
-        @teams.each do |team|
-          if signups[team.captain].include? "medic"
-            notice team.captain, "You have been designated as a medic due to the low avaliability of medics."
-            team.players.each { |k, v| team.players[k] = "medic" if k == team.captain } 
-          end
-        end
-      end
-    end
-=end
-
-    output = @teams.collect { |team| team.my_colourize team.captain.to_s }
+    output = @teams.collect { |team| team.my_colourize team.captain }
     message "Captains are #{ output.join(", ") }"
   end
   
   def update_lookup
     @lookup.clear
-    @players.to_a.each_with_index { |a, i| @lookup[i + 1] = a[0] }
+    @players.keys.each_with_index { |user, i| @lookup[i + 1] = user }
   end
 
   def tell_captain
@@ -43,7 +27,7 @@ module PickingLogic
 
     # Displays the classes that are not yet full for this team
     classes_needed(current_team.get_classes).each do |k, v| # playersLogic.rb
-      output = (get_classes[k] ||= []).collect { |player| "(#{ @lookup.invert[player] }) #{ player.to_s }" }
+      output = (get_classes[k] ||= []).collect { |player| "(#{ @lookup.invert[player] }) #{ player }" }
       notice current_captain, "#{ v } #{ k }: #{ output.join(", ") }"
     end
   end
@@ -51,7 +35,7 @@ module PickingLogic
   def list_captain user
     return notice(user, "Picking has not started.") unless picking? # stateLogic.rb
  
-    message "It is #{ current_captain.to_s }'s turn to pick"
+    message "It is #{ current_captain }'s turn to pick"
   end
 
   def can_pick? user
@@ -59,26 +43,12 @@ module PickingLogic
   end
   
   def pick_player_valid? player, player_class
-    @players.key? player and Const::Team_classes.key? player_class and player_class != "captain"
+    @players.key? player and Const::Team_classes.key? player_class
   end
   
   def pick_player_avaliable? player_class
     classes_needed(current_team.get_classes).key? player_class # playersLogic.rb
   end
-  
-=begin
-  def pick_medic? player, player_class
-    if player_class != "medic" and @players[player].include? "medic"
-      medics = 0
-      @teams.each { |team| medics = medics + 1 if (team.get_classes["medic"] ||= []).size > 0 }
-      message "#{ medics } medics have been picked already, #{ (Const::Team_size * Const::Team_classes["medic"] - medics) } medics still needed."
-      message "There are #{ (get_classes["medic"] ||= []).size } medics left, and you would take one of them?"
-      
-      return true if Const::Team_size * Const::Team_classes["medic"] - medics >= (get_classes["medic"] ||= []).size - 1
-    end
-    false
-  end
-=end
 
   def pick_player user, player, player_class
     return notice(user, "Picking has not started.") unless picking? # stateLogic.rb
@@ -87,20 +57,19 @@ module PickingLogic
     player_class.downcase!
     
     unless pick_player_valid? player, player_class
-      return notice(user, "Invalid pick #{ player } as #{ player_class }.") unless player.nick.to_i
+      return notice(user, "Invalid pick #{ player } as #{ player_class }.") unless player.to_i
       
-      player = @lookup[player.nick.to_i]
+      player = @lookup[player.to_i]
 
       return notice(user, "Invalid pick #{ player } as #{ player_class }.") unless pick_player_valid? player, player_class
     end
     
     return notice(user, "That class is full.") unless pick_player_avaliable? player_class
-    #return notice(user, "That pick is unavaliable, as that player is needed to play medic.") if pick_medic? player, player_class
 
     current_team.players[player] = player_class
     @players.delete player
     
-    message "#{ current_team.my_colourize user.to_s } picked #{ player.to_s } as #{ player_class }"
+    message "#{ current_team.my_colourize user } picked #{ player } as #{ player_class }"
     
     @pick += 1
     
@@ -126,7 +95,7 @@ module PickingLogic
   def list_format
     output = []
     (Const::Team_size * Const::Team_count).times { |i| output << pick_format(i) }
-    message "The picking format is: #{output.join(" ") }"
+    message "The picking format is: #{ output.join(" ") }"
   end
   
   def current_captain
@@ -138,7 +107,7 @@ module PickingLogic
   end
   
   def pick_format num
-    staggered num
+    hybrid num
   end
   
   def sequential num
@@ -153,8 +122,9 @@ module PickingLogic
   end
   
   def hybrid num
-    # 0 1 0 1 1 0 0 1 ...
-    return sequential if num < 4
-    staggered num
+    # 0 1 0 1
+    #         1 0 0 1 1 0 ...
+    return sequential(num) if num < 4
+    staggered(num - 2)
   end
 end

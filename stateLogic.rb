@@ -17,12 +17,8 @@ module StateLogic
   end
   
   def check_afk list
-    list.reject do |user|
-      if @spoken[user]
-        (Time.now - @spoken[user]).to_i <= Const::Afk_threshold
-      else
-        true
-      end
+    list.select do |user|
+      (Time.now - @spoken[user]).to_i > Const::Afk_threshold if @spoken[user]
     end
   end
 
@@ -48,6 +44,7 @@ module StateLogic
       
       message colourize "Teams are being drafted, captains will be selected in #{ Const::Picking_delay } seconds", Const::Colour_yellow
       sleep Const::Picking_delay
+      
       true
     end
   end
@@ -59,6 +56,7 @@ module StateLogic
       update_lookup # pickingLogic.rb
       choose_captains # pickingLogic.rb
       tell_captain # pickingLogic.rb
+      
       true
     end
   end
