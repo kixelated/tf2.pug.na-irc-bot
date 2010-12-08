@@ -427,7 +427,7 @@ module Cinch
 
     # @return [Fixnum]
     def hash
-      @nick.hash
+      @host.hash
     end
   end
 end

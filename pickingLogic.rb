@@ -57,9 +57,9 @@ module PickingLogic
     player_class.downcase!
     
     unless pick_player_valid? player, player_class
-      return notice(user, "Invalid pick #{ player } as #{ player_class }.") unless player.to_i
+      return notice(user, "Invalid pick #{ player } as #{ player_class }.") unless player.nick.to_i
       
-      player = @lookup[player.to_i]
+      player = @lookup[player.nick.to_i]
 
       return notice(user, "Invalid pick #{ player } as #{ player_class }.") unless pick_player_valid? player, player_class
     end
