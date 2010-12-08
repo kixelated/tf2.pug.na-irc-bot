@@ -27,7 +27,7 @@ module PickingLogic
 
     # Displays the classes that are not yet full for this team
     classes_needed(current_team.get_classes).each do |k, v| # playersLogic.rb
-      output = (get_classes[k] ||= []).collect { |player| "(#{ @lookup.invert[player] }) #{ player }" }
+      output = (get_classes[k] ||= []).collect { |player| "(#{ @lookup.invert[player] }) #{ player.to_s }" }
       notice current_captain, "#{ v } #{ k }: #{ output.join(", ") }"
     end
   end
@@ -35,7 +35,7 @@ module PickingLogic
   def list_captain user
     return notice(user, "Picking has not started.") unless picking? # stateLogic.rb
  
-    message "It is #{ current_captain }'s turn to pick"
+    message "It is #{ current_captain.to_s }'s turn to pick"
   end
 
   def can_pick? user
@@ -69,7 +69,7 @@ module PickingLogic
     current_team.players[player] = player_class
     @players.delete player
     
-    message "#{ current_team.my_colourize user } picked #{ player } as #{ player_class }"
+    message "#{ current_team.my_colourize user } picked #{ player.to_s } as #{ player_class }"
     
     @pick += 1
     
