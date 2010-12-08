@@ -3,20 +3,19 @@ require 'rcon'
 module ServerLogic
   def start_server
     @state = Const::State_server
-
-    begin
-      while @server.in_use?
-        message "Server #{ @server.to_s } is in use. Trying the next server in #{ Const::Server_delay } seconds."
-        
-        next_server
-        sleep Const::Server_delay
-      end
-
-      @server.cpswd @server.pswd
-      @server.clvl @map
-    rescue
-      message "Could not connect to #{ @server.to_s }, it may be down."
+    
+    @server.connect
+    while @server.in_use?
+      message "Server #{ @server.to_s } is in use. Trying the next server in #{ Const::Server_delay } seconds."
+      
+      next_server
+      sleep Const::Server_delay
+      
+      @server.connect
     end
+
+    @server.cpswd @server.pswd
+    @server.clvl @map
   end
   
   def announce_server
