@@ -59,6 +59,6 @@ module ServerLogic
   end
   
   def advertisement
-    "Servers are provided by #{ colourize "End", Const::Colour_brown } of #{ colourize "Reality", Const::Colour_brown }: #{ colourize "http://eoreality.net", Const::Colour_brown } #eoreality"
+    "Servers are provided by #{ colourize "End", Const::Colour_red } of #{ colourize "Reality", Const::Colour_red }: #{ colourize "http://eoreality.net", Const::Colour_red } #eoreality"
   end
 end

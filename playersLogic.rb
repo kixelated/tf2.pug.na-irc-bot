@@ -1,7 +1,7 @@
 module PlayersLogic
   def add_player user, classes
     return notice user, "You cannot add at this time, please wait for picking to end." unless can_add? # stateLogic.rb
-    notice user, "You must be registered with GameSurge in order to play in this channel, but consider this a warning. http://www.gamesurge.net/newuser/" unless User(user).authed?
+    notice user, "You must be registered with GameSurge in order to play in this channel, but consider this a warning. http://www.gamesurge.net/newuser/" unless user.authed?
     
     classes.collect! { |clss| clss.downcase }
     classes.reject! { |clss| not Const::Team_classes.key? clss }
@@ -18,12 +18,13 @@ module PlayersLogic
   end
   
   def list_players
-    output = @players.keys.collect do |user|
-      medic, captain = @players[user].include?("medic"), @players[user].include?("captain")
+    output = @players.collect do |user, classes|
+      medic, captain = classes.include?("medic"), classes.include?("captain")
       special = ":#{ colourize "m", Const::Colour_red if medic }#{ colourize "c", Const::Colour_yellow if captain }" if medic or captain
       "#{ user.to_s }#{ special }"
     end
-    message "#{ make_title "#{ @players.size } users added:" } #{ output.join(", ") }"
+    
+    message "#{ make_title "#{ @players.size } users added:" } #{ output.values.join(", ") }"
   end
 
   def list_players_detailed

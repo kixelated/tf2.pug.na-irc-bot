@@ -65,6 +65,7 @@ class Pug
   end
   
   def nick m
+    @players.rehash if @players.key? User(m.user.last_nick)
   end
 
   # !add
@@ -83,7 +84,7 @@ class Pug
   # !list, !players
   def list m
     list_players # playersLogic.rb
-    list_players_detailed
+    list_players_detailed # playersLogic.rb
   end
   
   # !need
@@ -187,8 +188,7 @@ class Pug
   def admin_replace m, user, replacement
     return unless require_admin m
     
-    replace_player User(user), User(replacement) # pickingLogic.rb
-    list_players # playersLogic.rb
+    list_players if replace_player User(user), User(replacement) # pickingLogic.rb
   end
   
   # !endgame
@@ -206,7 +206,7 @@ class Pug
     reset_game
     message "Game has been reset, please add up again."
   end
-
+  
   def require_admin m
     return notice m.user, "That is an admin-only command." unless m.channel.opped? m.user
     true
