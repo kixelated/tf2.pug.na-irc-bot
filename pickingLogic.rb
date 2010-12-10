@@ -95,7 +95,12 @@ module PickingLogic
   def list_format
     output = []
     (Const::Team_size * Const::Team_count).times { |i| output << pick_format(i) }
-    message "The picking format is: #{ output.join(" ") }"
+	humanTeams = output.map {|x| if x == 0		# If I can't do "if x" I'll quit ruby right now.
+		colourize "Blue", Const::Colour_aqua
+	else
+		colourize "Red", Const::Colour_red
+	end }
+    message "The picking format is: [  #{ humanTeams.join("  ") }  ]"
   end
   
   def current_captain
