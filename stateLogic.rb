@@ -3,7 +3,7 @@ module StateLogic
     if @state == Const::State_waiting and minimum_players?
       @state = Const::State_afk
       
-      @afk = check_afk @players.keys # will take a long time
+      @afk = check_afk @players.keys
       start_afk unless @afk.empty?
       
       attempt_picking
@@ -23,7 +23,7 @@ module StateLogic
   end
 
   def start_afk
-    message colourize "The following players are considered afk: #{ @afk.join(", ") }", Const::Colour_yellow
+    message "#{ make_title "AFK players:", Const::Colour_white, Const::Colour_black } #{ @afk.join(", ") }"
     
     @afk.each do |p|
       private p, "Warning, you are considered afk by the bot. Say anything in the channel within the next #{ Const::Afk_delay } seconds to avoid being removed."
@@ -42,7 +42,7 @@ module StateLogic
     if minimum_players?
       @state = Const::State_delay
       
-      message colourize "Teams are being drafted, captains will be selected in #{ Const::Picking_delay } seconds", Const::Colour_yellow
+      message colourize "Teams are being drafted, captains will be selected in #{ Const::Picking_delay } seconds", Const::Colour_yellow, Const::Colour_black
       sleep Const::Picking_delay
       
       true
@@ -89,7 +89,7 @@ module StateLogic
   end
   
   def list_afk
-    message "The following players are afk: #{ check_afk(@players.keys).join(", ") }"
+    message "#{ make_title "AFK players:", Const::Colour_white, Const::Colour_black } #{ check_afk(@players.keys).join(", ") }"
   end
   
   def picking? 

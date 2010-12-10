@@ -1,17 +1,17 @@
 module Utilities
-  def make_title msg, fore = 0, back = 1
+  def make_title msg, fore = Const::Colour_black, back = 0
     colourize msg.rjust(15), fore, back
   end
 
-  def colour_start fore = 0, back = 1
-    "\x03#{ fore.to_s.rjust(2, "0") },#{ back.to_s.rjust(2, "0") }"
+  def colour_start fore = Const::Colour_black, back = 0
+    "\x03#{ fore.to_s.rjust(2, "0") }" + "#{ ",#{ back.to_s.rjust(2, "0") }" if back != 0 }"
   end
   
   def colour_end
     "\x03"
   end
   
-  def colourize msg, fore = 0, back = 1
+  def colourize msg, fore = 0, back = 0
     colour_start(fore, back) + msg.to_s + colour_end
   end
 end

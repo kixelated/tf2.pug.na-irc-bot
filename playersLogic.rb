@@ -25,7 +25,7 @@ module PlayersLogic
       "#{ user.to_s }#{ special }"
     end
     
-    message "#{ make_title "#{ @players.size } users added:" } #{ output.values.join(", ") }"
+    message "#{ make_title "#{ @players.size } users added:", Const::Colour_white, Const::Colour_black } #{ output.values.join(", ") }"
   end
 
   def list_players_detailed
@@ -64,7 +64,7 @@ module PlayersLogic
     output.unshift [ "players" , (Const::Team_size * Const::Team_count - @players.size)] if @players.size < Const::Team_size * Const::Team_count
     output.collect! { |a| "#{ a[1] } #{ a[0] }" } # Format the output
 
-    message "Required classes: #{ output.join(", ") }"
+    message "#{ make_title "Required classes:", Const::Colour_white, Const::Colour_black } #{ output.join(", ") }"
   end
 
   def minimum_players?
