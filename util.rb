@@ -10,9 +10,9 @@ module Utilities
   def colour_end
     "\x03"
   end
-
+  
   def colourize msg, fore = 0, back = 1
-    colour_end + colour_start(fore, back) + msg.to_s + colour_end + colour_start(0)
+    colour_start(fore, back) + msg.to_s + colour_end
   end
 end
 
