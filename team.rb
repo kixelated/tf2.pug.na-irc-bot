@@ -18,10 +18,10 @@ class Team
     @players.invert_proper
   end
   
-  def my_colourize msg
+  def colourize msg
     colourize msg, @colour
   end
-  
+
   def to_s
     output = players.collect { |k, v| "#{ k } as #{ my_colourize v }" }
     "#{ my_colourize @name }: #{ output.values.join(", ") if output }"
