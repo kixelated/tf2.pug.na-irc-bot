@@ -28,7 +28,7 @@ mainbot = Thread.new do
 end
 
 Const::Messenger_count.times do |i|
-  sleep(60)
+  sleep(10)
 
   Thread.new do
     bot = Summer::Connection.new(Const::Irc_server, Const::Irc_port, "#{ Const::Nick_messenger }#{ i }", Const::Irc_channel, Const::Irc_vhost)
