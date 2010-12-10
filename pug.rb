@@ -65,7 +65,7 @@ class Pug
   end
   
   def nick m
-    @players.rehash if @players.key? User(m.user.last_nick)
+    @players.rehash if @players.key? m.user
   end
 
   # !add
