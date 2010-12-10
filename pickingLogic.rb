@@ -94,7 +94,7 @@ module PickingLogic
   
   def list_format
     output = []
-    (Const::Team_size * Const::Team_count).times { |i| output << colourize pick_format(i), Const::Team_colours[pick_format(i)] }
+    (Const::Team_size * Const::Team_count).times { |i| output << (colourize pick_format(i), Const::Team_colours[pick_format(i)]) }
     message "The picking format is: #{ output.join(" ") }"
   end
   
