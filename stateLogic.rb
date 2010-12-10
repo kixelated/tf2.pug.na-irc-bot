@@ -76,9 +76,7 @@ module StateLogic
     @last = Time.now
     @state = Const::State_waiting
     @pick = 0
-    
-    @spoken.reject! { |k, v| !@players.key? k }
-    
+
     next_server
     next_map
   end

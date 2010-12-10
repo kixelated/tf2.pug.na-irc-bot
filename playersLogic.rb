@@ -14,6 +14,7 @@ module PlayersLogic
   def remove_player user
     return notice user, "You cannot remove at this time." unless can_remove? # stateLogic.rb
     
+    @spoken.delete user
     @players.delete user
   end
   

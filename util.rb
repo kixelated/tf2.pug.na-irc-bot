@@ -12,7 +12,7 @@ module Utilities
   end
 
   def colourize msg, fore = 0, back = 1
-    colour_end + colour_start(fore, back) + msg + colour_end + colour_start(0)
+    colour_end + colour_start(fore, back) + msg.to_s + colour_end + colour_start(0)
   end
 end
 
