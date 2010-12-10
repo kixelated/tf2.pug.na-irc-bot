@@ -52,6 +52,7 @@ module StateLogic
   def start_picking
     if minimum_players?
       @state = Const::State_picking
+      @players.rehash # just in case, as add/remove is no officially closed
       
       update_lookup # pickingLogic.rb
       choose_captains # pickingLogic.rb
@@ -76,6 +77,8 @@ module StateLogic
     @last = Time.now
     @state = Const::State_waiting
     @pick = 0
+    
+    @spoken.reject! { |k, v| !@players.key? k }
 
     next_server
     next_map

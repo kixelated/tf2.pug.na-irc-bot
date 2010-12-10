@@ -14,8 +14,10 @@ module ServerLogic
       @server.connect
     end
 
-    @server.cpswd @server.pswd
+    
     @server.clvl @map
+    @server.cpswd @server.pswd
+    @server.command "sm_rtv_initialdelay 30.0"
   end
   
   def announce_server

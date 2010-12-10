@@ -7,8 +7,6 @@ module PickingLogic
       
       @captains << captain
       @teams << Team.new(captain, Const::Team_names[i], Const::Team_colours[i])
-      
-      @spoken.delete captain
       @players.delete captain
 
       notice captain, "You have been selected as a captain. When it is your turn to pick, you can choose players with the '!pick num' or '!pick name' command."
@@ -69,8 +67,6 @@ module PickingLogic
     return notice(user, "That class is full.") unless pick_player_avaliable? player_class
 
     current_team.players[player] = player_class
-    
-    @spoken.delete player
     @players.delete player
     
     message "#{ current_team.my_colourize user } picked #{ player.to_s } as #{ player_class }"
