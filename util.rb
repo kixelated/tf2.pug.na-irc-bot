@@ -1,6 +1,6 @@
 module Utilities
   def make_title msg, fore = Const::Colour_black, back = 0
-    colourize msg.rjust(15), fore, back
+    colourize msg.to_s.rjust(15), fore, back
   end
 
   def colour_start fore = Const::Colour_black, back = 0
