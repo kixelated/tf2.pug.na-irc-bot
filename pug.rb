@@ -65,7 +65,7 @@ class Pug
   end
   
   def nick m
-    @players.rehash if @players.key? m.user
+    @players.rehash if @players.keys.include? m.user
   end
 
   # !add
@@ -213,7 +213,7 @@ class Pug
   end
 
   def message msg
-    MasterMessenger.instance.msg Const::Irc_channel, colour_start(0) + msg.to_s + colour_end # util.rb
+    MasterMessenger.instance.msg Const::Irc_channel, msg.to_s
     false
   end
   
