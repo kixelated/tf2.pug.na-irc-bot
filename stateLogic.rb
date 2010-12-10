@@ -18,7 +18,7 @@ module StateLogic
   
   def check_afk list
     list.select do |user|
-      (Time.now - @spoken[user]).to_i > Const::Afk_threshold if @spoken[user]
+      !@spoken[user] or (Time.now - @spoken[user]).to_i > Const::Afk_threshold
     end
   end
 
