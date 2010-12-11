@@ -1,8 +1,13 @@
 require './util.rb'
+require 'active_record'
+require 'composite_primary_keys'
 
-class Team
+class Team < ActiveRecord::Base
   include Utilities
-
+  set_primary_keys :match_id, :steam_id
+  belongs_to :players
+  belongs_to :matches
+  
   attr_accessor :captain, :players
 	attr_accessor :name, :colour
   
@@ -26,4 +31,29 @@ class Team
     output = players.collect { |k, v| "#{ k } as #{ my_colourize v }" }
     "#{ my_colourize @name }: #{ output.values.join(", ") if output }"
   end
+  
+  
+  
+  def insert matchid, steamid, team, clss, iscaptain
+    Team.create do |t|
+      t.match_id = matchid
+      t.steam_id = steamid
+      t.team = team
+      t.class = clss
+      t.is_captain = iscaptain
+    end
+  end
+  
+  def update steamid, authname
+    Player.update(steamid, { :auth_name => authname } )
+  end
+  
+  def delete steamid
+    player = Player.new do |p|
+      p.steamid = steamid
+    end
+    player.destroy
+  end
+  
+  
 end

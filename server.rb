@@ -1,4 +1,6 @@
-class Server
+require 'active_record'
+
+class Server < ActiveRecord::Base
   attr_accessor :ip, :port, :pswd, :rcon
   
   def initialize ip, port, pswd, rcon
