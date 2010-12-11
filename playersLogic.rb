@@ -20,7 +20,7 @@ module PlayersLogic
   def list_players
     output = @players.collect do |user, classes|
       medic, captain = classes.include?("medic"), classes.include?("captain")
-      special = ":#{ colourize "m", Const::Colour_red if medic }#{ colourize "c", Const::Colour_yellow if captain }" if medic or captain
+      special = ":#{ colourize "m", Const::Red if medic }#{ colourize "c", Const::Yellow if captain }" if medic or captain
       "#{ user }#{ special }"
     end
     
@@ -30,7 +30,7 @@ module PlayersLogic
   def list_players_detailed
     temp = get_classes
     Const::Team_classes.each_key do |k|
-      message "#{ colourize rjust("#{ k }:"), Const::Colour_black, Const::Colour_lightgrey }#{ colourize " " + temp[k].join(", "), Const::Colour_black, Const::Colour_white }" if temp[k]
+      message "#{ colourize rjust("#{ k }:"), Const::Black, Const::Lightgrey }#{ colourize " " + temp[k].join(", "), Const::Black, Const::White }" if temp[k]
     end
   end
   

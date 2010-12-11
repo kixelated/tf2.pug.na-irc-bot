@@ -36,22 +36,22 @@ module Const
   State_picking = 3
   State_server = 4
   
-  Colour_white = 0
-  Colour_black = 1
-  Colour_navy = 2
-  Colour_green = 3
-  Colour_red = 4
-  Colour_brown = 5
-  Colour_purple = 6
-  Colour_olive = 7
-  Colour_yellow = 8
-  Colour_lime = 9
-  Colour_teal = 10
-  Colour_aqua = 11
-  Colour_royal = 12
-  Colour_pink = 13
-  Colour_darkgrey = 14
-  Colour_lightgrey = 15
+  White = 0
+  Black = 1
+  Navy = 2
+  Green = 3
+  Red = 4
+  Brown = 5
+  Purple = 6
+  Olive = 7
+  Yellow = 8
+  Lime = 9
+  Teal = 10
+  Aqua = 11
+  Royal = 12
+  Pink = 13
+  Darkgrey = 14
+  Lightgrey = 15
   
   Justify = 15
 end

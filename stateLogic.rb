@@ -23,7 +23,7 @@ module StateLogic
   end
 
   def start_afk
-    message "#{ colourize rjust("AFK players:"), Const::Colour_yellow } #{ @afk.join(", ") }"
+    message "#{ colourize rjust("AFK players:"), Const::Yellow } #{ @afk.join(", ") }"
     
     @afk.each do |p|
       private p, "Warning, you are considered afk by the bot. Say anything in the channel within the next #{ Const::Afk_delay } seconds to avoid being removed."
@@ -42,7 +42,7 @@ module StateLogic
     if minimum_players?
       @state = Const::State_delay
       
-      message colourize "Teams are being drafted, captains will be selected in #{ Const::Picking_delay } seconds", Const::Colour_yellow
+      message colourize "Teams are being drafted, captains will be selected in #{ Const::Picking_delay } seconds", Const::Yellow
       sleep Const::Picking_delay
       
       true
