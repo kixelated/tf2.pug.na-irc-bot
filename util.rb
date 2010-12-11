@@ -1,6 +1,6 @@
 module Utilities
-  def make_title msg, fore = Const::Colour_black, back = 0
-    colourize msg.to_s.rjust(15), fore, back
+  def rjust msg, justify = Const::Justify
+    msg.to_s.rjust(justify)
   end
 
   def colour_start fore = Const::Colour_black, back = 0
@@ -12,7 +12,12 @@ module Utilities
   end
   
   def colourize msg, fore = 0, back = 0
-    colour_start(fore, back) + msg.to_s + colour_end
+    output = msg.to_s.gsub(/\x03\d.*?\x03/) { |str| "#{ colour_end }#{ str }#{ colour_start(fore, back) }" }
+    "#{ colour_start(fore, back) }#{ output }#{ colour_end }"
+  end
+  
+  def bold msg
+    "\x02#{ msg.to_s }\x02"
   end
 end
 

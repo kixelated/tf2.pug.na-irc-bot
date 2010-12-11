@@ -61,16 +61,16 @@ class Pug
   end
   
   def channel m
-    @spoken[m.user] = Time.now if @players.key? m.user
+    @spoken[m.user.nick] = Time.now
   end
   
   def nick m
-    @players.rehash if @players.keys.include? m.user
+    list_players if replace_player m.user.last_nick, m.user.nick
   end
 
   # !add
   def add m, args
-    if add_player m.user, args.split(/ /) # playersLogic.rb
+    if add_player m.user.nick, args.split(/ /) # playersLogic.rb
       list_players # playersLogic.rb
       attempt_afk # stateLogic.rb
     end
@@ -78,7 +78,7 @@ class Pug
 
   # !remove, (quit), (part)
   def remove m
-    list_players if remove_player m.user # playersLogic.rb
+    list_players if remove_player m.user.nick # playersLogic.rb
   end
   
   # !list, !players
@@ -94,12 +94,12 @@ class Pug
 
   # !pick
   def pick m, player, player_class
-    pick_player m.user, User(player), player_class # pickingLogic.rb
+    pick_player m.user.nick, player, player_class # pickingLogic.rb
   end
   
   # !captain
   def captain m
-    list_captain m.user # pickingLogic.rb
+    list_captain m.user.nick # pickingLogic.rb
   end
   
   # !format
@@ -213,7 +213,7 @@ class Pug
   end
 
   def message msg
-    MasterMessenger.instance.msg Const::Irc_channel, msg.to_s
+    MasterMessenger.instance.msg Const::Irc_channel, colourize(msg.to_s, Const::Colour_white, Const::Colour_black)
     false
   end
   
