@@ -213,7 +213,7 @@ class Pug
   end
 
   def message msg
-    MasterMessenger.instance.msg Const::Irc_channel, colourize(msg.to_s, Const::Colour_white, Const::Colour_black)
+    MasterMessenger.instance.msg Const::Irc_channel, colourize(msg.to_s)
     false
   end
   
