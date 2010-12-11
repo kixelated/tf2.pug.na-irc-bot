@@ -7,8 +7,8 @@ module Const
   Irc_channel = "#tf2.pug.na.beta"
   
   Messenger_count = 0
-  Nick_bot = "IRCCompanionBot"
-  Nick_messenger = "IRCMessengerBo"
+  Nick_bot = "IRCCompanionTest"
+  Nick_messenger = "IRCMessengerTes"
 
   Afk_threshold = 10 * 60
   Afk_delay = 45
@@ -17,12 +17,11 @@ module Const
   Message_delay = 0.1
 
   Team_count = 2
-  Team_names = [ "Blue team", "Red team" ]
+  Team_names = [ "Blue", "Red" ]
   Team_colours = [ 11, 4 ]
   Team_size = 6
   Team_classes = { "scout" => 2, "soldier" => 2, "demo" => 1, "medic" => 1, "captain" => 1 }
   
-
   Dallas1 = Server.new("dallas1.tf2pug.eoreality.net", 27015, "tf2pug", "secret")
   Chicago1 = Server.new("chicago1.tf2pug.eoreality.net", 27015, "tf2pug", "secret")
 
@@ -53,6 +52,8 @@ module Const
   Colour_pink = 13
   Colour_darkgrey = 14
   Colour_lightgrey = 15
+  
+  Justify = 15
 end
 
 module Variables

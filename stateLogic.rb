@@ -23,7 +23,7 @@ module StateLogic
   end
 
   def start_afk
-    message "#{ make_title "AFK players:", Const::Colour_white, Const::Colour_black } #{ @afk.join(", ") }"
+    message "#{ rjust "AFK players:" } #{ @afk.join(", ") }"
     
     @afk.each do |p|
       private p, "Warning, you are considered afk by the bot. Say anything in the channel within the next #{ Const::Afk_delay } seconds to avoid being removed."
@@ -89,7 +89,7 @@ module StateLogic
   end
   
   def list_afk
-    message "#{ make_title "AFK players:", Const::Colour_white, Const::Colour_black } #{ check_afk(@players.keys).join(", ") }"
+    message "#{ rjust "AFK players:" } #{ check_afk(@players.keys).join(", ") }"
   end
   
   def picking? 

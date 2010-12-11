@@ -13,7 +13,7 @@ module PickingLogic
       notice captain, "Remember, you will play the class that you do not pick, so be sure to pick a medic if you do not wish to play medic."
     end
     
-    output = @teams.collect { |team| team.my_colourize team.captain.to_s }
+    output = @teams.collect { |team| team.my_colourize team.captain }
     message "Captains are #{ output.join(", ") }"
   end
   
@@ -27,7 +27,7 @@ module PickingLogic
 
     # Displays the classes that are not yet full for this team
     classes_needed(current_team.get_classes).each do |k, v| # playersLogic.rb
-      output = (get_classes[k] ||= []).collect { |player| "(#{ @lookup.invert[player] }) #{ player.to_s }" }
+      output = (get_classes[k] ||= []).collect { |player| "(#{ @lookup.invert[player] }) #{ player }" }
       notice current_captain, "#{ v } #{ k }: #{ output.join(", ") }"
     end
   end
@@ -35,7 +35,7 @@ module PickingLogic
   def list_captain user
     return notice(user, "Picking has not started.") unless picking? # stateLogic.rb
  
-    message "It is #{ current_captain.to_s }'s turn to pick"
+    message "It is #{ current_captain }'s turn to pick"
   end
 
   def can_pick? user
@@ -57,9 +57,9 @@ module PickingLogic
     player_class.downcase!
     
     unless pick_player_valid? player, player_class
-      return notice(user, "Invalid pick #{ player } as #{ player_class }.") unless player.nick.to_i
+      return notice(user, "Invalid pick #{ player } as #{ player_class }.") unless player.to_i
       
-      player = @lookup[player.nick.to_i]
+      player = @lookup[player.to_i]
 
       return notice(user, "Invalid pick #{ player } as #{ player_class }.") unless pick_player_valid? player, player_class
     end
@@ -69,7 +69,7 @@ module PickingLogic
     current_team.players[player] = player_class
     @players.delete player
     
-    message "#{ current_team.my_colourize user } picked #{ player.to_s } as #{ player_class }"
+    message "#{ current_team.my_colourize user } picked #{ player } as #{ player_class }"
     
     @pick += 1
     
@@ -82,19 +82,19 @@ module PickingLogic
   
   def announce_teams
     @teams.each do |team|
-      message team.to_s
+      message team.output_team
     end
   
     @teams.each do |team|
       team.players.each do |user, clss| 
-        private user, "You have been picked for #{ team.colourize team.name } as #{ clss }. The server info is: #{ @server.connect_info }" 
+        private user, "You have been picked for #{ team.to_s } as #{ clss }. The server info is: #{ @server.connect_info }" 
       end
     end
   end
   
   def list_format
     output = []
-    (Const::Team_size * Const::Team_count).times { |i| output << (colourize pick_format(i), Const::Team_colours[pick_format(i)]) }
+    (Const::Team_size * Const::Team_count).times { |i| output << (colourize Const::Team_names[pick_format(i)], Const::Team_colours[pick_format(i)]) }
     message "The picking format is: #{ output.join(" ") }"
   end
   

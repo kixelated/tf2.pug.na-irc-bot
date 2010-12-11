@@ -1,5 +1,3 @@
-require 'rubygems'
-
 require 'cinch'
 require 'summer'
 

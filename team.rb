@@ -21,9 +21,13 @@ class Team
   def colourize msg
     colourize msg, @colour
   end
+  
+  def output_team
+    output = players.collect { |k, v| "#{ k } as #{ my_colourize v }" }
+    "#{ my_colourize @name } Team: #{ output.values.join(", ") if output }"
+  end
 
   def to_s
-    output = players.collect { |k, v| "#{ k } as #{ my_colourize v }" }
-    "#{ my_colourize @name }: #{ output.values.join(", ") if output }"
+    colourize @name, @colour
   end
 end

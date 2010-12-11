@@ -1,7 +1,7 @@
 module PlayersLogic
   def add_player user, classes
     return notice user, "You cannot add at this time, please wait for picking to end." unless can_add? # stateLogic.rb
-    notice user, "You must be registered with GameSurge in order to play in this channel, but consider this a warning. http://www.gamesurge.net/newuser/" unless user.authed?
+    notice user, "You must be registered with GameSurge in order to play in this channel, but consider this a warning. http://www.gamesurge.net/newuser/" unless User(user).authed?
     
     classes.collect! { |clss| clss.downcase }
     classes.reject! { |clss| not Const::Team_classes.key? clss }
@@ -13,25 +13,24 @@ module PlayersLogic
 
   def remove_player user
     return notice user, "You cannot remove at this time." unless can_remove? # stateLogic.rb
-    
-    @spoken.delete user
+
     @players.delete user
   end
   
   def list_players
     output = @players.collect do |user, classes|
       medic, captain = classes.include?("medic"), classes.include?("captain")
-      special = ":#{ colourize "m", Const::Colour_red if medic }#{ colourize "c", Const::Colour_yellow if captain }" if medic or captain
-      "#{ user.to_s }#{ special }"
+      special = ":#{ colourize "m", Const::Colour_red, Const::Colour_black if medic }#{ colourize "c", Const::Colour_yellow, Const::Colour_black if captain }" if medic or captain
+      "#{ user }#{ special }"
     end
     
-    message "#{ make_title "#{ @players.size } users added:", Const::Colour_white, Const::Colour_black } #{ output.values.join(", ") }"
+    message "#{ rjust("#{ @players.size } users added:") } #{ output.values.join(", ") }"
   end
 
   def list_players_detailed
     temp = get_classes
     Const::Team_classes.each_key do |k|
-      message "#{ make_title "#{ k }:", Const::Colour_black, Const::Colour_lightgrey } #{ temp[k].join(", ") }" if temp[k]
+      message "#{ colourize rjust("#{ k }:"), Const::Colour_black, Const::Colour_lightgrey } #{ temp[k].join(", ") }" if temp[k]
     end
   end
   
@@ -46,6 +45,7 @@ module PlayersLogic
         end
       end
     end
+    false
   end
   
   def get_classes
@@ -64,7 +64,7 @@ module PlayersLogic
     output.unshift [ "players" , (Const::Team_size * Const::Team_count - @players.size)] if @players.size < Const::Team_size * Const::Team_count
     output.collect! { |a| "#{ a[1] } #{ a[0] }" } # Format the output
 
-    message "#{ make_title "Required classes:", Const::Colour_white, Const::Colour_black } #{ output.join(", ") }"
+    message "#{ rjust "Required classes:" } #{ output.join(", ") }"
   end
 
   def minimum_players?
