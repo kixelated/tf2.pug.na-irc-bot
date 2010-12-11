@@ -11,7 +11,7 @@ module Utilities
     "\x03"
   end
   
-  def colourize msg, fore = Const::Colour_white, back = Const::Colour_black
+  def colourize msg, fore = Const::White, back = Const::Black
     output = msg.to_s.gsub(/\x03\d.*?\x03/) { |str| "#{ colour_end }#{ str }#{ colour_start(fore, back) }" }
     "#{ colour_start(fore, back) }#{ output }#{ colour_end }"
   end
