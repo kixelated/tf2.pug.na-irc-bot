@@ -18,8 +18,8 @@ class Team
     @players.invert_proper
   end
   
-  def my_colourize msg
-    colourize msg, @colour
+  def my_colourize msg, bg = Const::Black
+    colourize msg, @colour, bg
   end
   
   def output_team
@@ -28,6 +28,6 @@ class Team
   end
 
   def to_s
-    my_colourize @name
+    @name
   end
 end
