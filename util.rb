@@ -3,7 +3,7 @@ module Utilities
     msg.to_s.rjust(justify)
   end
 
-  def colour_start fore = Const::Colour_black, back = 0
+  def colour_start fore, back = 0
     "\x03#{ fore.to_s.rjust(2, "0") }" + "#{ ",#{ back.to_s.rjust(2, "0") }" if back != 0 }"
   end
   
@@ -11,7 +11,7 @@ module Utilities
     "\x03"
   end
   
-  def colourize msg, fore = 0, back = 0
+  def colourize msg, fore = Const::Colour_white, back = Const::Colour_black
     output = msg.to_s.gsub(/\x03\d.*?\x03/) { |str| "#{ colour_end }#{ str }#{ colour_start(fore, back) }" }
     "#{ colour_start(fore, back) }#{ output }#{ colour_end }"
   end
