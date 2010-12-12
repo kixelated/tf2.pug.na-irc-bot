@@ -54,7 +54,7 @@ module PlayersLogic
   
   # I hate this function, but it is so important
   def classes_needed players, multiplier = 1
-    required = Const::Team_classes.collect { |k, v| v * multiplier - (players[k] ||= []).size }
+    required = Const::Team_classes.collect { |k, v| v * multiplier - players[k].size }
     required.reject! { |k, v| v <= 0 } # Remove any negative or zero values
     required
   end

@@ -27,7 +27,7 @@ module PickingLogic
 
     # Displays the classes that are not yet full for this team
     classes_needed(current_team.get_classes).each do |k, v| # playersLogic.rb
-      output = (get_classes[k] ||= []).collect { |player| "(#{ @lookup.invert[player] }) #{ player }" }
+      output = get_classes.collect { |player| "(#{ @lookup.invert[player] }) #{ player }" }
       notice current_captain, "#{ v } #{ k }: #{ output.join(", ") }"
     end
   end
@@ -74,9 +74,16 @@ module PickingLogic
     @pick += 1
     
     if @pick + Const::Team_count >= Const::Team_size * Const::Team_count
+      set_captain_classes
       end_picking
     else 
       tell_captain
+    end
+  end
+  
+  def set_captain_classes
+    @teams.each do |team|
+      team.players[team.captain] = classes_needed(team.get_classes).keys.first
     end
   end
   
