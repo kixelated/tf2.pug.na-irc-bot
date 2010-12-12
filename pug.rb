@@ -23,6 +23,7 @@ class Pug
   listen_to :channel, method: :channel
   listen_to :part, method: :remove
   listen_to :quit, method: :remove
+  listen_to :nick, method: :nick
   
   match /add (.+)/i, method: :add
   match /remove/i, method: :remove
@@ -33,9 +34,11 @@ class Pug
   
   match /pick ([\S]+) ([\S]+)/i, method: :pick
   match /captain/i, method: :captain
+  match /format/i, method: :format
   
   match /map/i, method: :map
   match /server/i, method: :server
+  match /ip/i, method: :server
   match /last/i, method: :last
   
   match /man/i, method: :help
@@ -49,6 +52,8 @@ class Pug
   match /changeserver ([\S]+) ([\S]+) ([\S]+) ([\S]+)/i, method: :admin_changeserver
   match /nextmap/i, method: :admin_nextmap
   match /nextserver/i, method: :admin_nextserver
+  match /reset/i, method: :admin_reset
+  match /endgame/i, method: :admin_endgame
 
   def initialize *args
     super
@@ -56,12 +61,16 @@ class Pug
   end
   
   def channel m
-    @spoken[m.user] = Time.now if @players.key? m.user
+    @spoken[m.user.nick] = Time.now
+  end
+  
+  def nick m
+    list_players if replace_player m.user.last_nick, m.user.nick
   end
 
   # !add
   def add m, args
-    if add_player m.user, args.split(/ /) # playersLogic.rb
+    if add_player m.user.nick, args.split(/ /) # playersLogic.rb
       list_players # playersLogic.rb
       attempt_afk # stateLogic.rb
     end
@@ -69,13 +78,13 @@ class Pug
 
   # !remove, (quit), (part)
   def remove m
-    list_players if remove_player m.user # playersLogic.rb
+    list_players if remove_player m.user.nick # playersLogic.rb
   end
   
   # !list, !players
   def list m
     list_players # playersLogic.rb
-    list_players_detailed
+    list_players_detailed # playersLogic.rb
   end
   
   # !need
@@ -85,12 +94,17 @@ class Pug
 
   # !pick
   def pick m, player, player_class
-    pick_player m.user, User(player), player_class # pickingLogic.rb
+    pick_player m.user.nick, player, player_class # pickingLogic.rb
   end
   
   # !captain
   def captain m
-    list_captain m.user # pickingLogic.rb
+    list_captain m.user.nick # pickingLogic.rb
+  end
+  
+  # !format
+  def format m
+    list_format # pickingLogic.rb
   end
   
   # !mumble
@@ -174,8 +188,23 @@ class Pug
   def admin_replace m, user, replacement
     return unless require_admin m
     
-    replace_player User(user), User(replacement) # pickingLogic.rb
-    list_players # playersLogic.rb
+    list_players if replace_player User(user), User(replacement) # pickingLogic.rb
+  end
+  
+  # !endgame
+  def admin_endgame m
+    return unless require_admin m
+    
+    end_game
+    message "Game has been ended, please add up again."
+  end
+  
+  # !reset
+  def admin_reset m
+    return unless require_admin m
+    
+    reset_game
+    message "Game has been reset, please add up again."
   end
   
   def require_admin m
@@ -184,17 +213,17 @@ class Pug
   end
 
   def message msg
-    MasterMessenger.instance.queuemsg Const::Irc_channel, colour_start(0) + msg + colour_end # util.rb
+    MasterMessenger.instance.msg Const::Irc_channel, colourize(msg.to_s)
     false
   end
   
   def private user, msg
-    MasterMessenger.instance.queuemsg user, msg
+    MasterMessenger.instance.msg user, msg
     false
   end
 
   def notice channel = Const::Irc_channel, msg
-    MasterMessenger.instance.queuenotice channel, msg
+    MasterMessenger.instance.notice channel, msg
     false
   end
 end

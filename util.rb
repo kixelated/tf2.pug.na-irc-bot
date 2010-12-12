@@ -1,20 +1,25 @@
 require 'open-uri'
 
 module Utilities
-  def make_title msg, fore = 0, back = 1
-    colourize msg.rjust(15), fore, back
+  def rjust msg, justify = Const::Justify
+    msg.to_s.rjust(justify)
   end
 
-  def colour_start fore = 0, back = 1
-    "\x03#{ fore.to_s.rjust(2, "0") },#{ back.to_s.rjust(2, "0") }"
+  def colour_start fore, back = 0
+    "\x03#{ fore.to_s.rjust(2, "0") }" + "#{ ",#{ back.to_s.rjust(2, "0") }" if back != 0 }"
   end
   
   def colour_end
     "\x03"
   end
-
-  def colourize msg, fore = 0, back = 1
-    colour_end + colour_start(fore, back) + msg + colour_end + colour_start(0)
+  
+  def colourize msg, fore = Const::White, back = Const::Black
+    output = msg.to_s.gsub(/\x03\d.*?\x03/) { |str| "#{ colour_end }#{ str }#{ colour_start(fore, back) }" }
+    "#{ colour_start(fore, back) }#{ output }#{ colour_end }"
+  end
+  
+  def bold msg
+    "\x02#{ msg.to_s }\x02"
   end
   
   def isvalidsteamid? steamid
@@ -58,9 +63,9 @@ class Hash
   # Input: a => b, c => b, d => e
   # Output: b => [a, c], e => [d]
   def invert_proper
-    self.class.new.tap do |hash|
+    self.class.new([]).tap do |hash|
       self.each do |k, v|
-        (hash[v] ||= []) << k
+        hash[v] << k
       end
     end
   end
@@ -68,10 +73,10 @@ class Hash
   # Input: a => [b, c], d => [e] 
   # Output: b => [a], c => [a], e => [d]
   def invert_proper_arr
-    self.class.new.tap do |hash|
+    self.class.new([]).tap do |hash|
       self.each do |k, v|
         v.each do |w| 
-          (hash[w] ||= []) << k
+          hash[w] << k
         end
       end
     end
