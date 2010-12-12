@@ -20,11 +20,11 @@ class MasterMessenger
     @bots.push(@bots.shift).first 
   end
   
-  def queuemsg channel, msg
+  def msg channel, msg
     addqueue "msg", channel, msg
   end
   
-  def queuenotice channel, msg
+  def notice channel, msg
     addqueue "notice", channel, msg
   end
 
@@ -71,8 +71,6 @@ class MasterMessenger
     end
   end
   
-  private
-  
   def addqueue type, channel, msg
     var = {}
     var[:type] = type
@@ -80,13 +78,4 @@ class MasterMessenger
     var[:msg] = msg
     @queue << var
   end
-
-  def msg channel, msg
-    select.msg channel, msg
-  end
-  
-  def notice channel, msg
-    select.notice channel, msg
-  end
-  
 end

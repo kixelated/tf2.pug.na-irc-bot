@@ -3,18 +3,24 @@ require 'rcon'
 module ServerLogic
   def start_server
     @state = Const::State_server
-
+    @server.connect
+    
     while @server.in_use?
       message "Server #{ @server.to_s } is in use. Trying the next server in #{ Const::Server_delay } seconds."
       
-      next_server
       sleep Const::Server_delay
+      
+      next_server
+      @server.connect
     end
-
-    @server.cpswd @server.pswd
-    @server.clvl @map
     
-    message "The pug will take place on #{ @server.to_s } with the map #{ @map }"
+    @server.clvl @map
+    @server.cpswd @server.pswd
+    @server.command "sm_rtv_initialdelay 30.0"
+  end
+  
+  def announce_server
+    message "The pug will take place on #{ @server.to_s } with the map #{ @map }."
     message advertisement
   end
   
@@ -53,6 +59,6 @@ module ServerLogic
   end
   
   def advertisement
-    "Servers are provided by #{ colourize "End", Const::Colour_brown } of #{ colourize "Reality", Const::Colour_brown }: #{ colourize "http://eoreality.net", 7 } #eoreality"
+    "Servers are provided by #{ colourize "End", Const::Brown } of #{ colourize "Reality", Const::Brown }: #{ colourize "http://eoreality.net", Const::Brown } #eoreality"
   end
 end

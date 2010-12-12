@@ -23,17 +23,15 @@ class Team < ActiveRecord::Base
     @players.invert_proper
   end
   
-  def my_colourize msg
-    colourize msg, @colour
+  def my_colourize msg, bg = Const::Black
+    colourize msg, @colour, bg
   end
   
-  def to_s
+  def output_team
     output = players.collect { |k, v| "#{ k } as #{ my_colourize v }" }
     "#{ my_colourize @name }: #{ output.values.join(", ") if output }"
   end
-  
-  
-  
+
   def insert matchid, steamid, team, clss, iscaptain
     Team.create do |t|
       t.match_id = matchid
@@ -55,5 +53,7 @@ class Team < ActiveRecord::Base
     player.destroy
   end
   
-  
+  def to_s
+    @name
+  end
 end

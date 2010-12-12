@@ -3,7 +3,7 @@ module StateLogic
     if @state == Const::State_waiting and minimum_players?
       @state = Const::State_afk
       
-      @afk = check_afk @players.keys # will take a long time
+      @afk = check_afk @players.keys
       start_afk unless @afk.empty?
       
       attempt_picking
@@ -11,26 +11,19 @@ module StateLogic
   end
   
   def attempt_picking
-    if minimum_players?
-      start_delay # pause for x seconds
-      start_picking
-    else
+    unless start_delay and start_picking 
       @state = Const::State_waiting
     end
   end
   
   def check_afk list
-    list.reject do |user|
-      if @spoken[user]
-        (Time.now - @spoken[user]).to_i <= Const::Afk_threshold
-      else
-        true
-      end
+    list.select do |user|
+      !@spoken[user] or (Time.now - @spoken[user]).to_i > Const::Afk_threshold
     end
   end
 
   def start_afk
-    message colourize "The following players are considered afk: #{ @afk.join(", ") }", Const::Colour_yellow
+    message "#{ colourize rjust("AFK players:"), Const::Yellow } #{ @afk.join(", ") }"
     
     @afk.each do |p|
       private p, "Warning, you are considered afk by the bot. Say anything in the channel within the next #{ Const::Afk_delay } seconds to avoid being removed."
@@ -46,22 +39,39 @@ module StateLogic
   end
   
   def start_delay
-    @state = Const::State_delay
-    
-    message colourize "Teams are being drafted, captains will be selected in #{ Const::Picking_delay } seconds", Const::Colour_yellow
-    sleep Const::Picking_delay
+    if minimum_players?
+      @state = Const::State_delay
+      
+      message colourize "Teams are being drafted, captains will be selected in #{ Const::Picking_delay } seconds", Const::Yellow
+      sleep Const::Picking_delay
+      
+      true
+    end
   end
   
   def start_picking
-    @state = Const::State_picking
-    
-    update_lookup # pickingLogic.rb
-    choose_captains # pickingLogic.rb
-    tell_captain # pickingLogic.rb
+    if minimum_players?
+      @state = Const::State_picking
+      @players.rehash # just in case, as add/remove is no officially closed
+      
+      update_lookup # pickingLogic.rb
+      choose_captains # pickingLogic.rb
+      tell_captain # pickingLogic.rb
+      
+      true
+    end
+  end
+  
+  def end_picking
+    start_server # serverLogic.rb
+    announce_teams # pickingLogic.rb
+    announce_server # serverLogic.rb
+    end_game
   end
   
   def end_game
     @teams.clear
+    @captains.clear
     @lookup.clear
 
     @last = Time.now
@@ -69,13 +79,17 @@ module StateLogic
     @pick = 0
     
     @spoken.reject! { |k, v| !@players.key? k }
-    
+
     next_server
     next_map
   end
   
+  def reset_game
+    setup
+  end
+  
   def list_afk
-    message "The following players are afk: #{ check_afk(@players.keys).join(", ") }"
+    message "#{ rjust "AFK players:" } #{ check_afk(@players.keys).join(", ") }"
   end
   
   def picking? 
@@ -87,6 +101,6 @@ module StateLogic
   end
   
   def can_remove?
-    @state < Const::State_delay
+    @state < Const::State_picking
   end
 end
