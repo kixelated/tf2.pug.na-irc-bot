@@ -44,6 +44,4 @@ Const::Messenger_count.times do |i|
   end
 end
 
-MasterMessenger.instance.processqueue!
-
 mainbot.join
