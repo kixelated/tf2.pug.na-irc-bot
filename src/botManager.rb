@@ -2,7 +2,7 @@ require 'singleton'
 
 require './variables.rb'
 
-class MasterMessenger
+class BotManager
   include Singleton
   
   def initialize
@@ -13,17 +13,21 @@ class MasterMessenger
     @bots << bot unless @bots.include? bot
   end
   
+  def quit
+    @bots.reject! { |bot| bot.quit }
+  end
+  
   def select
     @bots.push(@bots.shift).first
   end
-  
+
   def msg channel, msg
     select.msg channel, msg
-    sleep(Variables::Message_delay)
+    sleep(Const::Message_delay)
   end
   
   def notice channel, msg
     select.notice channel, msg
-    sleep(Variables::Message_delay)
+    sleep(Const::Message_delay)
   end
 end
