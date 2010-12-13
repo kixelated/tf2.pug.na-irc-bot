@@ -1,7 +1,7 @@
-require './playersLogic.rb'
-require './pickingLogic.rb'
-require './stateLogic.rb'
-require './serverLogic.rb'
+require './logicPlayers.rb'
+require './logicPicking.rb'
+require './logicState.rb'
+require './logicServer.rb'
 
 require './team.rb'
 require './server.rb'
@@ -213,17 +213,17 @@ class Pug
   end
 
   def message msg
-    MasterMessenger.instance.msg Const::Irc_channel, colourize(msg.to_s)
+    BotManager.instance.msg Const::Irc_channel, colourize(msg.to_s)
     false
   end
   
   def private user, msg
-    MasterMessenger.instance.msg user, msg
+    BotManager.instance.msg user, msg
     false
   end
 
   def notice channel = Const::Irc_channel, msg
-    MasterMessenger.instance.notice channel, msg
+    BotManager.instance.notice channel, msg
     false
   end
 end

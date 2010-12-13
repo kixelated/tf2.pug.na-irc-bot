@@ -73,7 +73,7 @@ module PickingLogic
     
     @pick += 1
     
-    if @pick + Const::Team_count >= Const::Team_size * Const::Team_count
+    if @pick >= (Const::Team_size - 1) * Const::Team_count
       set_captain_classes
       end_picking
     else 
@@ -101,7 +101,7 @@ module PickingLogic
   
   def list_format
     output = []
-    (Const::Team_size * Const::Team_count).times { |i| output << (colourize Const::Team_names[pick_format(i)], Const::Team_colours[pick_format(i)]) }
+    ((Const::Team_size - 1) * Const::Team_count).times { |i| output << (colourize Const::Team_names[pick_format(i)], Const::Team_colours[pick_format(i)]) }
     message "The picking format is: #{ output.join(" ") }"
   end
   

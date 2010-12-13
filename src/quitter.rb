@@ -4,6 +4,6 @@ class Quitter
   match /quit/, method: :quit
   
   def quit m
-    MasterMessenger.instance.quitall! if m.channel.opped? m.user
+    BotManager.instance.quit if m.channel.opped? m.user
   end
 end

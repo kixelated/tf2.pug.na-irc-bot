@@ -5,9 +5,9 @@ module Const
   Irc_port = 6667
 
   Irc_vhost = nil # "zomgbbq.com"
-  Irc_channel = "#tf2.pug.na.beta.fake"
+  Irc_channel = "#tf2.pug.na.beta"
   
-  Messenger_count = 0
+  Messenger_count = 1
   Nick_bot = "IRCCompanionTest"
   Nick_messenger = "IRCMessengerTes"
 
