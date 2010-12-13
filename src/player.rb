@@ -1,3 +1,3 @@
-class Player
+class Player < ActiveRecord::Base
 
 end
