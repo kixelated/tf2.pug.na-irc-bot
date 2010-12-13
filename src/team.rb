@@ -6,19 +6,19 @@ class Team
   attr_accessor :captain, :players
 	attr_accessor :name, :colour
   
-  def initialize captain, name, colour
+  def initialize captain, details
     @captain = captain
 		@players = { captain => "captain" }
     
-    @name = name
-    @colour = colour
+    @name = details["name"]
+    @colour = details["colour"]
 	end
 
   def get_classes
     @players.invert_proper
   end
   
-  def my_colourize msg, bg = Const::Black
+  def my_colourize msg, bg = const["colours"]["black"]
     colourize msg, @colour, bg
   end
   

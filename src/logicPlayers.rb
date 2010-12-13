@@ -4,7 +4,7 @@ module PlayersLogic
     notice user, "You must be registered with GameSurge in order to play in this channel, but consider this a warning. http://www.gamesurge.net/newuser/" unless User(user).authed?
     
     classes.collect! { |clss| clss.downcase }
-    classes.reject! { |clss| not Const::Team_classes.key? clss }
+    classes.reject! { |clss| not const["teams"]["classes"].key? clss }
 
     return notice user, "Invalid classes, you have not been added." if classes.empty?
 
@@ -20,7 +20,7 @@ module PlayersLogic
   def list_players
     output = @players.collect do |user, classes|
       medic, captain = classes.include?("medic"), classes.include?("captain")
-      special = ":#{ colourize "m", Const::Red if medic }#{ colourize "c", Const::Yellow if captain }" if medic or captain
+      special = ":#{ colourize "m", const["colours"]["red"] if medic }#{ colourize "c", const["colours"]["yellow"] if captain }" if medic or captain
       "#{ user }#{ special }"
     end
     
@@ -29,8 +29,8 @@ module PlayersLogic
 
   def list_players_detailed
     temp = get_classes
-    Const::Team_classes.each_key do |k|
-      message "#{ colourize rjust("#{ k }:"), Const::Lightgrey } #{ temp[k].join(", ") }" if temp[k]
+    const["teams"]["classes"].each_key do |k|
+      message "#{ colourize rjust("#{ k }:"), const["colours"]["lightgrey"] } #{ temp[k].join(", ") }" if temp[k]
     end
   end
   
@@ -54,21 +54,21 @@ module PlayersLogic
   
   # I hate this function, but it is so important
   def classes_needed players, multiplier = 1
-    required = Const::Team_classes.collect { |k, v| v * multiplier - players[k].size }
+    required = const["teams"]["classes"].collect { |k, v| v * multiplier - players[k].size }
     required.reject! { |k, v| v <= 0 } # Remove any negative or zero values
     required
   end
 
   def list_classes_needed
-    output = classes_needed(get_classes, Const::Team_count).to_a
-    output.unshift [ "players" , (Const::Team_size * Const::Team_count - @players.size)] if @players.size < Const::Team_size * Const::Team_count
+    output = classes_needed(get_classes, const["teams"]["count"]).to_a
+    output.unshift [ "players" , (const["teams"]["size"] * const["teams"]["count"] - @players.size)] if @players.size < const["teams"]["size"] * const["teams"]["count"]
     output.collect! { |a| "#{ a[1] } #{ a[0] }" } # Format the output
 
     message "#{ rjust "Required classes:" } #{ output.join(", ") }"
   end
 
   def minimum_players?
-    return false if @players.size < Const::Team_size * Const::Team_count
-    return classes_needed(get_classes, Const::Team_count).empty?
+    return false if @players.size < const["teams"]["size"] * const["teams"]["count"]
+    return classes_needed(get_classes, const["teams"]["count"]).empty?
   end
 end

@@ -1,9 +1,10 @@
 require 'singleton'
 
-require './variables.rb'
+require './constants.rb'
 
 class BotManager
   include Singleton
+  include Constants
   
   def initialize
     @bots = []
@@ -23,11 +24,11 @@ class BotManager
 
   def msg channel, msg
     select.msg channel, msg
-    sleep(Const::Message_delay)
+    sleep const["delays"]["message"]
   end
   
   def notice channel, msg
     select.notice channel, msg
-    sleep(Const::Message_delay)
+    sleep const["delays"]["message"]
   end
 end

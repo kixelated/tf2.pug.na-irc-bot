@@ -1,24 +1,24 @@
 require 'cinch'
 
-require './variables.rb'
+require './constants.rb'
 require './botManager.rb'
 require './pug.rb'
 require './quitter.rb'
 
 class BotMaster < Cinch::Bot
+  include Constants
+
   def initialize
     super
+
+    @server = const["irc"]["server"]
+    @port = const["irc"]["port"]
+    @vhost = const["irc"]["local_host"]
+    @nick = const["irc"]["nick"]
+    @channels = [ const["irc"]["channel"] ]
     
-    configure do |c|
-      c.server = Const::Irc_server
-      c.port = Const::Irc_port
-      c.vhost = Const::Irc_vhost
-      c.nick = Const::Nick_bot
-      c.channels = [ Const::Irc_channel ]
-      
-      c.plugins.plugins = [ Pug, Quitter ]
-      c.verbose = true
-    end
+    @plugins = [ Pug, Quitter ]
+    @verbose = true
     
     BotManager.instance.add self
   end
