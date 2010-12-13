@@ -1,7 +1,7 @@
 module StateLogic
   def attempt_afk
-    if @state == Const::State_waiting and minimum_players?
-      @state = Const::State_afk
+    if @state == const["states"]["waiting"] and minimum_players?
+      @state = const["states"]["afk"]
       
       @afk = check_afk @players.keys
       start_afk unless @afk.empty?
@@ -12,24 +12,24 @@ module StateLogic
   
   def attempt_picking
     unless start_delay and start_picking 
-      @state = Const::State_waiting
+      @state = const["states"]["waiting"]
     end
   end
   
   def check_afk list
     list.select do |user|
-      !@spoken[user] or (Time.now - @spoken[user]).to_i > Const::Afk_threshold
+      !@spoken[user] or (Time.now - @spoken[user]).to_i > const["settings"]["afk"]
     end
   end
 
   def start_afk
-    message "#{ colourize rjust("AFK players:"), Const::Yellow } #{ @afk.join(", ") }"
+    message "#{ colourize rjust("AFK players:"), const["colours"]["yellow"] } #{ @afk.join(", ") }"
     
     @afk.each do |p|
-      private p, "Warning, you are considered afk by the bot. Say anything in the channel within the next #{ Const::Afk_delay } seconds to avoid being removed."
+      private p, "Warning, you are considered afk by the bot. Say anything in the channel within the next #{ const["delays"]["afk"] } seconds to avoid being removed."
     end
     
-    sleep Const::Afk_delay
+    sleep const["delays"]["afk"]
 
     # check again if users are afk, this time removing the ones who are
     check_afk(@afk).each { |user| @players.delete user }
@@ -40,10 +40,10 @@ module StateLogic
   
   def start_delay
     if minimum_players?
-      @state = Const::State_delay
+      @state = const["states"]["delay"]
       
-      message colourize "Teams are being drafted, captains will be selected in #{ Const::Picking_delay } seconds", Const::Yellow
-      sleep Const::Picking_delay
+      message colourize "Teams are being drafted, captains will be selected in #{ const["delays"]["picking"] } seconds", const["colours"]["yellow"]
+      sleep const["delays"]["picking"]
       
       true
     end
@@ -51,8 +51,7 @@ module StateLogic
   
   def start_picking
     if minimum_players?
-      @state = Const::State_picking
-      @players.rehash # just in case, as add/remove is no officially closed
+      @state = const["states"]["picking"]
       
       update_lookup # pickingLogic.rb
       choose_captains # pickingLogic.rb
@@ -75,7 +74,7 @@ module StateLogic
     @lookup.clear
 
     @last = Time.now
-    @state = Const::State_waiting
+    @state = const["states"]["waiting"]
     @pick = 0
     
     @spoken.reject! { |k, v| !@players.key? k }
@@ -93,14 +92,14 @@ module StateLogic
   end
   
   def picking? 
-    @state == Const::State_picking
+    @state == const["states"]["picking"]
   end
 
   def can_add?
-    @state < Const::State_picking
+    @state < const["states"]["picking"]
   end
   
   def can_remove?
-    @state < Const::State_picking
+    @state < const["states"]["picking"]
   end
 end

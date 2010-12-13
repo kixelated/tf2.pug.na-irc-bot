@@ -1,7 +1,7 @@
 require 'open-uri'
 
 module Utilities
-  def rjust msg, justify = Const::Justify
+  def rjust msg, justify = const["formatting"]["justify"]
     msg.to_s.rjust(justify)
   end
 
@@ -13,7 +13,7 @@ module Utilities
     "\x03"
   end
   
-  def colourize msg, fore = Const::White, back = Const::Black
+  def colourize msg, fore = const["colours"]["white"], back = const["colours"]["black"]
     output = msg.to_s.gsub(/\x03\d.*?\x03/) { |str| "#{ colour_end }#{ str }#{ colour_start(fore, back) }" }
     "#{ colour_start(fore, back) }#{ output }#{ colour_end }"
   end

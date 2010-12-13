@@ -2,11 +2,11 @@ module PickingLogic
   def choose_captains
     possible_captains = get_classes["captain"]
 
-    Const::Team_count.times do |i|
+    const["teams"]["count"].times do |i|
       captain = possible_captains.delete_at rand(possible_captains.length)
       
       @captains << captain
-      @teams << Team.new(captain, Const::Team_names[i], Const::Team_colours[i])
+      @teams << Team.new(captain, const["teams"]["details"][i])
       @players.delete captain
 
       notice captain, "You have been selected as a captain. When it is your turn to pick, you can choose players with the '!pick num' or '!pick name' command."
@@ -28,7 +28,7 @@ module PickingLogic
     # Displays the classes that are not yet full for this team
     classes_needed(current_team.get_classes).each do |k, v| # playersLogic.rb
       output = get_classes.collect { |player| "(#{ @lookup.invert[player] }) #{ player }" }
-      notice current_captain, "#{ v } #{ k }: #{ output.join(", ") }"
+      notice current_captain, "#{ bold rjust("#{ v } #{ k }:") } #{ output.join(", ") }"
     end
   end
   
@@ -43,7 +43,7 @@ module PickingLogic
   end
   
   def pick_player_valid? player, player_class
-    @players.key? player and Const::Team_classes.key? player_class
+    @players.key? player and const["teams"]["classes"].key? player_class
   end
   
   def pick_player_avaliable? player_class
@@ -73,7 +73,7 @@ module PickingLogic
     
     @pick += 1
     
-    if @pick >= (Const::Team_size - 1) * Const::Team_count
+    if @pick >= (const["teams"]["size"] - 1) * const["teams"]["count"]
       set_captain_classes
       end_picking
     else 
@@ -93,7 +93,7 @@ module PickingLogic
     end
   
     @teams.each do |team|
-      team.players.each do |user, clss| 
+      team.players.each do |user, clss|
         private user, "You have been picked for #{ team.my_colourize "#{ team.to_s } Team", 0 } as #{ clss }. The server info is: #{ @server.connect_info }" 
       end
     end
@@ -101,7 +101,7 @@ module PickingLogic
   
   def list_format
     output = []
-    ((Const::Team_size - 1) * Const::Team_count).times { |i| output << (colourize Const::Team_names[pick_format(i)], Const::Team_colours[pick_format(i)]) }
+    ((const["teams"]["size"] - 1) * const["teams"]["count"]).times { |i| output << (colourize const["teams"]["details"][pick_format(i)]["name"], const["teams"]["details"][pick_format(i)]["colour"]) }
     message "The picking format is: #{ output.join(" ") }"
   end
   
@@ -119,13 +119,13 @@ module PickingLogic
   
   def sequential num
     # 0 1 0 1 0 1 0 1 ...
-    num % Const::Team_count
+    num % const["teams"]["count"]
   end
   
   def staggered num
     # 0 1 1 0 0 1 1 0 ...
-    # won't work as expected when @Const::Team_count > 2
-    ((num + Const::Team_count / 2) / Const::Team_count) % Const::Team_count
+    # won't work as expected when const["teams"]["count"] > 2
+    ((num + const["teams"]["count"] / 2) / const["teams"]["count"]) % const["teams"]["count"]
   end
   
   def hybrid num

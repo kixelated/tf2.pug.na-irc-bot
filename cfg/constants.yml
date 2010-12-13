@@ -1,0 +1,82 @@
+irc:
+  server: irc.gamesurge.net
+  port: 6667
+  channel: tf2.pug.na.beta
+  local_host: nil #zomgbbq.com
+  nick: IRCCompanionTest
+  
+messengers:
+  count: 1
+  nick: IRCMessengerTes
+
+delays: 
+  - afk: 45
+  - picking: 45
+  - server: 30
+  - message: 0.1
+  
+settings:
+  afk: 600
+  used: 6
+
+teams:
+  count: 2
+  details:
+    - name: Blu
+      colour: 11
+    - name: Red
+      colour: 4
+  size: 6
+  classes: 
+    - scout: 2
+    - soldier: 2
+    - demo: 1
+    - medic: 1
+    - captain: 1
+    
+servers:
+  - name: Dallas1
+    ip: dallas1.tf2pug.eoreality.net
+    port: 27015
+    password: tf2pug
+    rcon: secret
+  - name: Chicago1
+    ip: chicago1.tf2pug.eoreality.net
+    port: 27015
+    password: tf2pug
+    rcon: secret
+
+maps:
+  - cp_badlands
+  - cp_granary
+  - koth_viaduct
+  - cp_coldfront
+  - cp_gullywash_imp3
+
+states:
+  waiting: 0
+  afk: 1
+  delay: 2
+  picking: 3
+  server: 4
+
+colours:
+  white: 0
+  black: 1
+  navy: 2
+  green: 3
+  red: 4
+  brown: 5
+  purple: 6
+  olive: 7
+  yellow: 8
+  lime: 9
+  teal: 10
+  aqua: 11
+  royal: 12
+  pink: 13
+  darkgrey: 14
+  lightgrey: 15
+  
+formatting:
+  justify: 15

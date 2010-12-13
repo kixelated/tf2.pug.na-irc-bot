@@ -213,7 +213,7 @@ class Pug
   end
 
   def message msg
-    BotManager.instance.msg Const::Irc_channel, colourize(msg.to_s)
+    BotManager.instance.msg const["irc"]["channel"], colourize(msg.to_s)
     false
   end
   
@@ -222,7 +222,7 @@ class Pug
     false
   end
 
-  def notice channel = Const::Irc_channel, msg
+  def notice channel = const["irc"]["channel"], msg
     BotManager.instance.notice channel, msg
     false
   end

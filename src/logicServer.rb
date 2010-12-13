@@ -2,13 +2,13 @@ require 'rcon'
 
 module ServerLogic
   def start_server
-    @state = Const::State_server
+    @state = const["states"]["server"]
     @server.connect
     
     while @server.in_use?
-      message "Server #{ @server.to_s } is in use. Trying the next server in #{ Const::Server_delay } seconds."
+      message "Server #{ @server.to_s } is in use. Trying the next server in #{ const["delays"]["server"] } seconds."
       
-      sleep Const::Server_delay
+      sleep const["delays"]["server"]
       
       next_server
       @server.connect
@@ -49,16 +49,16 @@ module ServerLogic
   end
   
   def next_server
-    return @server = Const::Servers.first unless Const::Servers.include? @server
-    @server = Const::Servers[(Const::Servers.index(@server) + 1) % Const::Servers.size]
+    return @server = const["servers"].first unless const["servers"].include? @server
+    @server = const["servers"][(const["servers"].index(@server) + 1) % const["servers"].size]
   end
   
   def next_map
-    return @map = Const::Maps.first unless Const::Maps.include? @map
-    @map = Const::Maps[(Const::Maps.index(@map) + 1) % Const::Maps.size]
+    return @map = const["maps"].first unless const["maps"].include? @map
+    @map = const["maps"][(const["maps"].index(@map) + 1) % const["maps"].size]
   end
   
   def advertisement
-    "Servers are provided by #{ colourize "End", Const::Brown } of #{ colourize "Reality", Const::Brown }: #{ colourize "http://eoreality.net", Const::Brown } #eoreality"
+    "Servers are provided by #{ colourize "End", const["colours"]["brown"] } of #{ colourize "Reality", const["colours"]["brown"] }: #{ colourize "http://eoreality.net", const["colours"]["brown"] } #eoreality"
   end
 end
