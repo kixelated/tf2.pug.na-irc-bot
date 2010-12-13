@@ -4,11 +4,12 @@ module PlayersLogic
     notice user, "You must be registered with GameSurge in order to play in this channel, but consider this a warning. http://www.gamesurge.net/newuser/" unless User(user).authed?
     
     classes.collect! { |clss| clss.downcase }
-    classes.reject! { |clss| not const["teams"]["classes"].key? clss }
+    rej = classes.reject! { |clss| not const["teams"]["classes"].key? clss }
+    classes.uniq!
+    
+    notice user, "Invalid classes, possible options are #{ const["teams"]["classes"].keys.join(", ") }" if rej
 
-    return notice user, "Invalid classes, you have not been added." if classes.empty?
-
-    @players[user] = classes
+    @players[user] = classes unless classes.empty?
   end
 
   def remove_player user
@@ -52,7 +53,6 @@ module PlayersLogic
     @players.invert_proper_arr
   end
   
-  # I hate this function, but it is so important
   def classes_needed players, multiplier = 1
     required = const["teams"]["classes"].collect { |k, v| v * multiplier - players[k].size }
     required.reject! { |k, v| v <= 0 } # Remove any negative or zero values
@@ -60,7 +60,9 @@ module PlayersLogic
   end
 
   def list_classes_needed
-    output = classes_needed(get_classes, const["teams"]["count"]).to_a
+    temp = classes_needed(get_classes, const["teams"]["count"])
+    temp["players"] = const["teams"]["size"] * const["teams"]["count"] - @players.size if @players.size < const["teams"]["size"] * const["teams"]["count"]
+    
     output.unshift [ "players" , (const["teams"]["size"] * const["teams"]["count"] - @players.size)] if @players.size < const["teams"]["size"] * const["teams"]["count"]
     output.collect! { |a| "#{ a[1] } #{ a[0] }" } # Format the output
 

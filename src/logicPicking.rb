@@ -19,15 +19,18 @@ module PickingLogic
   
   def update_lookup
     @lookup.clear
-    @players.keys.each_with_index { |user, i| @lookup[i + 1] = user }
+    @players.keys.each_with_index { |user, i| @lookup[i] = user }
   end
 
   def tell_captain
     notice current_captain, "It is your turn to pick."
 
+    classes = get_classes
+    lookup_i = @lookup.invert
+    
     # Displays the classes that are not yet full for this team
     classes_needed(current_team.get_classes).each do |k, v| # playersLogic.rb
-      output = get_classes.collect { |player| "(#{ @lookup.invert[player] }) #{ player }" }
+      output = classes[k].collect { |player| "(#{ lookup_i[player] }) #{ player }" }
       notice current_captain, "#{ bold rjust("#{ v } #{ k }:") } #{ output.join(", ") }"
     end
   end
@@ -67,13 +70,13 @@ module PickingLogic
     return notice(user, "That class is full.") unless pick_player_avaliable? player_class
 
     current_team.players[player] = player_class
-    @players.delete player
+    @players.delete player   
+     
+    @pick += 1
     
     message "#{ current_team.my_colourize user } picked #{ player } as #{ player_class }"
     
-    @pick += 1
-    
-    if @pick >= (const["teams"]["size"] - 1) * const["teams"]["count"]
+    if @pick >= const["teams"]["total"] - const["teams"]["count"]
       set_captain_classes
       end_picking
     else 
@@ -100,8 +103,10 @@ module PickingLogic
   end
   
   def list_format
-    output = []
-    ((const["teams"]["size"] - 1) * const["teams"]["count"]).times { |i| output << (colourize const["teams"]["details"][pick_format(i)]["name"], const["teams"]["details"][pick_format(i)]["colour"]) }
+    output = Array.new(const["teams"]["total"] - const["teams"]["count"]).collect do |i| 
+      details = const["teams"]["details"][pick_format(i)]
+      output << (colourize details["name"], details["colour"])
+    end
     message "The picking format is: #{ output.join(" ") }"
   end
   

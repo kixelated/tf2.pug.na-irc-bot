@@ -20,13 +20,12 @@ settings:
   used: 6
 
 teams:
-  count: 2
   details:
     - name: Blu
       colour: 11
     - name: Red
       colour: 4
-  size: 6
+  players: 6
   classes: 
     - scout: 2
     - soldier: 2
