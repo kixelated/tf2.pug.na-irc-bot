@@ -5,6 +5,10 @@ require './util.rb'
 module Constants
   @@const = YAML.load_file '../cfg/constants.yml'
 
+  def self.const
+    @@const
+  end
+  
   def const
     @@const
   end

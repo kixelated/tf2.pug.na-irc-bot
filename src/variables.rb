@@ -4,7 +4,11 @@ module Variables
   include Constants
 
   def setup
-    @server = const["servers"].first
+    @servers = const["servers"].values.collect do |server|
+      new Server(server)
+    end
+  
+    @server = @servers.first
     @map = const["maps"].first
   
     @players = {}
