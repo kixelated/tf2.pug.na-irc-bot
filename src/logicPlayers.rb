@@ -36,16 +36,15 @@ module PlayersLogic
   end
   
   def replace_player user, replacement
-    if @players.key? user
-      return @players[replacement] = @players.delete(user)
-    else
-      @teams.each do |team|
-        if team.players.key? user
-          team.captain = replacement if team.captain == user
-          return team.players[replacement] = team.players.delete(user) 
-        end
+    return @players[replacement] = @players.delete(user) if @players.key? user
+      
+    @teams.each do |team|
+      if team.players.key? user
+        team.captain = replacement if team.captain == user
+        return team.players[replacement] = team.players.delete(user) 
       end
     end
+
     false
   end
   
@@ -60,17 +59,16 @@ module PlayersLogic
   end
 
   def list_classes_needed
-    temp = classes_needed(get_classes, const["teams"]["count"])
-    temp["players"] = const["teams"]["size"] * const["teams"]["count"] - @players.size if @players.size < const["teams"]["size"] * const["teams"]["count"]
+    output = classes_needed(get_classes, const["teams"]["count"])
+    output["players"] = const["teams"]["total"] - @players.size if @players.size < const["teams"]["total"]
     
-    output.unshift [ "players" , (const["teams"]["size"] * const["teams"]["count"] - @players.size)] if @players.size < const["teams"]["size"] * const["teams"]["count"]
-    output.collect! { |a| "#{ a[1] } #{ a[0] }" } # Format the output
+    output.collect! { |k, v| "#{ v } #{ k }" } # Format the output
 
-    message "#{ rjust "Required classes:" } #{ output.join(", ") }"
+    message "#{ rjust "Required classes:" } #{ output.values.join(", ") }"
   end
 
   def minimum_players?
-    return false if @players.size < const["teams"]["size"] * const["teams"]["count"]
+    return false if @players.size < const["teams"]["total"]
     return classes_needed(get_classes, const["teams"]["count"]).empty?
   end
 end

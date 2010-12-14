@@ -60,11 +60,9 @@ module PickingLogic
     player_class.downcase!
     
     unless pick_player_valid? player, player_class
-      return notice(user, "Invalid pick #{ player } as #{ player_class }.") unless player.to_i
-      
-      player = @lookup[player.to_i]
-
-      return notice(user, "Invalid pick #{ player } as #{ player_class }.") unless pick_player_valid? player, player_class
+      player = @lookup[player.to_i] if player.to_i
+    
+      return notice(user, "Invalid pick #{ player } as #{ player_class }.") unless player and pick_player_valid? player, player_class
     end
     
     return notice(user, "That class is full.") unless pick_player_avaliable? player_class
@@ -130,7 +128,7 @@ module PickingLogic
   def staggered num
     # 0 1 1 0 0 1 1 0 ...
     # won't work as expected when const["teams"]["count"] > 2
-    ((num + const["teams"]["count"] / 2) / const["teams"]["count"]) % const["teams"]["count"]
+    ((num + 1) / const["teams"]["count"]) % const["teams"]["count"]
   end
   
   def hybrid num

@@ -1,18 +1,12 @@
 class Server
-  attr_accessor :ip, :port, :pswd, :rcon
-  
-  def initialize ip, port, pswd, rcon
-    @ip = ip
-    @port = port
-    @pswd = pswd
-    @rcon = rcon
-    
+  def initialize details
+    @details = details
     @connected = false
   end
   
   #establish connection to server and auth
   def connect 
-    @conn = RCon::Query::Source.new(@ip, @port)
+    @conn = RCon::Query::Source.new(ip, port)
     @connected = @conn.auth rcon
   end
   
@@ -46,10 +40,14 @@ class Server
   end
   
   def connect_info
-    "connect #{ @ip }:#{ @port }; password #{ @pswd }"
+    "connect #{ ip }:#{ port }; password #{ password }"
+  end
+  
+  def method_missing(id, *args)
+    @details[args[0]]
   end
   
   def to_s
-    "#{ @ip }:#{ @port }"
+    "#{ ip }:#{ port }"
   end
 end

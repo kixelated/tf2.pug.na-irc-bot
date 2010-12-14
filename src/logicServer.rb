@@ -49,8 +49,8 @@ module ServerLogic
   end
   
   def next_server
-    return @server = const["servers"].first unless const["servers"].include? @server
-    @server = const["servers"][(const["servers"].index(@server) + 1) % const["servers"].size]
+    return @server = @servers.first unless @servers.include? @server
+    @server = @servers[(@servers.index(@server) + 1) % @servers.size]
   end
   
   def next_map
@@ -59,6 +59,6 @@ module ServerLogic
   end
   
   def advertisement
-    "Servers are provided by #{ colourize "End", const["colours"]["brown"] } of #{ colourize "Reality", const["colours"]["brown"] }: #{ colourize "http://eoreality.net", const["colours"]["brown"] } #eoreality"
+    "Servers are provided by #{ colourize "End", const["colours"]["orange"] } of #{ colourize "Reality", const["colours"]["orange"] }: #{ colourize "http://eoreality.net", const["colours"]["orange"] } #eoreality"
   end
 end

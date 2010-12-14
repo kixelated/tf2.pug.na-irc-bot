@@ -10,16 +10,18 @@ class BotMaster < Cinch::Bot
 
   def initialize
     super
+    
+    configure do |c|
+      c.server = Constants.const["irc"]["server"]
+      c.port = Constants.const["irc"]["port"]
+      c.vhost = Constants.const["irc"]["local_host"]
+      c.nick = Constants.const["irc"]["nick"]
+      c.channels = [ Constants.const["irc"]["channel"] ]
+      
+      c.plugins.plugins = [ Pug, Quitter ]
+      c.verbose = true
+    end
 
-    @server = const["irc"]["server"]
-    @port = const["irc"]["port"]
-    @vhost = const["irc"]["local_host"]
-    @nick = const["irc"]["nick"]
-    @channels = [ const["irc"]["channel"] ]
-    
-    @plugins = [ Pug, Quitter ]
-    @verbose = true
-    
     BotManager.instance.add self
   end
 end

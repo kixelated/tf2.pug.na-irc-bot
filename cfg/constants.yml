@@ -1,12 +1,12 @@
 irc:
   server: irc.gamesurge.net
   port: 6667
-  channel: tf2.pug.na.beta
-  local_host: nil #zomgbbq.com
+  channel: '#tf2.pug.na.beta'
+  local_host: 
   nick: IRCCompanionTest
   
 messengers:
-  count: 1
+  count: 0
   nick: IRCMessengerTes
 
 delays: 
@@ -67,15 +67,15 @@ colours:
   red: 4
   brown: 5
   purple: 6
-  olive: 7
+  orange: 7
   yellow: 8
   lime: 9
   teal: 10
   aqua: 11
-  royal: 12
+  blue: 12
   pink: 13
-  darkgrey: 14
-  lightgrey: 15
+  grey: 14
+  lgrey: 15
   
 formatting:
   justify: 15

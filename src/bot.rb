@@ -7,7 +7,7 @@ mainbot = Thread.new do
   BotMaster.new.start
 end
 
-2.times do |i|
+Constants.const["messengers"]["count"].times do |i|
   sleep(10)
 
   Thread.new do
