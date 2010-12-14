@@ -1,11 +1,12 @@
 require './constants.rb'
+require './server.rb'
 
 module Variables
   include Constants
 
   def setup
-    @servers = const["servers"].values.collect do |server|
-      new Server(server)
+    @servers = const["servers"].collect do |details|
+      Server.new details
     end
   
     @server = @servers.first
