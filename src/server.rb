@@ -1,6 +1,13 @@
 class Server
-  def initialize details
-    @details = details
+  attr_reader :name, :ip, :port, :password, :rcon
+  
+  def initialize name, ip, port, password, rcon
+    @name = name
+    @ip = ip
+    @port = port
+    @password = password
+    @rcon = rcon 
+
     @connected = false
   end
   
@@ -40,14 +47,10 @@ class Server
   end
   
   def connect_info
-    "connect #{ ip }:#{ port }; password #{ password }"
-  end
-  
-  def method_missing(id, *args)
-    @details[args[0]]
+    "connect #{ @ip }:#{ @port }; password #{ @password }"
   end
   
   def to_s
-    "#{ ip }:#{ port }"
+    @name
   end
 end
