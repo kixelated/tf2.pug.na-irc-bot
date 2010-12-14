@@ -31,7 +31,7 @@ module PlayersLogic
   def list_players_detailed
     temp = get_classes
     const["teams"]["classes"].each_key do |k|
-      message "#{ colourize rjust("#{ k }:"), const["colours"]["lightgrey"] } #{ temp[k].join(", ") }" if temp[k]
+      message "#{ colourize rjust("#{ k }:"), const["colours"]["lgrey"] } #{ temp[k].join(", ") }" unless temp[k].empty?
     end
   end
   

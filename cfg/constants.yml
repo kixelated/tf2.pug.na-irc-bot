@@ -10,10 +10,10 @@ messengers:
   nick: IRCMessengerTes
 
 delays: 
-  - afk: 45
-  - picking: 45
-  - server: 30
-  - message: 0.1
+  afk: 45
+  picking: 45
+  server: 30
+  message: 0.1
   
 settings:
   afk: 600
@@ -27,11 +27,11 @@ teams:
       colour: 4
   players: 6
   classes: 
-    - scout: 2
-    - soldier: 2
-    - demo: 1
-    - medic: 1
-    - captain: 1
+    scout: 2
+    soldier: 2
+    demo: 1
+    medic: 1
+    captain: 1
     
 servers:
   - name: Dallas1

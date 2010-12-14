@@ -6,7 +6,7 @@ module Variables
 
   def setup
     @servers = const["servers"].collect do |details|
-      Server.new details
+      Server.new details["name"], details["ip"], details["port"], details["password"], details["rcon"]
     end
   
     @server = @servers.first

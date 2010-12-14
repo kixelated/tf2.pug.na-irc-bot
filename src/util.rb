@@ -65,20 +65,22 @@ class Hash
   def invert_proper
     self.class.new([]).tap do |hash|
       self.each do |k, v|
-        hash[v] << k
+        (hash[v] ||= []) << k
       end
+      hash.default = []
     end
   end
   
   # Input: a => [b, c], d => [e] 
   # Output: b => [a], c => [a], e => [d]
   def invert_proper_arr
-    self.class.new([]).tap do |hash|
+    self.class.new.tap do |hash|
       self.each do |k, v|
         v.each do |w| 
-          hash[w] << k
+          (hash[w] ||= []) << k
         end
       end
+      hash.default = []
     end
   end
 end
