@@ -1,4 +1,6 @@
 require 'yaml'
+require 'active_record'
+require 'sqlite3'
 
 require './util.rb'
 
@@ -20,3 +22,6 @@ module Constants
 end
 
 Constants.calculate
+
+dbconfig = YAML.load_file '../cfg/database.yml'
+ActiveRecord::Base.establish_connection dbconfig
