@@ -1,15 +1,28 @@
+require './player.rb'
+
 module PlayersLogic
   def add_player user, classes
+    u = User(user)
+  
     return notice user, "You cannot add at this time, please wait for picking to end." unless can_add? # stateLogic.rb
-    notice user, "You must be registered with GameSurge in order to play in this channel, but consider this a warning. http://www.gamesurge.net/newuser/" unless User(user).authed?
-    
+    return notice user, "You must be registered with GameSurge in order to play in this channel. http://www.gamesurge.net/newuser/" unless u.authed?
+
     classes.collect! { |clss| clss.downcase }
     rej = classes.reject! { |clss| not const["teams"]["classes"].key? clss }
     classes.uniq!
     
     notice user, "Invalid classes, possible options are #{ const["teams"]["classes"].keys.join(", ") }" if rej
+    
+    unless Player.find_by_authname(u.authname)
+      player = Player.new(:authname => u.authname, :name => u.nick)
+      player.save
+      
+      notice user, "Welcome to #tf2.pug.na! The channel has certain quality standards, and we ask that you have a good amount of experience and understanding of the 6v6 format before playing here. If you do not yet meet these requirements, please type !remove and try another system like tf2lobby.com"
+      notice user, "If you are still interested in playing here, there are a few rules that you can find on our wiki page. Please ask questions and use the !man command to list all of the avaliable commands. Teams will be drafted by captains when there are enough players added, so hang tight and don't fret if you are not picked."
+    end
 
     @players[user] = classes unless classes.empty?
+    @authnames[user] = u.authname
   end
 
   def remove_player user
@@ -36,16 +49,7 @@ module PlayersLogic
   end
   
   def replace_player user, replacement
-    return @players[replacement] = @players.delete(user) if @players.key? user
-      
-    @teams.each do |team|
-      if team.players.key? user
-        team.captain = replacement if team.captain == user
-        return team.players[replacement] = team.players.delete(user) 
-      end
-    end
-
-    false
+    remove_player user if add_player replacement, @players[user] 
   end
   
   def get_classes

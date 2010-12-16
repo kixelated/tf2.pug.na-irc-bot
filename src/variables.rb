@@ -13,6 +13,7 @@ module Variables
     @map = const["maps"].first
   
     @players = {}
+    @authnames = {}
     @spoken = {}
     @afk = []
 

@@ -2,7 +2,6 @@ require 'rcon'
 
 module ServerLogic
   def start_server
-    @state = const["states"]["server"]
     @server.connect
     
     while @server.in_use?
