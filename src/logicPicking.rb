@@ -1,3 +1,6 @@
+require './player.rb'
+require './match.rb'
+
 module PickingLogic
   def choose_captains
     possible_captains = get_classes["captain"]
@@ -68,24 +71,41 @@ module PickingLogic
     return notice(user, "That class is full.") unless pick_player_avaliable? player_class
 
     current_team.players[player] = player_class
-    @players.delete player   
-     
+    @players.delete player
+    
     @pick += 1
     
     message "#{ current_team.my_colourize user } picked #{ player } as #{ player_class }"
     
     if @pick >= const["teams"]["total"] - const["teams"]["count"]
-      set_captain_classes
-      end_picking
+      final_pick
     else 
       tell_captain
     end
   end
   
-  def set_captain_classes
+  def final_pick
+    end_picking # stateLogic.rb
+  
+    update_captain
+    create_match
+    start_server # serverLogic.rb
+
+    announce_teams
+    announce_server # serverLogic.rb
+    
+    end_game # stateLogic.rb
+  end
+  
+  def update_captain
     @teams.each do |team|
       team.players[team.captain] = classes_needed(team.get_classes).keys.first
     end
+  end
+  
+  def create_match
+    Match.new :players => 
+    
   end
   
   def announce_teams

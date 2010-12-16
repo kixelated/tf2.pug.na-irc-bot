@@ -51,6 +51,7 @@ maps:
   - koth_viaduct
   - cp_coldfront
   - cp_gullywash_imp3
+  - cp_yukon
 
 states:
   waiting: 0

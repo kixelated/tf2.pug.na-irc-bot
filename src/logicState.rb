@@ -62,10 +62,7 @@ module StateLogic
   end
   
   def end_picking
-    start_server # serverLogic.rb
-    announce_teams # pickingLogic.rb
-    announce_server # serverLogic.rb
-    end_game
+    @state = const["states"]["server"]
   end
   
   def end_game
@@ -77,6 +74,7 @@ module StateLogic
     @state = const["states"]["waiting"]
     @pick = 0
     
+    @authnames.reject! { |k, v| !@players.key? k }
     @spoken.reject! { |k, v| !@players.key? k }
 
     next_server
