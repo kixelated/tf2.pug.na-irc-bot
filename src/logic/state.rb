@@ -1,4 +1,12 @@
 module StateLogic
+  def update_spoken user
+    @spoken[user] = Time.now
+    
+    if @afk.delete user and @afk.empty?
+      attempt_delay # logic/state.rb
+    end
+  end
+
   def attempt_afk
     if state? "waiting" and minimum_players?
       start_afk

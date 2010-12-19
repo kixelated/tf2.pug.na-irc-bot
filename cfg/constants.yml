@@ -53,6 +53,12 @@ maps:
   - cp_gullywash_imp3
   - cp_yukon
 
+reward:
+  ratio: .4
+  classes:
+    - medic
+    - captain
+
 states:
   waiting: 0
   afk: 1

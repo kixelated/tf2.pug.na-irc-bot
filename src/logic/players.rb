@@ -52,6 +52,14 @@ module PlayersLogic
     remove_player user if add_player replacement, @signups[user] 
   end
   
+  def reward_player user
+    total = 0
+    ratio = calculate_ratios user
+    const["reward"]["classes"].each { |clss| total += ratio[clss] }
+    
+    Channel(const["irc"]["channel"]).voice user if total >= const["reward"]["ratio"]
+  end
+  
   def get_classes
     @signups.invert_proper_arr
   end
@@ -87,6 +95,15 @@ module PlayersLogic
 
     message "#{ rjust "Required classes:" } #{ output.values.join(", ") }"
   end
+  
+  def calculate_ratios user
+    total = user.players.count
+    
+    Hash.new.tap do |ratios|
+      user.stats.group("class").each { |stat| ratios[stat.class] = stat.count / total }
+      ratios.default = 0
+    end
+  end
 
   def list_stats user
     u = User.find_by_name(user)
@@ -95,12 +112,9 @@ module PlayersLogic
     
     return notice user, "No user found by that name." unless u
     
-    total = u.players.count
+    output = calculate_ratios.collect { |clss, percent| "#{ (percent * 100).floor }% #{ clss }" }
     
-    output = []
-    u.stats.group("class").each { |s| output << "#{ 100 * s.count / total }% #{ s.class }" }
-    
-    message "#{ u.name } has #{ total } games played: #{ output.join(",") }"
+    message "#{ u.name } has #{ total } games played: #{ output.values.join(", ") }"
   end
 
   def minimum_players?
