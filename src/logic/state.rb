@@ -3,7 +3,7 @@ module StateLogic
     if @state == const["states"]["waiting"] and minimum_players?
       @state = const["states"]["afk"]
       
-      @afk = check_afk @players.keys
+      @afk = check_afk @signups.keys
       start_afk unless @afk.empty?
       
       attempt_picking
@@ -32,7 +32,7 @@ module StateLogic
     sleep const["delays"]["afk"]
 
     # check again if users are afk, this time removing the ones who are
-    check_afk(@afk).each { |user| @players.delete user }
+    check_afk(@afk).each { |user| @signups.delete user }
     @afk.clear
 
     list_players # playersLogic.rb
@@ -74,8 +74,8 @@ module StateLogic
     @state = const["states"]["waiting"]
     @pick = 0
     
-    @authnames.reject! { |k, v| !@players.key? k }
-    @spoken.reject! { |k, v| !@players.key? k }
+    @authnames.reject! { |k, v| !@signups.key? k }
+    @spoken.reject! { |k, v| !@signups.key? k }
 
     next_server
     next_map
@@ -86,7 +86,7 @@ module StateLogic
   end
   
   def list_afk
-    message "#{ rjust "AFK players:" } #{ check_afk(@players.keys).join(", ") }"
+    message "#{ rjust "AFK players:" } #{ check_afk(@signups.keys).join(", ") }"
   end
   
   def picking? 

@@ -6,5 +6,6 @@ class User < ActiveRecord::Base
   has_many :players
   has_many :stats, :through => :players
   
-  validates :name, :presence => true
+  validates :name, :presence => true # TODO: Rename nick to name.
+  validates :auth, :presence => true # TODO: Rename authname to auth.
 end

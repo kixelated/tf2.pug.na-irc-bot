@@ -14,7 +14,6 @@ module Variables
     @map = const["maps"].first
   
     @signups = {}
-    @players = {}
     @spoken = {}
     @afk = []
 
