@@ -1,18 +1,8 @@
 module StateLogic
   def attempt_afk
-    if @state == const["states"]["waiting"] and minimum_players?
-      @state = const["states"]["afk"]
-      
-      @afk = check_afk @signups.keys
-      start_afk unless @afk.empty?
-      
-      attempt_picking
-    end
-  end
-  
-  def attempt_picking
-    unless start_delay and start_picking 
-      @state = const["states"]["waiting"]
+    if state? "waiting" and minimum_players?
+      start_afk
+      attempt_delay
     end
   end
   
@@ -21,8 +11,13 @@ module StateLogic
       !@spoken[user] or (Time.now - @spoken[user]).to_i > const["settings"]["afk"]
     end
   end
-
+  
   def start_afk
+    state "afk"
+  
+    @afk = check_afk @signups.keys
+    return if @afk.empty?
+  
     message "#{ colourize rjust("AFK players:"), const["colours"]["yellow"] } #{ @afk.join(", ") }"
     
     @afk.each do |p|
@@ -30,39 +25,55 @@ module StateLogic
     end
     
     sleep const["delays"]["afk"]
+    
+    # return if not needed
+    return unless @state == const["states"]["afk"]
 
     # check again if users are afk, this time removing the ones who are
     check_afk(@afk).each { |user| @signups.delete user }
     @afk.clear
 
-    list_players # playersLogic.rb
+    list_players # logic/players.rb
+  end
+  
+  def attempt_delay
+    if state? "afk"
+      if minimum_players?
+        start_delay
+        attempt_picking
+      else 
+        state "waiting"
+      end
+    end
   end
   
   def start_delay
-    if minimum_players?
-      @state = const["states"]["delay"]
-      
-      message colourize "Teams are being drafted, captains will be selected in #{ const["delays"]["picking"] } seconds", const["colours"]["yellow"]
-      sleep const["delays"]["picking"]
-      
-      true
+    state "delay"
+        
+    message colourize "Teams are being drafted, captains will be selected in #{ const["delays"]["picking"] } seconds", const["colours"]["yellow"]
+    sleep const["delays"]["picking"]
+  end
+  
+  def attempt_picking
+    if state? "delay"
+      if minimum_players? 
+        start_picking
+      else
+        state "waiting"
+      end
     end
   end
   
   def start_picking
-    if minimum_players?
-      @state = const["states"]["picking"]
-      
-      update_lookup # pickingLogic.rb
-      choose_captains # pickingLogic.rb
-      tell_captain # pickingLogic.rb
-      
-      true
-    end
+    state "picking"
+    
+    update_lookup # logic/picking.rb
+    choose_captains # logic/picking.rb
+    tell_captain # logic/picking.rb
   end
   
   def end_picking
-    @state = const["states"]["server"]
+    state "server"
   end
   
   def end_game
@@ -71,7 +82,7 @@ module StateLogic
     @lookup.clear
 
     @last = Time.now
-    @state = const["states"]["waiting"]
+    state "waiting"
     @pick = 0
     
     @authnames.reject! { |k, v| !@signups.key? k }
@@ -89,8 +100,12 @@ module StateLogic
     message "#{ rjust "AFK players:" } #{ check_afk(@signups.keys).join(", ") }"
   end
   
-  def picking? 
-    @state == const["states"]["picking"]
+  def state s
+    @state = const["states"][s]
+  end
+
+  def state? s
+    @state == const["states"][s]
   end
 
   def can_add?

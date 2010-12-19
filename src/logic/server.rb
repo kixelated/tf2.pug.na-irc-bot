@@ -15,7 +15,7 @@ module ServerLogic
     
     @server.clvl @map
     @server.cpswd @server.pswd
-    @server.command "sm_rtv_initialdelay 30.0"
+    @server.command "sm_rtv_initialdelay 30.0" # TODO: Test this, people have reported it doesn't work.
   end
   
   def announce_server

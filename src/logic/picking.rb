@@ -34,14 +34,14 @@ module PickingLogic
     lookup_i = @lookup.invert
     
     # Displays the classes that are not yet full for this team
-    classes_needed(current_team.get_classes).each do |k, v| # playersLogic.rb
+    classes_needed(current_team.get_classes).each do |k, v| # logic/players.rb
       output = classes[k].collect { |player| "(#{ lookup_i[player] }) #{ player }" }
       notice current_captain, "#{ bold rjust("#{ v } #{ k }:") } #{ output.join(", ") }"
     end
   end
   
   def list_captain user
-    return notice(user, "Picking has not started.") unless picking? # stateLogic.rb
+    return notice(user, "Picking has not started.") unless state? "picking" # logic/state.rb
  
     message "It is #{ current_captain }'s turn to pick"
   end
@@ -55,11 +55,11 @@ module PickingLogic
   end
   
   def pick_player_avaliable? player_class
-    classes_needed(current_team.get_classes).key? player_class # playersLogic.rb
+    classes_needed(current_team.get_classes).key? player_class # logic/players.rb
   end
 
   def pick_player user, player, player_class
-    return notice(user, "Picking has not started.") unless picking? # stateLogic.rb
+    return notice(user, "Picking has not started.") unless state? "picking" # logic/state.rb
     return notice(user, "It is not your turn to pick.") unless can_pick? user
 
     player.downcase!
@@ -88,16 +88,16 @@ module PickingLogic
   end
   
   def final_pick
-    end_picking # stateLogic.rb
+    end_picking # logic/state.rb
   
     update_captain
     create_match
-    start_server # serverLogic.rb
+    start_server # logic/server.rb
 
     announce_teams
-    announce_server # serverLogic.rb
+    announce_server # logic/server.rb
     
-    end_game # stateLogic.rb
+    end_game # logic/state.rb
   end
   
   def update_captain
@@ -134,8 +134,7 @@ module PickingLogic
   
   def list_format
     output = Array.new(const["teams"]["total"] - const["teams"]["count"]).collect do |i| 
-      details = const["teams"]["details"][pick_format(i)]
-      output << (colourize details["name"], details["colour"])
+      output << (colourize "#{ i }", const["teams"]["details"][pick_format(i)]["colour"])
     end
     message "The picking format is: #{ output.join(" ") }"
   end

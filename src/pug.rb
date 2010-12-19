@@ -61,6 +61,10 @@ class Pug
   
   def channel m
     @spoken[m.user.nick] = Time.now
+    
+    if @afk.delete m.user.nick and @afk.empty?
+      attempt_delay # stateLogic.rb
+    end
   end
   
   def nick m

@@ -6,7 +6,7 @@ module PlayersLogic
     u = User(user)
     user.downcase!
     
-    return notice user, "You cannot add at this time, please wait for picking to end." unless can_add? # stateLogic.rb
+    return notice user, "You cannot add at this time, please wait for picking to end." unless can_add? # logic/state.rb
     return notice user, "You must be registered with GameSurge in order to play in this channel. http://www.gamesurge.net/newuser/" unless u.authed?
 
     classes.collect! { |clss| clss.downcase }
@@ -26,7 +26,7 @@ module PlayersLogic
   end
 
   def remove_player user
-    return notice user, "You cannot remove at this time." unless can_remove? # stateLogic.rb
+    return notice user, "You cannot remove at this time." unless can_remove? # logic/state.rb
 
     @signups.delete user
   end
