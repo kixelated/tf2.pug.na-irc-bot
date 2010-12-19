@@ -141,7 +141,7 @@ module PickingLogic
     end
   
     @teams.each do |team|
-      team.players.each do |user, clss|
+      team.signups.each do |user, clss|
         private user, "You have been picked for #{ team.colourize team, 0 } as #{ clss }. The server info is: #{ @server.connect_info }" 
       end
     end
