@@ -58,6 +58,11 @@ maps:
   - cp_gullywash_imp3
   - cp_yukon
 
+mumble:
+  ip: chi6.eoreality.net
+  port: 64746
+  password: tf2pug
+
 reward:
   ratio: .4
   classes:

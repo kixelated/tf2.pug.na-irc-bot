@@ -20,7 +20,7 @@ module ServerLogic
   
   def announce_server
     message "The pug will take place on #{ @server.to_s } with the map #{ @map }."
-    message advertisement
+    advertisement
   end
   
   def change_map map
@@ -33,11 +33,16 @@ module ServerLogic
 
   def list_server
     message "#{ @server.connect_info }"
-    message advertisement
+    advertisement
   end  
   
   def list_map
     message "The current map is #{ @map }"
+  end
+  
+  def list_mumble
+    message "Mumble server info: #{ const["mumble"]["ip"] }:#{ const["mumble"]["port"] } #{ "password: #{ const["mumble"]["password"] }" if const["mumble"]["password"] }"
+    advertisement
   end
   
   def list_last
@@ -58,6 +63,6 @@ module ServerLogic
   end
   
   def advertisement
-    "Servers are provided by #{ colourize "End", const["colours"]["orange"] } of #{ colourize "Reality", const["colours"]["orange"] }: #{ colourize "http://eoreality.net", const["colours"]["orange"] } #eoreality"
+    message "Servers are provided by #{ colourize "End", const["colours"]["orange"] } of #{ colourize "Reality", const["colours"]["orange"] }: #{ colourize "http://eoreality.net", const["colours"]["orange"] } #eoreality"
   end
 end

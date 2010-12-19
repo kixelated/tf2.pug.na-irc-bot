@@ -136,8 +136,7 @@ class Pug
   
   # !mumble
   def mumble m
-    message "The Mumble IP is: chi6.eoreality.net:64746 password: tf2pug"
-    message advertisement
+    list_mumble # logic/server.rb
   end
 
   # !map
