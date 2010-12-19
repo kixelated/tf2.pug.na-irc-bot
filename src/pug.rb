@@ -91,12 +91,17 @@ class Pug
   # !list, !players
   def list m
     list_players # logic/players.rb
-    list_players_detailed # logic/players.rb
+    
+    if state? "picking" and current_captain == m.user.nick
+      list_players_numbers # logic/players.rb
+    else
+      list_players_detailed # logic/players.rb
+    end
   end
   
   # !need
   def need m
-    list_classes_needed # logic/players.rb
+    list_classes_needed if can_add? # logic/players.rb
   end
 
   # !pick

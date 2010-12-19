@@ -81,9 +81,20 @@ module PlayersLogic
   end
 
   def list_players_detailed
-    temp = get_classes
+    classes = get_classes
+
     const["teams"]["classes"].each_key do |k|
-      message "#{ colourize rjust("#{ k }:"), const["colours"]["lgrey"] } #{ temp[k].join(", ") }" unless temp[k].empty?
+      message "#{ colourize rjust("#{ k }:"), const["colours"]["lgrey"] } #{ classes[k].join(", ") }" unless classes[k].empty?
+    end
+  end
+  
+  def list_players_numbers
+    classes = get_classes
+    lookup_i = @lookup.invert
+    
+    const["teams"]["classes"].each_key do |k|
+      output = classes[k].collect { |p| "(#{ lookup_i[p] }) #{ p }" }
+      message "#{ colourize rjust("#{ k }:"), const["colours"]["lgrey"] } #{ output.join(", ") }" unless classes[k].empty?
     end
   end
  
