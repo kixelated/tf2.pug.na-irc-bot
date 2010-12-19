@@ -108,7 +108,7 @@ class Pug
   
   # !mumble
   def mumble m
-    message "The Mumble IP is: chi6.eoreality.net:64746 password: tf2pug"
+    message "The Mumble IP is: chi6.eoreality.net:64746 password: tf2pug. Download Mumble here: http://mumble.sourceforge.net/"
     message advertisement
   end
 
