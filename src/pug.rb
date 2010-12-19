@@ -33,6 +33,7 @@ class Pug
   match /afk/i, method: :afk
   
   match /pick ([\S]+) ([\S]+)/i, method: :pick
+  match /random ([\S]+)/i, method: :random
   match /captain/i, method: :captain
   match /format/i, method: :format
   
@@ -101,6 +102,10 @@ class Pug
   # !pick
   def pick m, player, player_class
     pick_player m.user.nick, player, player_class # logic/picking.rb
+  end
+  
+  def pick m, clss
+    pick_random m.user.nick, clss # logic/picking.rb
   end
   
   # !captain

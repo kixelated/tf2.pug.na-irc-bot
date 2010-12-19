@@ -49,6 +49,13 @@ module PickingLogic
  
     message "It is #{ current_captain }'s turn to pick"
   end
+  
+  def pick_random user, player_class
+    classes = get_classes[player_class]
+    player = classes[rand(classes.length)]
+    
+    pick_player user, player, player_class
+  end
 
   def can_pick? user
     current_captain == user
