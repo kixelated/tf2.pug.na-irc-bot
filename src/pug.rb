@@ -1,10 +1,9 @@
-require './logicPlayers.rb'
-require './logicPicking.rb'
-require './logicState.rb'
-require './logicServer.rb'
+require 'cinch'
 
-require './team.rb'
-require './server.rb'
+require './logic/players.rb'
+require './logic/picking.rb'
+require './logic/state.rb'
+require './logic/server.rb'
 
 require './variables.rb'
 require './util.rb'

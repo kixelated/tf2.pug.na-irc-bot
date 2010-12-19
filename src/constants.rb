@@ -1,7 +1,5 @@
 require 'yaml'
 
-require './util.rb'
-
 module Constants
   @@const = YAML.load_file '../cfg/constants.yml'
 
