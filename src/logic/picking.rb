@@ -73,7 +73,7 @@ module PickingLogic
     return notice(user, "Picking has not started.") unless state? "picking" # logic/state.rb
     return notice(user, "It is not your turn to pick.") unless can_pick? user
 
-    player.downcase!
+    # TODO: Make player case-insensitive
     player_class.downcase!
     
     unless pick_player_valid? player, player_class
@@ -87,10 +87,14 @@ module PickingLogic
     current_team.signups[player] = player_class
     @signups.delete player
     
-    @pick += 1
-    
     message "#{ current_team.colourize user } picked #{ player } as #{ player_class }"
     
+    next_pick
+  end
+  
+  def next_pick
+    @pick += 1
+  
     if @pick >= const["teams"]["total"] - const["teams"]["count"]
       final_pick
     else 

@@ -104,7 +104,8 @@ class Pug
     pick_player m.user.nick, player, player_class # logic/picking.rb
   end
   
-  def pick m, clss
+  # !random
+  def random m, clss
     pick_random m.user.nick, clss # logic/picking.rb
   end
   
