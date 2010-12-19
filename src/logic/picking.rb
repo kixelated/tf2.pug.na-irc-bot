@@ -1,5 +1,8 @@
-require './player.rb'
-require './match.rb'
+require '../model/team.rb'
+require '../model/match.rb'
+require '../model/player.rb'
+require '../model/stat.rb'
+require '../model/user.rb'
 
 module PickingLogic
   def choose_captains

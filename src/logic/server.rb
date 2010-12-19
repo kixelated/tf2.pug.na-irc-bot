@@ -1,4 +1,4 @@
-require 'rcon'
+require '../server.rb'
 
 module ServerLogic
   def start_server
