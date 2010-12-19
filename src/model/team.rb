@@ -11,7 +11,7 @@ class Team < ActiveRecord::Base
   has_many :players
   has_many :stats, :though => :players
   has_many :matches, :though => :players
-  
+
   attr_accessor :captain, :colour, :signups
   
   validates :name, :presence => true

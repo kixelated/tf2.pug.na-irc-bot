@@ -11,7 +11,11 @@ module PickingLogic
     const["teams"]["count"].times do |i|
       captain = possible_captains.delete_at rand(possible_captains.length)
       
-      @teams << Team.new(:name => const["teams"]["details"][i]["name"], :colour => const["teams"]["details"][i]["colour"], :captain => captain)
+      @teams << Team.new(
+        :name => const["teams"]["details"][i]["name"], 
+        :colour => const["teams"]["details"][i]["colour"], 
+        :captain => captain
+      )
       @signups.delete captain
 
       notice captain, "You have been selected as a captain. When it is your turn to pick, you can choose players with the '!pick num' or '!pick name' command."
@@ -89,8 +93,8 @@ module PickingLogic
   
   def final_pick
     end_picking # logic/state.rb
-  
-    update_captain
+    update_captains
+    
     create_match
     start_server # logic/server.rb
 
@@ -100,24 +104,35 @@ module PickingLogic
     end_game # logic/state.rb
   end
   
-  def update_captain
+  def update_captains
     @teams.each do |team|
-      team.players[team.captain] = classes_needed(team.get_classes).keys.first
+      team.signups[team.captain] = classes_needed(team.get_classes).keys.first
     end
   end
-  
+ 
   def create_match
     match = Match.create
     
     @teams.each do |team|
-      team.save # notice: teams have not been saved up to this point just in case of !endgame
+      team.save # teams have not been saved up to this point just in case of !endgame
       match.teams << team
       
-      team.signups.each do |player, clss|
-        user = User.find_by_auth(User(player).authname)
-        match.players.create(:team => team, :user => user).stats.create(:class => clss)
+      # Create each player's statistics
+      team.signups.each do |user, clss|
+        p = create_player user, match, team
+        
+        create_stat p, "captain" if user == team.captain # captain gets counted twice
+        create_stat p, clss
       end
     end
+  end
+  
+  def create_player user, match, team
+    User.find_by_auth(@auth[user]).players.create(:match => match, :team => team)
+  end
+  
+  def create_stat player, clss
+    player.stats.create(:class => clss)
   end
   
   def announce_teams

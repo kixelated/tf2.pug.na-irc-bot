@@ -78,14 +78,13 @@ module StateLogic
   
   def end_game
     @teams.clear
-    @captains.clear
     @lookup.clear
 
     @last = Time.now
     state "waiting"
     @pick = 0
     
-    @authnames.reject! { |k, v| !@signups.key? k }
+    @auth.reject! { |k, v| !@signups.key? k }
     @spoken.reject! { |k, v| !@signups.key? k }
 
     next_server
