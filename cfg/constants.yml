@@ -1,9 +1,14 @@
 irc:
   server: irc.gamesurge.net
   port: 6667
-  channel: '#tf2.pug.na.beta'
   local_host: 
+  
   nick: IRCCompanionTest
+  channel: '#tf2.pug.na.beta'
+  
+  auth: 
+  auth_password:
+  auth_serv: AuthServ
   
 messengers:
   count: 0

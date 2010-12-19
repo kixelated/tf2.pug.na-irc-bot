@@ -94,7 +94,7 @@ module Cinch
 
     # @yield
     def initialize(&b)
-      @logger = Logger::FormattedLogger.new($stderr)
+      @logger = Logger::FormattedLogger.new($stdout)
       @events = {}
       @config = OpenStruct.new({
                                  :server => "localhost",
@@ -117,7 +117,10 @@ module Cinch
                                                             }),
                                  :channels => [],
                                  :encoding => Encoding.default_external,
-                                 :vhost => nil,
+                                 :local_host => nil,
+                                 :auth => nil,
+                                 :auth_pass => nil,
+                                 :auth_serv => "AuthServ"
                                })
 
       @semaphores_mutex = Mutex.new
@@ -128,6 +131,8 @@ module Cinch
       @quit = false
 
       on :connect do
+        bot.auth if bot.config.auth
+      
         bot.config.channels.each do |channel|
           bot.join channel
         end
@@ -385,6 +390,10 @@ module Cinch
       Channel(channel).part(reason)
     end
 
+    # Authorize with AuthServ or NameServ
+    def auth
+      raw "PRIVMSG #{ @config.auth_serv } AUTH #{ @config.auth } #{ @config.auth_password }"
+    end
 
     # The bot's nickname.
     # @overload nick=(new_nick)
