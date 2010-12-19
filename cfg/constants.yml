@@ -8,12 +8,12 @@ irc:
 messengers:
   count: 0
   nick: IRCMessengerTes
+  mps: 0.5
 
 delays: 
   afk: 45
   picking: 45
   server: 30
-  message: 0.1
   
 settings:
   afk: 600

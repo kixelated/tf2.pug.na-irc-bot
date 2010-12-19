@@ -3,7 +3,7 @@ require './constants.rb'
 require './botMaster.rb'
 require './botMessenger.rb'
 
-mainbot = Thread.new do
+Thread.new do
   BotMaster.new.start
 end
 
@@ -15,4 +15,4 @@ Constants.const["messengers"]["count"].times do |i|
   end
 end
 
-mainbot.join
+BotManager.instance.start

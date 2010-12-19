@@ -8,6 +8,8 @@ class BotManager
   
   def initialize
     @bots = []
+    @queue = Queue.new
+    @quit = false
   end
   
   def add bot
@@ -15,20 +17,35 @@ class BotManager
   end
   
   def quit
-    @bots.reject! { |bot| bot.quit }
+    @bots.each { |bot| bot.quit }
+    @quit = true
   end
   
   def select
     @bots.push(@bots.shift).first
   end
-
-  def msg channel, msg
-    select.msg channel, msg
-    sleep const["delays"]["message"]
+  
+  def msg(to, message)
+    @queue << { :type => "msg", :to => to, :message => message }
   end
   
-  def notice channel, msg
-    select.notice channel, msg
-    sleep const["delays"]["message"]
+  def notice(to, message)
+    @queue << { :type => "notice", :to => to, :message => message }
+  end
+  
+  def start
+    while not @quit
+      unless @queue.empty?
+        m = @queue.pop
+        
+        if m.type == "msg"
+          select.msg m.to, m.message
+        else 
+          select.notice m.to, m.message
+        end
+        
+        sleep 1.0 / const["messengers"]["mpstotal"]
+      end
+    end
   end
 end
