@@ -1,4 +1,4 @@
-require 'open-uri'
+#require 'open-uri'
 
 module Utilities
   def rjust msg, justify = const["formatting"]["justify"]
@@ -21,7 +21,7 @@ module Utilities
   def bold msg
     "\x02#{ msg.to_s }\x02"
   end
-  
+=begin
   def isvalidsteamid? steamid
     steamid =~ /^STEAM_0:[01]:[0-9]{7,8}$/
   end
@@ -41,7 +41,7 @@ module Utilities
     content = file.read
     content.include?(code)
   end
-  
+=end
 end
 
 class Hash

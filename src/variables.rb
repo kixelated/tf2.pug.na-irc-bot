@@ -1,5 +1,6 @@
 require './constants.rb'
-require './server.rb'
+
+require './model/server.rb'
 
 module Variables
   include Constants
@@ -12,12 +13,11 @@ module Variables
     @server = @servers.first
     @map = const["maps"].first
   
+    @signups = {}
     @players = {}
-    @authnames = {}
     @spoken = {}
     @afk = []
 
-    @captains = []
     @teams = []
     @lookup = {}
     
