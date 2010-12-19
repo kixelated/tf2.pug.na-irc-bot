@@ -14,6 +14,7 @@ module Variables
     @map = const["maps"].first
   
     @signups = {}
+    @auth = {} # A backup of nicks to authnames in case somebody disconnects during picking
     @spoken = {}
     @afk = []
 

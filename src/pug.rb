@@ -35,6 +35,9 @@ class Pug
   match /captain/i, method: :captain
   match /format/i, method: :format
   
+  match /stats ([\S]+)/i, method: :stats
+  match /nick/i, method: :update_nick
+  
   match /map/i, method: :map
   match /server/i, method: :server
   match /ip/i, method: :server
@@ -42,7 +45,6 @@ class Pug
   
   match /man/i, method: :help
   match /mumble/i, method: :mumble
-  match /stats/i, method: :stats
   
   match /force ([\S]+) (.+)/i, method: :admin_force
   match /replace ([\S]+) ([\S]+)/i, method: :admin_replace
@@ -63,7 +65,7 @@ class Pug
     @spoken[m.user.nick] = Time.now
     
     if @afk.delete m.user.nick and @afk.empty?
-      attempt_delay # stateLogic.rb
+      attempt_delay # logic/state.rb
     end
   end
   
@@ -73,41 +75,51 @@ class Pug
 
   # !add
   def add m, args
-    if add_player m.user.nick, args.split(/ /) # playersLogic.rb
-      list_players # playersLogic.rb
-      attempt_afk # stateLogic.rb
+    if add_player m.user.nick, args.split(/ /) # logic/players.rb
+      list_players # logic/players.rb
+      attempt_afk # logic/state.rb
     end
   end
 
   # !remove, (quit), (part)
   def remove m
-    list_players if remove_player m.user.nick # playersLogic.rb
+    list_players if remove_player m.user.nick # logic/players.rb
   end
   
   # !list, !players
   def list m
-    list_players # playersLogic.rb
-    list_players_detailed # playersLogic.rb
+    list_players # logic/players.rb
+    list_players_detailed # logic/players.rb
   end
   
   # !need
   def need m
-    list_classes_needed # playersLogic.rb
+    list_classes_needed # logic/players.rb
   end
 
   # !pick
   def pick m, player, player_class
-    pick_player m.user.nick, player, player_class # pickingLogic.rb
+    pick_player m.user.nick, player, player_class # logic/picking.rb
   end
   
   # !captain
   def captain m
-    list_captain m.user.nick # pickingLogic.rb
+    list_captain m.user.nick # logic/picking.rb
   end
   
   # !format
   def format m
-    list_format # pickingLogic.rb
+    list_format # logic/picking.rb
+  end
+  
+  # !stats
+  def stats m, user
+    list_stats user # logic/players.rb
+  end
+  
+  # !nick
+  def update_nick m, nick
+    update_player m.user, nick # logic/players.rb
   end
   
   # !mumble
@@ -118,17 +130,17 @@ class Pug
 
   # !map
   def map m
-    list_map # serverLogic.rb
+    list_map # logic/server.rb
   end
   
   # !server
   def server m
-    list_server # serverLogic.rb
+    list_server # logic/server.rb
   end
   
   # !last
   def last m
-    list_last # serverLogic.rb
+    list_last # logic/server.rb
   end
   
   # !man
@@ -136,13 +148,9 @@ class Pug
     message "The avaliable commands are: !add, !remove, !list, !need, !pick, !captain, !mumble, !map, !server"
   end
   
-  def stats m
-    notice m.user, "Stats have not yet been implemented."
-  end
-  
   # !afk
   def afk m
-    list_afk # stateLogic.rb
+    list_afk # logic/state.rb
   end
 
   # !changemap
@@ -181,9 +189,9 @@ class Pug
   def admin_force m, player, args
     return unless require_admin m
     
-    if add_player User(player), args.split(/ /) # playersLogic.rb
-      list_players # playersLogic.rb
-      attempt_afk # stateLogic.rb
+    if add_player User(player), args.split(/ /) # logic/players.rb
+      list_players # logic/players.rb
+      attempt_afk # logic/state.rb
     end
   end
   
@@ -191,7 +199,7 @@ class Pug
   def admin_replace m, user, replacement
     return unless require_admin m
     
-    list_players if replace_player User(user), User(replacement) # pickingLogic.rb
+    list_players if replace_player User(user), User(replacement) # logic/picking.rb
   end
   
   # !endgame
