@@ -16,6 +16,9 @@ module ServerLogic
     @server.clvl @map["file"]
     @server.cpswd @server.pswd
     @server.command "sm_rtv_initialdelay 30.0" # TODO: Test this, people have reported it doesn't work.
+    
+    @last_maps << @map
+    @last_maps.shift if @last_maps.size > const["rotation"]["exclude"]
   end
   
   def announce_server
@@ -52,10 +55,14 @@ module ServerLogic
     @server = @servers[(@servers.index(@server) + 1) % @servers.size]
   end
   
-  def next_map
-    num = rand const["mapweight"]
-    
-    const["maps"].each do |map|
+  def next_map 
+    maps = const["rotation"]["maps"].reject { |map| @last_maps.include? map }
+   
+    weight = 0
+    maps.each { |map| weight += map["weight"] }
+  
+    num = rand weight
+    maps.each do |map|
       num -= map["weight"]
       return (@map = map) if num < 0
     end

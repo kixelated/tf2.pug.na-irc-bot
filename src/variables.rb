@@ -11,7 +11,8 @@ module Variables
     end
   
     @server = @servers.first
-    @map = const["maps"].first
+    @prev_maps = []
+    next_map
   
     @signups = {}
     @auth = {} # A backup of nicks to authnames in case somebody disconnects during picking

@@ -16,9 +16,6 @@ module Constants
     const["teams"]["total"] = const["teams"]["players"] * const["teams"]["count"]
     
     const["messengers"]["mpstotal"] = (1 + const["messengers"]["count"]) * const["messengers"]["mps"]
-    
-    const["mapweight"] = 0 
-    const["maps"].each { |map| const["mapweight"] += map.weight }
   end
 end
 
