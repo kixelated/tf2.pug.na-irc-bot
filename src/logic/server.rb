@@ -13,22 +13,18 @@ module ServerLogic
       @server.connect
     end
     
-    @server.clvl @map
+    @server.clvl @map["file"]
     @server.cpswd @server.pswd
     @server.command "sm_rtv_initialdelay 30.0" # TODO: Test this, people have reported it doesn't work.
   end
   
   def announce_server
-    message "The pug will take place on #{ @server.to_s } with the map #{ @map }."
+    message "The pug will take place on #{ @server.to_s } with the map #{ @map["name"] }."
     advertisement
   end
   
   def change_map map
     @map = map
-  end
-  
-  def change_server ip, port, pass, rcon
-    @server = Server.new(ip, port, pass, rcon)
   end
 
   def list_server
@@ -37,7 +33,7 @@ module ServerLogic
   end  
   
   def list_map
-    message "The current map is #{ @map }"
+    message "The current map is #{ @map["name"] }"
   end
   
   def list_mumble
@@ -53,13 +49,16 @@ module ServerLogic
   end
   
   def next_server
-    return @server = @servers.first unless @servers.include? @server
     @server = @servers[(@servers.index(@server) + 1) % @servers.size]
   end
   
   def next_map
-    return @map = const["maps"].first unless const["maps"].include? @map
-    @map = const["maps"][(const["maps"].index(@map) + 1) % const["maps"].size]
+    num = rand const["mapweight"]
+    
+    const["maps"].each do |map|
+      num -= map["weight"]
+      return (@map = map) if num < 0
+    end
   end
   
   def advertisement

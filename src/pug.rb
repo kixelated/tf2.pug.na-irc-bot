@@ -19,6 +19,10 @@ class Pug
   include StateLogic
   include ServerLogic
   
+  message "Player related commands: !add, !remove, !list, !need, !afk, !stats, !nick"
+  message "Captain related comands: !pick, !random, !captain, !format, !list, !state"
+  message "Server related commands: !ip, !map, !mumble, !last"
+
   listen_to :channel, method: :channel
   listen_to :join, method: :join
   listen_to :part, method: :remove
@@ -31,22 +35,22 @@ class Pug
   match /players/i, method: :list
   match /need/i, method: :need
   match /afk/i, method: :afk
+  match /stats ([\S]+)/i, method: :stats
+  match /nick/i, method: :update_nick
   
   match /pick ([\S]+) ([\S]+)/i, method: :pick
   match /random ([\S]+)/i, method: :random
   match /captain/i, method: :captain
   match /format/i, method: :format
-  
-  match /stats ([\S]+)/i, method: :stats
-  match /nick/i, method: :update_nick
+  match /state/i, method: :state
   
   match /map/i, method: :map
   match /server/i, method: :server
   match /ip/i, method: :server
   match /last/i, method: :last
+  match /mumble/i, method: :mumble
   
   match /man/i, method: :help
-  match /mumble/i, method: :mumble
   
   match /force ([\S]+) (.+)/i, method: :admin_force
   match /replace ([\S]+) ([\S]+)/i, method: :admin_replace
@@ -124,6 +128,11 @@ class Pug
     list_format # logic/picking.rb
   end
   
+  # !state
+  def state m
+    list_state # logic/state.rb
+  end
+  
   # !stats
   def stats m, user
     list_stats user.nick # logic/players.rb
@@ -170,14 +179,6 @@ class Pug
     
     change_map map
     list_map
-  end
-  
-  # changeserver
-  def admin_changeserver m, ip, port, pass, rcon
-    return unless require_admin m.user.nick
-    
-    change_server ip, port, pass, rcon
-    list_server
   end
   
   # !nextmap

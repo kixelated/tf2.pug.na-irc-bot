@@ -51,13 +51,42 @@ servers:
     rcon: secret
 
 maps:
-  - cp_badlands
-  - cp_granary
-  - koth_viaduct
-  - cp_coldfront
-  - cp_gullywash_imp3
-  - cp_yukon
-
+  - name: badlands
+    file: cp_badlands
+    weight: 16
+    
+  - name: granary
+    file: cp_granary
+    weight: 12
+    
+  - name: gullywash
+    file: cp_gullywash_imp3
+    weight: 10
+    
+  - name: viaduct
+    file: koth_viaduct
+    weight: 8
+    
+  - name: coldfront
+    file: cp_coldfront
+    weight: 6
+    
+  - name: snakewater
+    file: cp_snakewater_b4
+    weight: 6
+    
+  - name: yukon
+    file: cp_yukon
+    weight: 4
+    
+  - name: ashville
+    file: koth_ashville_rc1
+    weight: 4
+    
+  - name: freight
+    file: cp_freight_final2
+    weight: 4
+    
 mumble:
   ip: chi6.eoreality.net
   port: 64746
