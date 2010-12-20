@@ -45,6 +45,8 @@ module Utilities
 end
 
 class Hash
+# Something tells me these methods might already exist and that I should check.
+=begin
   def collect
     self.class.new.tap do |hash|
       self.each do |k, v|
@@ -58,6 +60,7 @@ class Hash
       self[k] = yield k, v
     end
   end
+=end
 
   # Proper invert, values are not always unique.
   # Input: a => b, c => b, d => e

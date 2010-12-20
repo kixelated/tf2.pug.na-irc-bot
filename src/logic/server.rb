@@ -51,6 +51,11 @@ module ServerLogic
     return message "The last match was started #{ time / 3600 } hours and #{ time / 60 % 60 } minutes ago"
   end
   
+  def list_rotation
+    output = const["rotation"]["maps"].collect { |map| "#{ map["name"] }(#{ map["weight"] })" }
+    message "Map(weight) rotation: #{ output.join(", ") }"
+  end
+  
   def next_server
     @server = @servers[(@servers.index(@server) + 1) % @servers.size]
   end

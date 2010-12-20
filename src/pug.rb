@@ -21,7 +21,7 @@ class Pug
   
   message "Player related commands: !add, !remove, !list, !need, !afk, !stats, !nick"
   message "Captain related comands: !pick, !random, !captain, !format, !list, !state"
-  message "Server related commands: !ip, !map, !mumble, !last"
+  message "Server related commands: !ip, !map, !mumble, !last, !rotation"
 
   listen_to :channel, method: :channel
   listen_to :join, method: :join
@@ -49,14 +49,13 @@ class Pug
   match /ip/i, method: :server
   match /last/i, method: :last
   match /mumble/i, method: :mumble
+  match /rotation/i, method: :rotation
   
   match /man/i, method: :help
   
   match /force ([\S]+) (.+)/i, method: :admin_force
   match /replace ([\S]+) ([\S]+)/i, method: :admin_replace
-  
   match /changemap ([\S]+)/i, method: :admin_changemap
-  match /changeserver ([\S]+) ([\S]+) ([\S]+) ([\S]+)/i, method: :admin_changeserver
   match /nextmap/i, method: :admin_nextmap
   match /nextserver/i, method: :admin_nextserver
   match /reset/i, method: :admin_reset
@@ -161,6 +160,10 @@ class Pug
   # !last
   def last m
     list_last # logic/server.rb
+  end
+  
+  def rotation m
+    list_rotation # logic/server.rb
   end
   
   # !man
