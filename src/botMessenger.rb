@@ -1,5 +1,4 @@
-require 'summer'
-
+require_relative 'summer'
 require_relative 'constants'
 require_relative 'botManager'
 

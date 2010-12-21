@@ -1,5 +1,4 @@
 require 'singleton'
-
 require_relative 'constants'
 
 class BotManager

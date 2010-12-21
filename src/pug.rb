@@ -1,12 +1,12 @@
 require 'cinch'
 
+require_relative 'variables'
+require_relative 'util'
+
 require_relative 'logic/players'
 require_relative 'logic/picking'
 require_relative 'logic/state'
 require_relative 'logic/server'
-
-require_relative 'variables'
-require_relative 'util'
 
 class Pug
   include Cinch::Plugin
@@ -19,10 +19,6 @@ class Pug
   include StateLogic
   include ServerLogic
   
-  message "Player related commands: !add, !remove, !list, !need, !afk, !stats, !nick"
-  message "Captain related comands: !pick, !random, !captain, !format, !list, !state"
-  message "Server related commands: !ip, !map, !mumble, !last, !rotation"
-
   listen_to :channel, method: :channel
   listen_to :join, method: :join
   listen_to :part, method: :remove
@@ -162,13 +158,16 @@ class Pug
     list_last # logic/server.rb
   end
   
+  # !rotation
   def rotation m
     list_rotation # logic/server.rb
   end
   
   # !man
   def help m
-    message "The avaliable commands are: !add, !remove, !list, !need, !pick, !captain, !mumble, !map, !server"
+    message "Player related commands: !add, !remove, !list, !need, !afk, !stats, !nick"
+    message "Captain related comands: !pick, !random, !captain, !format, !list, !state"
+    message "Server related commands: !ip, !map, !mumble, !last, !rotation"
   end
   
   # !afk

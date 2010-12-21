@@ -1,6 +1,5 @@
 require 'cinch'
-
-require 'botManager'
+require_relative 'botManager'
 
 class Quitter
   include Cinch::Plugin
