@@ -13,7 +13,7 @@ irc:
 messengers:
   count: 0
   nick: IRCMessengerTes
-  mps: 0.5
+  mps: 2
 
 delays: 
   afk: 45

@@ -130,19 +130,19 @@ module PickingLogic
       
       # Create each player's statistics
       team.signups.each do |user, clss|
-        p = create_player user, match, team
+        p = create_player_record user, match, team
         
-        create_stat p, "captain" if user == team.captain # captain gets counted twice
-        create_stat p, clss
+        create_stat_record p, "captain" if user == team.captain # captain gets counted twice
+        create_stat_record p, clss
       end
     end
   end
   
-  def create_player user, match, team
+  def create_player_record user, match, team
     User.find_by_auth(@auth[user]).players.create(:match => match, :team => team)
   end
   
-  def create_stat player, clss
+  def create_stat_record player, clss
     player.stats.create(:class => clss)
   end
   
