@@ -1,6 +1,9 @@
 require 'rcon'
+require_relative 'constants'
 
 class Server
+  include Constants
+
   attr_reader :name, :ip, :port, :password, :rcon
   
   def initialize name, ip, port, password, rcon

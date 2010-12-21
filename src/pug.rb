@@ -36,9 +36,9 @@ class Pug
   
   match /pick ([\S]+) ([\S]+)/i, method: :pick
   match /random ([\S]+)/i, method: :random
-  match /captain/i, method: :captain
+  match /captain/i, method: :scaptain
   match /format/i, method: :format
-  match /state/i, method: :state
+  match /state/i, method: :lstate
   
   match /map/i, method: :map
   match /server/i, method: :server
@@ -114,7 +114,7 @@ class Pug
   end
   
   # !captain
-  def captain m
+  def scaptain m
     list_captain m.user # logic/picking.rb
   end
   
@@ -124,7 +124,7 @@ class Pug
   end
   
   # !state
-  def state m
+  def lstate m
     list_state # logic/state.rb
   end
   

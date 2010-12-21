@@ -22,7 +22,7 @@ module PickingLogic
       notice captain, "Remember, you will play the class that you do not pick, so be sure to pick a medic if you do not wish to play medic."
     end
     
-    output = @teams.collect { |team| team.colourize captain }
+    output = @teams.collect { |team| team.my_colourize team.captain }
     message "Captains are #{ output.join(", ") }"
   end
   
@@ -87,7 +87,7 @@ module PickingLogic
     current_team.signups[player] = player_class
     @signups.delete player
     
-    message "#{ current_team.colourize user.nick } picked #{ player } as #{ player_class }"
+    message "#{ current_team.my_colourize user.nick } picked #{ player } as #{ player_class }"
     
     next_pick
   end
@@ -146,7 +146,7 @@ module PickingLogic
   end
   
   def create_stat_record player, clss
-    player.stats.create(:class => clss)
+    player.stats.create(:class_name => clss)
   end
   
   def announce_teams
@@ -156,7 +156,7 @@ module PickingLogic
   
     @teams.each do |team|
       team.signups.each do |nick, clss|
-        private nick, "You have been picked for #{ team.colourize team, 0 } as #{ clss }. The server info is: #{ @server.connect_info }" 
+        private nick, "You have been picked for #{ team.my_colourize team, 0 } as #{ clss }. The server info is: #{ @server.connect_info }" 
       end
     end
   end

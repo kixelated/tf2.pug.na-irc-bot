@@ -4,6 +4,7 @@ require_relative '../util'
 
 class Team < ActiveRecord::Base
   include Constants
+  include Utilities
 
   has_and_belongs_to_many :matches # TODO: Create join table.
   has_and_belongs_to_many :users # TODO: Create join table.
@@ -17,8 +18,13 @@ class Team < ActiveRecord::Base
   validates :name, :presence => true
   validates :captain, :presence => true
   
-  def colourize str, bg = const["colours"]["black"]
-    Utilities::colourize str, @colour, bg
+  def initialize *args
+    super
+    @signups = {}
+  end
+  
+  def my_colourize str, bg = const["colours"]["black"]
+    colourize str, @colour, bg
   end
   
   def get_classes
@@ -26,6 +32,11 @@ class Team < ActiveRecord::Base
   end
   
   def formatted
+    output = @signups.collect { |k, v| "#{ k } as #{ my_colourize v }" }
+    "#{ my_colourize @name }: #{ output.values.join(", ") if output }"
+  end
   
+  def to_s
+    @name
   end
 end

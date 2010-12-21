@@ -14,7 +14,7 @@ module ServerLogic
     end
     
     @server.clvl @map["file"]
-    @server.cpswd @server.pswd
+    @server.cpswd @server.password
     @server.command "sm_rtv_initialdelay 30.0" # TODO: Test this, people have reported it doesn't work.
     
     @prev_maps << @map

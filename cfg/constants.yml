@@ -11,9 +11,9 @@ irc:
   auth_serv: AuthServ
   
 messengers:
-  count: 0
+  count: 1
   nick: IRCMessengerTes
-  mps: 2
+  mps: 0.5
 
 delays: 
   afk: 45

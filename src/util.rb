@@ -1,6 +1,6 @@
 #require 'open-uri'
 
-module Utilities
+module Utilities  
   def rjust msg, justify = const["formatting"]["justify"]
     msg.to_s.rjust(justify)
   end
