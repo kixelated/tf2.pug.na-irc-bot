@@ -159,7 +159,8 @@ module PickingLogic
   end
   
   def list_format
-    output = Array.new(const["teams"]["total"] - const["teams"]["count"]).collect do |i| 
+    output = []
+    (const["teams"]["total"] - const["teams"]["count"]).times do |i|
       output << (colourize "#{ i }", const["teams"]["details"][pick_format(i)]["colour"])
     end
     message "The picking format is: #{ output.join(" ") }"

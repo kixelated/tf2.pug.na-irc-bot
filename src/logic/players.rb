@@ -16,7 +16,7 @@ module PlayersLogic
     create_player user unless User.find_by_auth(user.authname)
 
     @signups[user.nick] = classes
-    @auth[user.nick] = u.authname
+    @auth[user.nick] = user.authname
   end
   
   def create_player user
@@ -51,7 +51,7 @@ module PlayersLogic
   end
   
   def reward_player user
-    unless u = find_by_auth(user.authname)
+    if u = User.find_by_auth(user.authname)
       total = 0
       ratio = calculate_ratios u
       const["reward"]["classes"].each { |clss| total += ratio[clss] }
@@ -107,21 +107,21 @@ module PlayersLogic
     message "#{ rjust "Required classes:" } #{ o.join(", ") }"
   end
   
-  def calculate_ratios player
-    total = player.players.count
+  def calculate_ratios user
+    total = user.players.count
     
     Hash.new.tap do |ratios|
-      player.stats.group("class").each { |stat| ratios[stat.class] = stat.count / total }
+      user.stats.group("class").each { |stat| ratios[stat.class] = stat.count / total }
       ratios.default = 0
     end
   end
 
-  def list_stats user, nick
+  def list_stats nick
     u = User.find_by_name(nick)
     u = User.find_by_auth(nick) unless u
     u = User.find_by_auth(User(nick).authname) unless u or !User(nick)
     
-    return notice user, "No user found by that name." unless u
+    return message "There are no records of the user #{ nick }" unless u
     
     output = calculate_ratios(u).collect { |clss, percent| "#{ (percent * 100).floor }% #{ clss }" }
     

@@ -130,7 +130,11 @@ class Pug
   
   # !stats
   def stats m, user
-    list_stats m.user, user # logic/players.rb
+    if user == "me"
+      list_stats m.user.nick # logic/players.rb
+    else
+      list_stats user # logic/players.rb
+    end
   end
   
   # !nick

@@ -40,7 +40,7 @@ module ServerLogic
   end
   
   def list_mumble
-    message "Mumble server info: #{ const["mumble"]["ip"] }:#{ const["mumble"]["port"] } #{ "password: #{ const["mumble"]["password"] }. Download Mumble here: http://mumble.sourceforge.net/" if const["mumble"]["password"] }"
+    message "Mumble server info: #{ const["mumble"]["ip"] }:#{ const["mumble"]["port"] } #{ "password: #{ const["mumble"]["password"] }" if const["mumble"]["password"] } . Download Mumble here: http://mumble.sourceforge.net/"
     advertisement
   end
   
