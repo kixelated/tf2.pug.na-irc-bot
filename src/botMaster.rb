@@ -1,9 +1,9 @@
 require 'cinch'
 
-require './constants.rb'
-require './botManager.rb'
-require './pug.rb'
-require './quitter.rb'
+require_relative 'constants'
+require_relative 'botManager'
+require_relative 'pug'
+require_relative 'quitter'
 
 class BotMaster < Cinch::Bot
   include Constants

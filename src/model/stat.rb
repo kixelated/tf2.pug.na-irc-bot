@@ -1,4 +1,4 @@
-require '../database.rb'
+require_relative '../database'
 
 class Stat < ActiveRecord::Base
   belongs_to :player

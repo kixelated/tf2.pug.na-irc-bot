@@ -1,4 +1,4 @@
-require '../server.rb'
+require_relative '../server'
 
 module ServerLogic
   def start_server

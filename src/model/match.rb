@@ -1,4 +1,4 @@
-require '../database.rb'
+require_relative '../database'
 
 class Match < ActiveRecord::Base
   has_and_belongs_to_many :teams # TODO: Create join table.

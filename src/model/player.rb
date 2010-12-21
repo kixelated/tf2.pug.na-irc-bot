@@ -1,4 +1,4 @@
-require '../database.rb'
+require_relative '../database'
 
 class Player < ActiveRecord::Base
   belongs_to :match

@@ -1,7 +1,7 @@
 require 'summer'
 
-require './constants.rb'
-require './botManager.rb'
+require_relative 'constants'
+require_relative 'botManager'
 
 class BotMessenger < Summer::Connection
   include Constants

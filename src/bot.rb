@@ -1,7 +1,7 @@
-require './constants.rb'
+require_relative 'constants'
 
-require './botMaster.rb'
-require './botMessenger.rb'
+require_relative 'botMaster'
+require_relative 'botMessenger'
 
 Thread.new do
   BotMaster.new.start

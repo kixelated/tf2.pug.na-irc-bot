@@ -1,6 +1,6 @@
-require './constants.rb'
+require_relative 'constants'
 
-require './model/server.rb'
+require_relative 'model/server'
 
 module Variables
   include Constants

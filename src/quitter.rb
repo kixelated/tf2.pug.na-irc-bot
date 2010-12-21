@@ -1,6 +1,6 @@
 require 'cinch'
 
-require './botManager.rb'
+require 'botManager'
 
 class Quitter
   include Cinch::Plugin

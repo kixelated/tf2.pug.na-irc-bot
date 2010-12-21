@@ -1,12 +1,12 @@
 require 'cinch'
 
-require './logic/players.rb'
-require './logic/picking.rb'
-require './logic/state.rb'
-require './logic/server.rb'
+require_relative 'logic/players'
+require_relative 'logic/picking'
+require_relative 'logic/state'
+require_relative 'logic/server'
 
-require './variables.rb'
-require './util.rb'
+require_relative 'variables'
+require_relative 'util'
 
 class Pug
   include Cinch::Plugin

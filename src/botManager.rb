@@ -1,6 +1,6 @@
 require 'singleton'
 
-require './constants.rb'
+require_relative 'constants'
 
 class BotManager
   include Singleton

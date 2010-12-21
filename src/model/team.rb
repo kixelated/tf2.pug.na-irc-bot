@@ -1,6 +1,6 @@
-require '../constants.rb'
-require '../database.rb'
-require '../util.rb'
+require_relative '../constants'
+require_relative '../database'
+require_relative '../util'
 
 class Team < ActiveRecord::Base
   include Constants

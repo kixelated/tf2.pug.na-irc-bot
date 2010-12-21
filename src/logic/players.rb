@@ -1,5 +1,5 @@
-require '../model/user.rb'
-require '../util.rb'
+require_relative '../model/user'
+require_relative '../util'
 
 module PlayersLogic
   def add_player user, classes
