@@ -1,0 +1,3 @@
+[submodule "src/lib/cinch"]
+	path = src/lib/cinch
+	url = git@github.com:qpingu/cinch.git
