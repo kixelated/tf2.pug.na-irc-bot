@@ -28,7 +28,7 @@ module PickingLogic
   
   def update_lookup
     @lookup.clear
-    @signups.keys.each_with_index { |user, i| @lookup[i] = user }
+    @signups.keys.each_with_index { |nick, i| @lookup[i] = nick }
   end
 
   def tell_captain
@@ -57,8 +57,8 @@ module PickingLogic
     pick_player user, player, player_class
   end
 
-  def can_pick? user
-    current_captain == user
+  def can_pick? nick
+    current_captain == nick
   end
   
   def pick_player_valid? player, player_class
@@ -71,7 +71,7 @@ module PickingLogic
 
   def pick_player user, player, player_class
     return notice(user, "Picking has not started.") unless state? "picking" # logic/state.rb
-    return notice(user, "It is not your turn to pick.") unless can_pick? user
+    return notice(user, "It is not your turn to pick.") unless can_pick? user.nick
 
     # TODO: Make player case-insensitive
     player_class.downcase!
@@ -87,7 +87,7 @@ module PickingLogic
     current_team.signups[player] = player_class
     @signups.delete player
     
-    message "#{ current_team.colourize user } picked #{ player } as #{ player_class }"
+    message "#{ current_team.colourize user.nick } picked #{ player } as #{ player_class }"
     
     next_pick
   end
@@ -129,17 +129,17 @@ module PickingLogic
       match.teams << team
       
       # Create each player's statistics
-      team.signups.each do |user, clss|
-        p = create_player_record user, match, team
+      team.signups.each do |nick, clss|
+        p = create_player_record nick, match, team
         
-        create_stat_record p, "captain" if user == team.captain # captain gets counted twice
+        create_stat_record p, "captain" if nick == team.captain # captain gets counted twice
         create_stat_record p, clss
       end
     end
   end
   
-  def create_player_record user, match, team
-    User.find_by_auth(@auth[user]).players.create(:match => match, :team => team)
+  def create_player_record nick, match, team
+    User.find_by_auth(@auth[nick]).players.create(:match => match, :team => team)
   end
   
   def create_stat_record player, clss
@@ -152,8 +152,8 @@ module PickingLogic
     end
   
     @teams.each do |team|
-      team.signups.each do |user, clss|
-        private user, "You have been picked for #{ team.colourize team, 0 } as #{ clss }. The server info is: #{ @server.connect_info }" 
+      team.signups.each do |nick, clss|
+        private nick, "You have been picked for #{ team.colourize team, 0 } as #{ clss }. The server info is: #{ @server.connect_info }" 
       end
     end
   end

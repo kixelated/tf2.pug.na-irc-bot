@@ -1,8 +1,8 @@
 module StateLogic
   def update_spoken user
-    @spoken[user] = Time.now
+    @spoken[user.nick] = Time.now
     
-    if @afk.delete user and @afk.empty?
+    if @afk.delete user.nick and @afk.empty?
       attempt_delay # logic/state.rb
     end
   end
@@ -15,8 +15,8 @@ module StateLogic
   end
   
   def check_afk list
-    list.select do |user|
-      !@spoken[user] or (Time.now - @spoken[user]).to_i > const["settings"]["afk"]
+    list.select do |nick|
+      !@spoken[nick] or (Time.now - @spoken[nick]).to_i > const["settings"]["afk"]
     end
   end
   
@@ -38,7 +38,7 @@ module StateLogic
     return unless @state == const["states"]["afk"]
 
     # check again if users are afk, this time removing the ones who are
-    check_afk(@afk).each { |user| @signups.delete user }
+    check_afk(@afk).each { |nick| @signups.delete nick }
     @afk.clear
 
     list_players # logic/players.rb

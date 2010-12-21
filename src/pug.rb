@@ -63,20 +63,20 @@ class Pug
   end
   
   def channel m
-    update_spoken m.user.nick # logic/state.rb
+    update_spoken m.user # logic/state.rb
   end
   
   def join m
-    reward_player m.user.nick # logic/players.rb
+    reward_player m.user # logic/players.rb
   end
   
   def nick m
-    list_players if replace_player m.user.last_nick, m.user.nick
+    list_players if replace_player m.user.last_nick, m.user
   end
 
   # !add
   def add m, args
-    if add_player m.user.nick, args.split(/ /) # logic/players.rb
+    if add_player m.user, args.split(/ /) # logic/players.rb
       list_players # logic/players.rb
       attempt_afk # logic/state.rb
     end
@@ -105,17 +105,17 @@ class Pug
 
   # !pick
   def pick m, player, player_class
-    pick_player m.user.nick, player, player_class # logic/picking.rb
+    pick_player m.user, player, player_class # logic/picking.rb
   end
   
   # !random
   def random m, clss
-    pick_random m.user.nick, clss # logic/picking.rb
+    pick_random m.user, clss # logic/picking.rb
   end
   
   # !captain
   def captain m
-    list_captain m.user.nick # logic/picking.rb
+    list_captain m.user # logic/picking.rb
   end
   
   # !format
@@ -130,12 +130,12 @@ class Pug
   
   # !stats
   def stats m, user
-    list_stats user.nick # logic/players.rb
+    list_stats m.user, user # logic/players.rb
   end
   
   # !nick
-  def update_nick m, nick
-    update_player m.user.nick, nick # logic/players.rb
+  def update_nick m
+    update_player m.user # logic/players.rb
   end
   
   # !mumble
@@ -185,7 +185,7 @@ class Pug
   
   # !nextmap
   def admin_nextmap m
-    return unless require_admin m.user.nick
+    return unless require_admin m.user
     
     next_map
     list_map
@@ -193,7 +193,7 @@ class Pug
   
   # !nextserver
   def admin_nextserver m
-    return unless require_admin m.user.nick
+    return unless require_admin m.user
     
     next_server
     list_server
@@ -201,7 +201,7 @@ class Pug
 
   # !force
   def admin_force m, player, args
-    return unless require_admin m.user.nick
+    return unless require_admin m.user
     
     if add_player User(player), args.split(/ /) # logic/players.rb
       list_players # logic/players.rb
@@ -211,14 +211,14 @@ class Pug
   
   # !replace
   def admin_replace m, user, replacement
-    return unless require_admin m.user.nick
+    return unless require_admin m.user
     
-    list_players if replace_player User(user), User(replacement) # logic/picking.rb
+    list_players if replace_player user, User(replacement) # logic/picking.rb
   end
   
   # !endgame
   def admin_endgame m
-    return unless require_admin m.user.nick
+    return unless require_admin m.user
     
     end_game
     message "Game has been ended, please add up again."
@@ -226,7 +226,7 @@ class Pug
   
   # !reset
   def admin_reset m
-    return unless require_admin m.user.nick
+    return unless require_admin m.user
     
     reset_game
     message "Game has been reset, please add up again."
