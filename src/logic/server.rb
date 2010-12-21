@@ -17,8 +17,8 @@ module ServerLogic
     @server.cpswd @server.pswd
     @server.command "sm_rtv_initialdelay 30.0" # TODO: Test this, people have reported it doesn't work.
     
-    @last_maps << @map
-    @last_maps.shift if @last_maps.size > const["rotation"]["exclude"]
+    @prev_maps << @map
+    @prev_maps.shift if @prev_maps.size > const["rotation"]["exclude"]
   end
   
   def announce_server
@@ -40,7 +40,7 @@ module ServerLogic
   end
   
   def list_mumble
-    message "Mumble server info: #{ const["mumble"]["ip"] }:#{ const["mumble"]["port"] } #{ "password: #{ const["mumble"]["password"] }" if const["mumble"]["password"] }"
+    message "Mumble server info: #{ const["mumble"]["ip"] }:#{ const["mumble"]["port"] } #{ "password: #{ const["mumble"]["password"] }. Download Mumble here: http://mumble.sourceforge.net/" if const["mumble"]["password"] }"
     advertisement
   end
   
@@ -61,7 +61,7 @@ module ServerLogic
   end
   
   def next_map 
-    maps = const["rotation"]["maps"].reject { |map| @last_maps.include? map }
+    maps = const["rotation"]["maps"].reject { |map| @prev_maps.include? map }
    
     weight = 0
     maps.each { |map| weight += map["weight"] }
