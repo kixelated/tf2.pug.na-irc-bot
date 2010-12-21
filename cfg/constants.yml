@@ -26,9 +26,9 @@ settings:
 
 teams:
   details:
-    - name: Blu Pug Team
+    - name: Blu Team
       colour: 11
-    - name: Red Pug Team
+    - name: Red Team
       colour: 4
   players: 6
   classes: 
