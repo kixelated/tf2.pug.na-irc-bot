@@ -11,11 +11,11 @@ module PickingLogic
     const["teams"]["count"].times do |i|
       captain = possible_captains.delete_at rand(possible_captains.length)
       
-      @teams << Team.new(
-        :name => const["teams"]["details"][i]["name"], 
-        :colour => const["teams"]["details"][i]["colour"], 
-        :captain => captain
-      )
+      team = Team.new
+      team.set_captain captain
+      team.set_details const["teams"]["details"][i]
+      
+      @teams << team
       @signups.delete captain
 
       notice captain, "You have been selected as a captain. When it is your turn to pick, you can choose players with the '!pick num' or '!pick name' command."
@@ -28,7 +28,7 @@ module PickingLogic
   
   def update_lookup
     @lookup.clear
-    @signups.keys.each_with_index { |nick, i| @lookup[i] = nick }
+    @signups.keys.each_with_index { |nick, i| @lookup[i + 1] = nick }
   end
 
   def tell_captain
@@ -151,12 +151,12 @@ module PickingLogic
   
   def announce_teams
     @teams.each do |team|
-      message team.formatted
+      message team.format_team
     end
   
     @teams.each do |team|
       team.signups.each do |nick, clss|
-        private nick, "You have been picked for #{ team.my_colourize team, 0 } as #{ clss }. The server info is: #{ @server.connect_info }" 
+        private nick, "You have been picked for #{ team.format_name } as #{ clss }. The server info is: #{ @server.connect_info }" 
       end
     end
   end

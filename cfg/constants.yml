@@ -30,12 +30,12 @@ teams:
       colour: 11
     - name: Red Team
       colour: 4
-  players: 6
+  players: 2
   classes: 
     scout: 2
-    soldier: 2
-    demo: 1
-    medic: 1
+    soldier: 0
+    demo: 0
+    medic: 0
     captain: 1
     
 servers:
@@ -95,6 +95,7 @@ mumble:
   password: tf2pug
 
 reward:
+  min: 20
   ratio: .4
   classes:
     - medic

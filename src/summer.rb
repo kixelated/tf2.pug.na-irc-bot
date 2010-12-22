@@ -52,7 +52,6 @@ module Summer
 
     # Will join channels specified in configuration.
     def startup!
-      puts "Joining channel"
       join(@channel)
       @started = true
     end

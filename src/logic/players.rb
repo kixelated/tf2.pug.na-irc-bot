@@ -4,9 +4,12 @@ require_relative '../util'
 module PlayersLogic
   def add_player user, classes
     return unless classes
-  
+    
     return notice user, "You cannot add at this time, please wait for picking to end." unless can_add? # logic/state.rb
-    return notice user, "You must be registered with GameSurge in order to play in this channel. http://www.gamesurge.net/newuser/" unless user.authed?
+    unless user.authed?
+      user.refresh # just in case they authed but the cache hasn't been updated
+      return notice user, "You must be registered with GameSurge in order to play in this channel. http://www.gamesurge.net/newuser/" unless user.authed?
+    end
 
     classes.collect! { |clss| clss.downcase }
     rej = classes.reject! { |clss| not const["teams"]["classes"].key? clss }
@@ -58,7 +61,7 @@ module PlayersLogic
       ratio = calculate_ratios u
       const["reward"]["classes"].each { |clss| total += ratio[clss] }
       
-      Channel(const["irc"]["channel"]).voice user if total >= const["reward"]["ratio"]
+      Channel(const["irc"]["channel"]).voice user if total >= const["reward"]["ratio"].to_f
     end
   end
   
@@ -111,9 +114,10 @@ module PlayersLogic
   
   def calculate_ratios user
     total = user.players.count
-    
+    classes = user.stats.group("class_name").count
+
     Hash.new.tap do |ratios|
-      user.stats.group("class_name").each { |stat| ratios[stat.class] = stat.count / total }
+      classes.each { |clss, count| ratios[clss] = count.to_f / total.to_f }
       ratios.default = 0
     end
   end
@@ -123,10 +127,11 @@ module PlayersLogic
     u = User.find_by_auth(nick) unless u
     u = User.find_by_auth(User(nick).authname) unless u or !User(nick)
     
-    return message "There are no records of the user #{ nick }" unless u
+    total = u.players.count if u
+    return message "There are no records of the user #{ nick }" unless u and total > 0
     
     output = calculate_ratios(u).collect { |clss, percent| "#{ (percent * 100).floor }% #{ clss }" }
-    
+
     message "#{ u.name } has #{ u.players.count } games played: #{ output.join(", ") }"
   end
 

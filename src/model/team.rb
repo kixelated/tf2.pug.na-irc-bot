@@ -15,14 +15,16 @@ class Team < ActiveRecord::Base
 
   attr_accessor :captain, :colour, :signups
   
-  validates :name, :presence => true
-  validates :captain, :presence => true
-  
-  def initialize *args
-    super
-    @signups = {}
+  def set_captain captain
+    @captain = captain
+    @signups = { captain => "captain" }
   end
-  
+
+  def set_details info
+    @name = info["name"]
+    @colour = info["colour"]
+  end
+
   def my_colourize str, bg = const["colours"]["black"]
     colourize str, @colour, bg
   end
@@ -31,9 +33,13 @@ class Team < ActiveRecord::Base
     @signups.invert_proper
   end
   
-  def formatted
+  def format_team
     output = @signups.collect { |k, v| "#{ k } as #{ my_colourize v }" }
-    "#{ my_colourize @name }: #{ output.values.join(", ") if output }"
+    "#{ format_name }: #{ output.join(", ") if output }"
+  end
+  
+  def format_name
+    my_colourize @name
   end
   
   def to_s
