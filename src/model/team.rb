@@ -29,10 +29,6 @@ class Team < ActiveRecord::Base
     colourize str, @colour, bg
   end
   
-  def get_classes
-    @signups.invert_proper
-  end
-  
   def format_team
     output = @signups.collect { |k, v| "#{ k } as #{ my_colourize v }" }
     "#{ format_name }: #{ output.join(", ") if output }"

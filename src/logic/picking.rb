@@ -38,7 +38,7 @@ module PickingLogic
     lookup_i = @lookup.invert
     
     # Displays the classes that are not yet full for this team
-    classes_needed(current_team.get_classes).each do |k, v| # logic/players.rb
+    classes_needed(current_team.signups.invert_proper).each do |k, v| # logic/players.rb
       output = classes[k].collect { |player| "(#{ lookup_i[player] }) #{ player }" }
       notice current_captain, "#{ bold rjust("#{ v } #{ k }:") } #{ output.join(", ") }"
     end
@@ -66,7 +66,7 @@ module PickingLogic
   end
   
   def pick_player_avaliable? player_class
-    classes_needed(current_team.get_classes).key? player_class # logic/players.rb
+    classes_needed(current_team.signups.invert_proper).key? player_class # logic/players.rb
   end
 
   def pick_player user, player, player_class
@@ -117,7 +117,7 @@ module PickingLogic
   
   def update_captains
     @teams.each do |team|
-      team.signups[team.captain] = classes_needed(team.get_classes).keys.first
+      team.signups[team.captain] = classes_needed(team.signups.invert_proper).keys.first
     end
   end
  
@@ -130,13 +130,14 @@ module PickingLogic
       
       # Create each player's statistics
       team.signups.each do |nick, clss|
-        u = User.find_by_auth(@auth[nick])
-      
-        team.users << u
-      
-        p = create_player_record u, match, team
-        create_stat_record p, "captain" if nick == team.captain # captain gets counted twice
-        create_stat_record p, clss
+        u = @auth[nick]
+        if u
+          team.users << u
+        
+          p = create_player_record u, match, team
+          create_stat_record p, "captain" if nick == team.captain # captain gets counted twice
+          create_stat_record p, clss
+        end
       end
     end
   end

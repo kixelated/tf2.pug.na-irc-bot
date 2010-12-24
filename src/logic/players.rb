@@ -6,11 +6,7 @@ module PlayersLogic
     return unless classes
     
     return notice user, "You cannot add at this time, please wait for picking to end." unless can_add? # logic/state.rb
-    unless user.authed?
-      user.refresh # just in case they authed but the cache hasn't been updated
-      return notice user, "You must be registered with GameSurge in order to play in this channel. http://www.gamesurge.net/newuser/" unless user.authed?
-    end
-
+    
     classes.collect! { |clss| clss.downcase }
     rej = classes.reject! { |clss| not const["teams"]["classes"].key? clss }
     classes.uniq!
@@ -18,10 +14,18 @@ module PlayersLogic
     notice user, "Invalid classes, possible options are #{ const["teams"]["classes"].keys.join(", ") }" if rej
     return if classes.empty?
     
-    create_player user unless User.find_by_auth(user.authname)
-
     @signups[user.nick] = classes
-    @auth[user.nick] = user.authname
+    u = nil
+    
+    user.refresh unless user.authed? # just in case they authed but the cache hasn't been updated
+    unless user.authed?
+      notice user, "In order for stats to be recorded, you must be authorized with GameSurge. Please read this guide: http://www.gamesurge.net/newuser/" unless user.authed?
+    else
+      u = User.find_by_auth(user.authname)
+      u = create_player user unless u
+    end
+    
+    @auth[user.nick] = u
   end
   
   def create_player user
@@ -56,7 +60,7 @@ module PlayersLogic
   end
   
   def reward_player user
-    if u = User.find_by_auth(user.authname)
+    if user.authed? and u = User.find_by_auth(user.authname)
       total = 0
       ratio = calculate_ratios u
       const["reward"]["classes"].each { |clss| total += ratio[clss] }
@@ -127,9 +131,9 @@ module PlayersLogic
     u = User.find_by_auth(nick) unless u
     u = User.find_by_auth(User(nick).authname) unless u or !User(nick)
     
-    total = u.players.count if u
-    return message "There are no records of the user #{ nick }" unless u and total > 0
+    return message "There are no records of the user #{ nick }" unless u
     
+    total = u.players.count
     output = calculate_ratios(u).collect { |clss, percent| "#{ (percent * 100).floor }% #{ clss }" }
 
     message "#{ u.name } has #{ u.players.count } games played: #{ output.join(", ") }"
