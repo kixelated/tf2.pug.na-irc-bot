@@ -34,6 +34,10 @@ class Team < ActiveRecord::Base
     "#{ format_name }: #{ output.join(", ") if output }"
   end
   
+  def get_classes
+    @signups.invert_proper
+  end
+  
   def format_name
     my_colourize @name
   end

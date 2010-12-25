@@ -74,7 +74,7 @@ rotation:
       weight: 6
       
     - name: snakewater
-      file: cp_snakewater_b4
+      file: cp_snakewater_b7
       weight: 6
       
     - name: yukon
@@ -95,8 +95,8 @@ mumble:
   password: tf2pug
 
 reward:
-  min: 20
-  ratio: .4
+  min: 10
+  ratio: .3
   classes:
     - medic
     - captain

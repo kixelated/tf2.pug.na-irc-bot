@@ -20,7 +20,7 @@ class Pug
   include ServerLogic
   
   listen_to :channel, method: :channel
-  listen_to :join, method: :join
+  listen_to :join, method: :reward
   listen_to :part, method: :remove
   listen_to :quit, method: :remove
   listen_to :nick, method: :nick
@@ -32,13 +32,15 @@ class Pug
   match /need/i, method: :need
   match /afk/i, method: :afk
   match /stats ([\S]+)/i, method: :stats
-  match /nick/i, method: :update_nick
+  match /nick ([\S]+)/i, method: :update_nick
+  match /reward/i, method: :reward
   
   match /pick ([\S]+) ([\S]+)/i, method: :pick
   match /random ([\S]+)/i, method: :random
   match /captain/i, method: :scaptain
   match /format/i, method: :format
   match /state/i, method: :lstate
+  match /teams/i, method: :teams
   
   match /map/i, method: :map
   match /server/i, method: :server
@@ -56,6 +58,9 @@ class Pug
   match /nextserver/i, method: :admin_nextserver
   match /reset/i, method: :admin_reset
   match /endgame/i, method: :admin_endgame
+  
+  match /debug/i, method: :admin_debug
+  match /auth/i, method: :admin_auth
 
   def initialize *args
     super
@@ -64,10 +69,6 @@ class Pug
   
   def channel m
     update_spoken m.user # logic/state.rb
-  end
-  
-  def join m
-    reward_player m.user # logic/players.rb
   end
   
   def nick m
@@ -90,17 +91,17 @@ class Pug
   # !list, !players
   def list m
     list_players # logic/players.rb
-    
-    if state? "picking" and current_captain == m.user.nick
-      list_players_numbers # logic/players.rb
-    else
-      list_players_detailed # logic/players.rb
-    end
+    list_players_detailed # logic/players.rb
   end
   
   # !need
   def need m
     list_classes_needed if can_add? # logic/players.rb
+  end
+  
+  # !reward
+  def reward m
+    reward_player m.user # logic/players.rb
   end
 
   # !pick
@@ -123,6 +124,11 @@ class Pug
     list_format # logic/picking.rb
   end
   
+  # !teams
+  def teams m
+    print_teams if state? "picking"
+  end
+  
   # !state
   def lstate m
     list_state # logic/state.rb
@@ -138,8 +144,8 @@ class Pug
   end
   
   # !nick
-  def update_nick m
-    update_player m.user # logic/players.rb
+  def update_nick m, nick
+    update_player m.user, nick # logic/players.rb
   end
   
   # !mumble
@@ -170,7 +176,7 @@ class Pug
   # !man
   def help m
     message "Player related commands: !add, !remove, !list, !need, !afk, !stats, !nick"
-    message "Captain related comands: !pick, !random, !captain, !format, !list, !state"
+    message "Captain related comands: !pick, !random, !captain, !format, !list, !state, !teams"
     message "Server related commands: !ip, !map, !mumble, !last, !rotation"
   end
   
@@ -235,7 +241,21 @@ class Pug
     reset_game
     message "Game has been reset, please add up again."
   end
+
+  # !debug
+  def admin_debug m
+    return unless require_admin m.user
+    
+    # Add debug here
+  end
   
+  # !auth
+  def admin_auth m
+    return unless require_admin m.user
+    
+    bot.msg Constants.const["irc"]["auth_serv"], "AUTH #{ Constants.const["irc"]["auth"] } #{ Constants.const["irc"]["auth_password"] }"
+  end
+
   def require_admin user
     return notice user, "That is an admin-only command." unless Channel(const["irc"]["channel"]).opped? user
     true

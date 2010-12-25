@@ -7,5 +7,4 @@ class User < ActiveRecord::Base
   has_many :stats, :through => :players
   
   validates :name, :presence => true
-  validates :auth, :presence => true
 end

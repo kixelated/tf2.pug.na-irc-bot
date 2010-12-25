@@ -69,7 +69,7 @@ class Hash
   # Output: { b => [a, c], e => [d] }
   # Output (non-proper): { b => a, e => d }
   def invert_proper
-    self.class.new([]).tap do |hash|
+    self.class.new.tap do |hash|
       self.each do |k, v|
         (hash[v] ||= []) << k
       end

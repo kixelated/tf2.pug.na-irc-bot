@@ -24,6 +24,10 @@ class BotMaster < Cinch::Bot
       c.plugins.plugins = [ Pug, Quitter ]
       c.verbose = true
     end
+    
+    on :connect do 
+      bot.msg Constants.const["irc"]["auth_serv"], "AUTH #{ Constants.const["irc"]["auth"] } #{ Constants.const["irc"]["auth_password"] }" if Constants.const["irc"]["auth"]
+    end
 
     BotManager.instance.add self
   end
