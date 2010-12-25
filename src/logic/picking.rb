@@ -146,7 +146,7 @@ module PickingLogic
   end
   
   def create_stat_record player, clss
-    player.stats.create(:class_name => clss)
+    player.stats.create(:class => Tfclass.find_by_name(clss))
   end
   
   def print_teams

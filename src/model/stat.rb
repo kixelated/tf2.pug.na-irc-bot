@@ -1,7 +1,9 @@
 require_relative '../database'
 
+require_relative 'player'
+require_relative 'tfclass'
+
 class Stat < ActiveRecord::Base
   belongs_to :player
-  
-  validates :class, :presence => true
+  has_one :tfclass
 end

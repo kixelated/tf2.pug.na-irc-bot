@@ -117,10 +117,10 @@ module PlayersLogic
   
   def calculate_ratios user
     total = user.players.count
-    classes = user.stats.group("class_name").count
+    classes = user.stats.group("class_id").count
 
     Hash.new.tap do |ratios|
-      classes.each { |clss, count| ratios[clss] = count.to_f / total.to_f }
+      classes.each { |clss, count| ratios[Tfclass.find(clss).name] = count.to_f / total.to_f }
       ratios.default = 0
     end
   end
@@ -134,9 +134,9 @@ module PlayersLogic
     return message "There are no records of the user #{ nick }" unless u
     
     total = u.players.count
-    output = calculate_ratios(u).collect { |clss, percent| "#{ (percent * 100).floor }% #{ clss }" }
+    output = calculate_ratios(u).collect { |clss, percent| "#{ (percent * 100).round }% #{ clss }" }
 
-    message "#{ u.name } has #{ u.players.count } games played: #{ output.join(", ") }"
+    message "#{ u.name }#{ "*" unless u.auth } has #{ u.players.count } games played: #{ output.join(", ") }"
   end
 
   def minimum_players?

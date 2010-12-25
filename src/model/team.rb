@@ -2,6 +2,11 @@ require_relative '../constants'
 require_relative '../database'
 require_relative '../util'
 
+require_relative 'match'
+require_relative 'player'
+require_relative 'user'
+require_relative 'stat'
+
 class Team < ActiveRecord::Base
   include Constants
   include Utilities
@@ -11,7 +16,6 @@ class Team < ActiveRecord::Base
   
   has_many :players
   has_many :stats, :through => :players
-  has_many :matches, :through => :players
 
   attr_accessor :captain, :colour, :signups
   
