@@ -16,11 +16,10 @@ module PlayersLogic
     
     @signups[user.nick] = classes
     
-    u = nil
-    user.refresh # just in case they authed but the cache hasn't been updated
+    user.refresh unless user.authed? # just in case they authed but the cache hasn't been updated
     
     u = User.find_by_auth(user.authname) if user.authed?
-    u = User.where(:name => user.nick, :auth => nil).first unless u or !user.authed?
+    u = User.where(:name => user.nick, :auth => nil).first unless u
     u = create_player user.authname, user.nick unless u
 
     u.update_attributes(:auth => user.authname) if user.authed? and u.auth == nil
