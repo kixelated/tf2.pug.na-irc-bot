@@ -61,28 +61,33 @@ module PickingLogic
     current_captain == nick
   end
   
-  def pick_player_valid? player, player_class
-    @signups.key? player and const["teams"]["classes"].key? player_class
+  def find_player player
+    temp = @signups.keys.reject { |k| k.downcase != player.downcase }
+    temp.first unless temp.empty?
   end
   
-  def pick_player_avaliable? player_class
+  def pick_class_valid? clss
+    const["teams"]["classes"].key? clss
+  end
+  
+  def pick_class_avaliable? player_class
     classes_needed(current_team.get_classes).key? player_class # logic/players.rb
   end
 
-  def pick_player user, player, player_class
+  def pick_player user, player_nick, player_class
     return notice(user, "Picking has not started.") unless state? "picking" # logic/state.rb
     return notice(user, "It is not your turn to pick.") unless can_pick? user.nick
 
-    # TODO: Make player case-insensitive
     player_class.downcase!
+    player = find_player player_nick
     
-    unless pick_player_valid? player, player_class
-      player = @lookup[player.to_i] if player.to_i
-    
-      return notice(user, "Invalid pick #{ player } as #{ player_class }.") unless player and pick_player_valid? player, player_class
+    unless player
+      player = @lookup[player_nick.to_i] if player_nick.to_i > 0
+      return notice(user, "Could not find #{ player_nick }.") unless player
     end
     
-    return notice(user, "That class is full.") unless pick_player_avaliable? player_class
+    return notice(user, "Invalid class #{ player_class }.") unless pick_class_valid? player_class
+    return notice(user, "The class #{ player_class } is full.") unless pick_class_avaliable? player_class
 
     current_team.signups[player] = player_class
     @signups.delete player

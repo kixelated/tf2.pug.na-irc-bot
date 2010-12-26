@@ -19,7 +19,7 @@ servers.each do |server|
   down.login server["ftp"]["user"], server["ftp"]["password"]
   down.chdir server["ftp"]["dir"] if server["ftp"]["dir"]
   
-  filepath = "stv/#{ server["name"] }"
+  filepath = "../stv/#{ server["name"] }"
   
   down.nlst.each do |filename|
     if filename =~ /.+\.dem/
