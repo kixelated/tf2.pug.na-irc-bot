@@ -5,5 +5,5 @@ require_relative 'tfclass'
 
 class Stat < ActiveRecord::Base
   belongs_to :player
-  has_one :tfclass
+  belongs_to :tfclass
 end

@@ -16,16 +16,14 @@ module PlayersLogic
     
     @signups[user.nick] = classes
     
+    u = nil
     user.refresh # just in case they authed but the cache hasn't been updated
     
     u = User.find_by_auth(user.authname) if user.authed?
-    u = User.find_by_name(user.nick) unless u
+    u = User.where(:name => user.nick, :auth => nil).first unless u or !user.authed?
     u = create_player user.authname, user.nick unless u
-    
-    if user.authed? and u.auth == nil
-      u.auth = user.authname
-      u.save
-    end
+
+    u.update_attributes(:auth => user.authname) if user.authed? and u.auth == nil
     
     @auth[user.nick] = u
     true
@@ -117,20 +115,23 @@ module PlayersLogic
   
   def calculate_ratios user
     total = user.players.count
-    classes = user.stats.group("class_id").count
+    classes = user.stats.group("tfclass_id").count
+    puts "#{ classes }"
 
     Hash.new.tap do |ratios|
-      classes.each { |clss, count| ratios[Tfclass.find(clss).name] = count.to_f / total.to_f }
+      classes.each do |clss, count|
+        temp = Tfclass.find(clss).name
+        puts "#{ temp }"
+        ratios[temp] = count.to_f / total.to_f
+      end
       ratios.default = 0
     end
   end
 
   def list_stats nick
     u = User.find_by_name(nick)
-    u = User.find_by_auth(nick) unless u
-    u = User.find_by_auth(User(nick).authname) unless u or !User(nick)
-    u = User.find_by_name(User(nick).nick) unless u or !User(nick)
-    
+    u = User.find_by_auth(User(nick).authname) unless u or !User(nick) or !User(nick).authname
+
     return message "There are no records of the user #{ nick }" unless u
     
     total = u.players.count

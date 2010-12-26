@@ -123,7 +123,7 @@ module PickingLogic
   end
  
   def create_match
-    match = Match.create
+    match = Match.create :time => Time.now
     
     @teams.each do |team|
       team.save # teams have not been saved up to this point just in case of !endgame
@@ -146,7 +146,7 @@ module PickingLogic
   end
   
   def create_stat_record player, clss
-    player.stats.create(:class => Tfclass.find_by_name(clss))
+    player.stats.create(:tfclass => Tfclass.find_by_name(clss))
   end
   
   def print_teams

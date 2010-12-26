@@ -3,16 +3,16 @@ irc:
   port: 6667
   local_host:
   
-  nick: IRCCompanionTest
-  channel: '#tf2.pug.na.beta'
+  nick: IRCTrashcanBot
+  channel: '#tf2.pug.na'
   
-  auth:
-  auth_password:
-  auth_serv: AuthServ
+  auth: PugNaBot
+  auth_password: secret
+  auth_serv: AuthServ@Services.GameSurge.net
   
 messengers:
   count: 1
-  nick: IRCMessengerTes
+  nick: IRCTrashcanBo
   mps: 0.5
 
 delays: 
@@ -39,16 +39,31 @@ teams:
     captain: 1
     
 servers:
-  - name: Dallas1
-    ip: dallas1.tf2pug.eoreality.net
-    port: 27015
-    password: tf2pug
-    rcon: secret
-  - name: Chicago1
+  - name: chicago1
     ip: chicago1.tf2pug.eoreality.net
     port: 27015
     password: tf2pug
     rcon: secret
+    ftp:
+      user: pugna
+      password: secret
+      dir: orangebox/tf
+    
+  - name: dallas1
+    ip: dallas1.tf2pug.eoreality.net
+    port: 27015
+    password: tf2pug
+    rcon: secret
+    ftp:
+      user: pugna
+      password: secret
+      dir: orangebox/tf
+      
+storage:
+  ip: tf2pug.us
+  user: demos@tf2pug.us
+  password: secret
+  dir:
 
 rotation:
   exclude: 2
