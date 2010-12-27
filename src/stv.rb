@@ -3,14 +3,14 @@ require 'fileutils'
 require_relative 'constants'
 require_relative 'model/match'
 
-storage = Constants.const["storage"]
+storage = Constants.const["stv"]
 servers = Constants.const["servers"]
 
 puts "Establishing a connection to #{ storage["ip"] }"
 
 up = Net::FTP.new storage["ip"]
-up.login storage["user"], storage["password"]
-up.chdir storage["dir"] if storage["dir"]
+up.login storage["ftp"]["user"], storage["ftp"]["password"]
+up.chdir storage["ftp"]["dir"] if storage["ftp"]["dir"]
 
 servers.each do |server|
   puts "Establishing a connection to #{ server["name"] }"

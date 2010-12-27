@@ -25,12 +25,13 @@ module Summer
       end
     end
 
-    def msg(to, message)
-      response("PRIVMSG #{to} :#{message}")
+    def msg(to, message, notice = false)
+      response("NOTICE #{to} :#{message}") if notice
+      response("PRIVMSG #{to} :#{message}") unless notice
     end
     
     def notice(to, message)
-      response("NOTICE #{to} :#{message}")
+      msg to, message, true
     end
 	
     def started?

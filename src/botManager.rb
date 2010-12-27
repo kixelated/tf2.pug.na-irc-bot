@@ -7,6 +7,7 @@ class BotManager
   
   def initialize
     @bots = []
+    @queue = []
   end
   
   def add bot
@@ -15,19 +16,26 @@ class BotManager
   
   def quit
     @bots.each { |bot| bot.quit }
+    @bots.clear
   end
-  
-  def select
-    @bots.push(@bots.shift).first
-  end
-  
-  def msg to, message
-    select.msg to, message
-    sleep 1.0 / const["messengers"]["mpstotal"]
+
+  def msg to, message, notice = false
+    @queue << { :to => to, :message => message, :notice => notice }
   end
   
   def notice to, message
-    select.notice to, message
-    sleep 1.0 / const["messengers"]["mpstotal"]
+    msg to, message, true
+  end
+  
+  def start
+    while @bots.size > 0
+      unless @queue.empty?
+        tosend = @queue.shift
+        bot = @bots.push(@bots.shift).last
+        
+        bot.msg tosend["to"], tosend["message"], tosend["notice"]
+        sleep(@bots.size.to_f / const["messengers"]["mps"].to_f)
+      end
+    end
   end
 end

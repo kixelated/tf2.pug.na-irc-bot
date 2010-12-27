@@ -20,7 +20,7 @@ class Pug
   include ServerLogic
   
   listen_to :channel, method: :channel
-  listen_to :join, method: :reward
+  listen_to :join, method: :join
   listen_to :part, method: :remove
   listen_to :quit, method: :remove
   listen_to :nick, method: :nick
@@ -33,15 +33,13 @@ class Pug
   match /afk/i, method: :afk
   match /stats ([\S]+)/i, method: :stats
   match /nick ([\S]+)/i, method: :update_nick
-  match /reward/i, method: :reward
-  
+
   match /pick ([\S]+) ([\S]+)/i, method: :pick
   match /random ([\S]+)/i, method: :random
   match /captain/i, method: :scaptain
   match /format/i, method: :format
   match /state/i, method: :lstate
-  match /teams/i, method: :teams
-  
+
   match /map/i, method: :map
   match /server/i, method: :server
   match /ip/i, method: :server
@@ -60,8 +58,7 @@ class Pug
   match /endgame/i, method: :admin_endgame
   
   match /debug/i, method: :admin_debug
-  match /auth/i, method: :admin_auth
-
+  
   def initialize *args
     super
     setup # variables.rb 
@@ -69,6 +66,10 @@ class Pug
   
   def channel m
     update_spoken m.user # logic/state.rb
+  end
+  
+  def join m
+    reward_player m.user # logic/players.rb
   end
   
   def nick m
@@ -99,11 +100,6 @@ class Pug
     list_classes_needed if can_add? # logic/players.rb
   end
   
-  # !reward
-  def reward m
-    reward_player m.user # logic/players.rb
-  end
-
   # !pick
   def pick m, player, player_class
     pick_player m.user, player, player_class # logic/picking.rb
@@ -123,12 +119,7 @@ class Pug
   def format m
     list_format # logic/picking.rb
   end
-  
-  # !teams
-  def teams m
-    print_teams if state? "picking"
-  end
-  
+
   # !state
   def lstate m
     list_state # logic/state.rb
@@ -176,8 +167,8 @@ class Pug
   # !man
   def help m
     message "Player related commands: !add, !remove, !list, !need, !afk, !stats, !nick"
-    message "Captain related comands: !pick, !random, !captain, !format, !list, !state, !teams"
-    message "Server related commands: !ip, !map, !mumble, !last, !rotation"
+    message "Captain related comands: !pick, !random, !captain, !format, !list, !state"
+    message "Server related commands: !ip, !map, !mumble, !last, !rotation, !stv"
   end
   
   # !afk

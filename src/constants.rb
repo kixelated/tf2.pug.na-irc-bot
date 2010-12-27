@@ -14,8 +14,6 @@ module Constants
   def self.calculate
     const["teams"]["count"] = const["teams"]["details"].size
     const["teams"]["total"] = const["teams"]["players"] * const["teams"]["count"]
-    
-    const["messengers"]["mpstotal"] = (1 + const["messengers"]["count"]) * const["messengers"]["mps"]
   end
 end
 
