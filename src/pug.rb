@@ -24,7 +24,7 @@ class Pug
   listen_to :part, method: :remove
   listen_to :quit, method: :remove
   listen_to :nick, method: :nick
-  
+
   match /add (.+)/i, method: :add
   match /remove/i, method: :remove
   match /list/i, method: :list
@@ -46,7 +46,8 @@ class Pug
   match /last/i, method: :last
   match /mumble/i, method: :mumble
   match /rotation/i, method: :rotation
-  
+  match /stv/i, method: :stv  
+
   match /man/i, method: :help
   
   match /force ([\S]+) (.+)/i, method: :admin_force
@@ -162,6 +163,12 @@ class Pug
   # !rotation
   def rotation m
     list_rotation # logic/server.rb
+  end
+  
+  # !stv
+  def stv m
+    update_stv
+    list_stv
   end
   
   # !man

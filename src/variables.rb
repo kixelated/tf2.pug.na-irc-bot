@@ -5,11 +5,7 @@ module Variables
   include Constants
 
   def setup
-    @servers = const["servers"].collect do |details|
-      Server.new details["name"], details["ip"], details["port"], details["password"], details["rcon"]
-    end
-  
-    @server = @servers.first
+    @server = Server.new const["servers"].first
     @prev_maps = []
     next_map
   

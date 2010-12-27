@@ -45,6 +45,7 @@ servers:
     password: tf2pug
     rcon: secret
     ftp:
+      ip: 205.234.152.155
       user: pugna
       password: secret
       dir: orangebox/tf
@@ -55,6 +56,7 @@ servers:
     password: tf2pug
     rcon: secret
     ftp:
+      ip: 96.8.114.74
       user: pugna
       password: secret
       dir: orangebox/tf
@@ -62,10 +64,15 @@ servers:
 stv:
   ip: tf2pug.us
   url: http://tf2pug.us/demos
+  path: ../stv/
   ftp:
+    ip: tf2pug.us
     user: demos@tf2pug.us
     password: kuVgYXxYqydQ
     dir:
+  delete:
+    remote: true
+    local: false
 
 rotation:
   exclude: 2

@@ -4,36 +4,38 @@ require_relative 'constants'
 class Server
   include Constants
 
-  attr_reader :name, :ip, :port, :password, :rcon
+  attr_reader :ip, :port, :name, :password, :rcon
   
-  def initialize name, ip, port, password, rcon
-    @name = name
-    @ip = ip
-    @port = port
-    @password = password
-    @rcon = rcon 
+  def initialize details
+    @name = details["name"]
+    @ip = details["ip"]
+    @port = details["port"]
+    @password = details["password"]
+    @rcon = details["rcon"] 
 
     @connected = false
   end
   
-  #establish connection to server and auth
-  def connect 
+  def connect
     @conn = RCon::Query::Source.new(ip, port)
     @connected = @conn.auth rcon
   end
   
-  #execute any command passed
+  def close
+    @conn.disconnect if @conn
+    @connected = false
+  end
+  
   def command cmd
-    return unless connected? 
+    connect unless connected? 
     @conn.command cmd
   end
   
   def cvar name
-    return unless connected?
+    connect unless connected?
     @conn.cvar name
   end
 
-  #change map
   def clvl map
     command "changelevel #{ map }"
   end
@@ -52,10 +54,10 @@ class Server
   end
   
   def connect_info
-    "connect #{ @ip }:#{ @port }; password #{ @password }"
+    "connect #{ ip }:#{ port }; password #{ password }"
   end
   
   def to_s
-    @name
+    name
   end
 end

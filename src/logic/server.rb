@@ -1,21 +1,17 @@
 require_relative '../server'
+require_relative '../stv'
 
 module ServerLogic
   def start_server
-    @server.connect
-    
     while @server.in_use?
       message "Server #{ @server.to_s } is in use. Trying the next server in #{ const["delays"]["server"] } seconds."
+      next_server
       
       sleep const["delays"]["server"]
-      
-      next_server
-      @server.connect
     end
     
     @server.clvl @map["file"]
     @server.cpswd @server.password
-    @server.command "sm_rtv_initialdelay 30.0" # TODO: Test this, people have reported it doesn't work.
     
     @prev_maps << @map
     @prev_maps.shift if @prev_maps.size > const["rotation"]["exclude"]
@@ -28,6 +24,32 @@ module ServerLogic
   
   def change_map map
     @map = map
+  end
+  
+  def update_stv
+    const["servers"].each do |server_d|
+      server = Server.new server_d
+      
+      unless server.in_use?
+        stv = STV.new server_d["ftp"]
+        
+        count = stv.demos.size
+        message "Uploading #{ count } demos from #{ server.to_s }."
+        
+        stv.update if count
+        stv.disconnect
+      else
+        message "#{ server.to_s } is currently in use."
+      end
+      
+      server.close
+    end
+    
+    STV.disconnect
+  end
+  
+  def list_stv
+    message "STV demos can be found here: #{ const["stv"]["url"] }"
   end
 
   def list_server
@@ -57,7 +79,10 @@ module ServerLogic
   end
   
   def next_server
-    @server = @servers[(@servers.index(@server) + 1) % @servers.size]
+    temp = const["servers"].push(const["servers"].shift).first
+    
+    @server.close
+    @server = Server.new temp
   end
   
   def next_map 

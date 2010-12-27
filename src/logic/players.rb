@@ -13,9 +13,7 @@ module PlayersLogic
     
     notice user, "Invalid classes, possible options are #{ const["teams"]["classes"].keys.join(", ") }" if rej
     return if classes.empty?
-    
-    @signups[user.nick] = classes
-    
+
     user.refresh unless user.authed? # just in case they authed but the cache hasn't been updated
     
     u = User.find_by_auth(user.authname) if user.authed?
@@ -24,8 +22,8 @@ module PlayersLogic
 
     u.update_attributes(:auth => user.authname) if user.authed? and u.auth == nil
     
+    @signups[user.nick] = classes
     @auth[user.nick] = u
-    true
   end
   
   def create_player auth = nil, nick
@@ -115,12 +113,10 @@ module PlayersLogic
   def calculate_ratios user
     total = user.players.count
     classes = user.stats.group("tfclass_id").count
-    puts "#{ classes }"
 
     Hash.new.tap do |ratios|
       classes.each do |clss, count|
         temp = Tfclass.find(clss).name
-        puts "#{ temp }"
         ratios[temp] = count.to_f / total.to_f
       end
       ratios.default = 0

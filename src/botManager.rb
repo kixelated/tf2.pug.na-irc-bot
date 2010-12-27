@@ -8,6 +8,7 @@ class BotManager
   def initialize
     @bots = []
     @queue = []
+    @quit = false
   end
   
   def add bot
@@ -17,6 +18,7 @@ class BotManager
   def quit
     @bots.each { |bot| bot.quit }
     @bots.clear
+    @quit = true
   end
 
   def msg to, message, notice = false
@@ -28,14 +30,15 @@ class BotManager
   end
   
   def start
-    while @bots.size > 0
-      unless @queue.empty?
+    while not @quit
+      unless @queue.empty? or @bots.size == 0
         tosend = @queue.shift
         bot = @bots.push(@bots.shift).last
         
-        bot.msg tosend["to"], tosend["message"], tosend["notice"]
-        sleep(@bots.size.to_f / const["messengers"]["mps"].to_f)
+        bot.msg tosend[:to], tosend[:message], tosend[:notice]
       end
+      
+      sleep(1.0 / (const["messengers"]["mps"].to_f * @bots.size.to_f)) # doubles as the delay and a way to reduce throttling
     end
   end
 end
