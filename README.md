@@ -4,7 +4,11 @@ tf2.pug.na - A TF2 pug bot in Ruby
 Installation
 ------------
 
-This bot requires Ruby 1.9.0+, which is probably not the installed version on your system. It also requires the bundler gem, which can be installed with:
+This bot requires Ruby 1.9.0+, which is probably not the installed version on your system. In addition, sqlite3 needs to be installed:
+
+    apt-get install sqlite3
+
+In addition, the bot requires the bundler gem, which can be installed with:
 
     gem install bundler
 
@@ -12,7 +16,7 @@ After installing bundler, navigate to the src directory and execute the command:
 
     bundle install
     
-This will install all of the gems needed for the bot to operate.
+This will install the rest of the gems needed for the bot to operate.
 
 
 Configuration

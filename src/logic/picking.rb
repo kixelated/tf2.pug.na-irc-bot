@@ -110,15 +110,15 @@ module PickingLogic
   def final_pick
     end_picking # logic/state.rb
     update_captains
-    
-    create_match
-    start_server # logic/server.rb
-
     print_teams
-    announce_teams
+
+    start_server # logic/server.rb
     announce_server # logic/server.rb
+    announce_teams
     
+    create_match # takes a while
     end_game # logic/state.rb
+    list_players # logic/players.rb
   end
   
   def update_captains

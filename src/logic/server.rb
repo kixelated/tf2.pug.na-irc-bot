@@ -27,6 +27,9 @@ module ServerLogic
   end
   
   def update_stv
+    return message "Update already in progress" if @updating
+  
+    @updating = true
     const["servers"].each do |server_d|
       server = Server.new server_d
       
@@ -46,6 +49,8 @@ module ServerLogic
     end
     
     STV.disconnect
+    
+    @updating = false
   end
   
   def list_stv

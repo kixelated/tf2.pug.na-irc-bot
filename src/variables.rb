@@ -20,5 +20,7 @@ module Variables
     @last = nil
     @state = const["states"]["waiting"]
     @pick = 0
+    
+    @updating = false
   end
 end
