@@ -106,11 +106,7 @@ module StateLogic
   def list_afk
     message "#{ rjust "AFK players:" } #{ check_afk(@signups.keys).join(", ") }"
   end
-  
-  def list_state
-    message "The current state is #{ const["states"].invert[@state] }"
-  end
-  
+
   def state s
     @state = const["states"][s]
   end

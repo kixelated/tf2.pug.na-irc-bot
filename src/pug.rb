@@ -19,37 +19,42 @@ class Pug
   include StateLogic
   include ServerLogic
   
-  listen_to :channel, method: :channel
-  listen_to :join, method: :join
-  listen_to :part, method: :remove
-  listen_to :quit, method: :remove
-  listen_to :nick, method: :nick
-
-  match /add (.+)/i, method: :add
-  match /remove/i, method: :remove
-  match /list/i, method: :list
-  match /players/i, method: :list
-  match /need/i, method: :need
-  match /afk/i, method: :afk
-  match /stats ([\S]+)/i, method: :stats
-  match /nick ([\S]+)/i, method: :update_nick
-
-  match /pick ([\S]+) ([\S]+)/i, method: :pick
-  match /random ([\S]+)/i, method: :random
-  match /captain/i, method: :scaptain
-  match /format/i, method: :format
-  match /state/i, method: :lstate
-
-  match /map/i, method: :map
-  match /server/i, method: :server
-  match /ip/i, method: :server
-  match /last/i, method: :last
-  match /mumble/i, method: :mumble
-  match /rotation/i, method: :rotation
-  match /stv/i, method: :stv  
-
-  match /man/i, method: :help
+  listen_to :channel, method: :event_channel
+  listen_to :join, method: :event_join
+  listen_to :part, method: :event_part
+  listen_to :quit, method: :event_quit
+  listen_to :nick, method: :event_nick
   
+  # player-related commands
+  match /add (.+)/i, method: :command_add
+  match /remove/i, method: :command_remove
+  match /list/i, method: :command_list
+  match /players/i, method: :command_list
+  match /need/i, method: :command_need
+  match /afk/i, method: :command_afk
+  match /stats ([\S]+)/i, method: :command_stats
+  match /nick ([\S]+)/i, method: :command_nick
+
+  # picking-related commands
+  match /pick ([\S]+) ([\S]+)/i, method: :command_pick
+  match /random ([\S]+)/i, method: :command_random
+  match /captain/i, method: :command_captain
+  match /format/i, method: :command_format
+
+  # server-related commands
+  match /map/i, method: :command_map
+  match /server/i, method: :command_server
+  match /ip/i, method: :command_server
+  match /last/i, method: :command_last
+  match /mumble/i, method: :command_mumble
+  match /rotation/i, method: :command_rotation
+  match /stv/i, method: :command_stv  
+  match /status/i, method: :command_status
+  
+  # misc commands
+  match /man/i, method: :command_help
+  
+  # admin commands
   match /force ([\S]+) (.+)/i, method: :admin_force
   match /replace ([\S]+) ([\S]+)/i, method: :admin_replace
   match /changemap ([\S]+)/i, method: :admin_changemap
@@ -57,7 +62,6 @@ class Pug
   match /nextserver/i, method: :admin_nextserver
   match /reset/i, method: :admin_reset
   match /endgame/i, method: :admin_endgame
-  
   match /debug/i, method: :admin_debug
   
   def initialize *args
@@ -65,69 +69,53 @@ class Pug
     setup # variables.rb 
   end
   
-  def channel m
+  def event_channel m
     update_spoken m.user # logic/state.rb
   end
   
-  def join m
+  def event_join m
     reward_player m.user # logic/players.rb
   end
   
-  def nick m
-    list_players if replace_player m.user.last_nick, m.user
+  def event_part m
+    command_remove m
+  end
+  
+  def event_quit m
+    command_remove m
+  end
+  
+  def event_nick m
+    list_players if replace_player m.user.last_nick, m.user # logic/player.rb
   end
 
+  # Player-related commands
   # !add
-  def add m, args
+  def command_add m, args
     if add_player m.user, args.split(/ /) # logic/players.rb
       list_players # logic/players.rb
       attempt_afk # logic/state.rb
     end
   end
 
-  # !remove, (quit), (part)
-  def remove m
+  # !remove
+  def command_remove m
     list_players if remove_player m.user.nick # logic/players.rb
   end
   
   # !list, !players
-  def list m
+  def command_list m
     list_players # logic/players.rb
     list_players_detailed # logic/players.rb
   end
   
   # !need
-  def need m
+  def command_need m
     list_classes_needed if can_add? # logic/players.rb
   end
   
-  # !pick
-  def pick m, player, player_class
-    pick_player m.user, player, player_class # logic/picking.rb
-  end
-  
-  # !random
-  def random m, clss
-    pick_random m.user, clss # logic/picking.rb
-  end
-  
-  # !captain
-  def scaptain m
-    list_captain m.user # logic/picking.rb
-  end
-  
-  # !format
-  def format m
-    list_format # logic/picking.rb
-  end
-
-  # !state
-  def lstate m
-    list_state # logic/state.rb
-  end
-  
   # !stats
-  def stats m, user
+  def command_stats m, user
     if user == "me"
       list_stats m.user.nick # logic/players.rb
     else
@@ -135,54 +123,83 @@ class Pug
     end
   end
   
+  # !afk
+  def command_afk m
+    list_afk # logic/state.rb
+  end
+  
   # !nick
-  def update_nick m, nick
+  def command_nick m, nick
     update_player m.user, nick # logic/players.rb
   end
   
+  # Picking-related commands
+  # !pick
+  def command_pick m, player, player_class
+    pick_player m.user, player, player_class # logic/picking.rb
+  end
+  
+  # !random
+  def command_random m, clss
+    pick_random m.user, clss # logic/picking.rb
+  end
+  
+  # !captain
+  def command_captain m
+    list_captain m.user # logic/picking.rb
+  end
+  
+  # !format
+  def command_format m
+    list_format # logic/picking.rb
+  end
+
+  # Server-related commands
   # !mumble
-  def mumble m
+  def command_mumble m
     list_mumble # logic/server.rb
   end
 
   # !map
-  def map m
+  def command_map m
     list_map # logic/server.rb
   end
   
   # !server
-  def server m
+  def command_server m
     list_server # logic/server.rb
   end
   
   # !last
-  def last m
+  def command_last m
     list_last # logic/server.rb
   end
   
   # !rotation
-  def rotation m
+  def command_rotation m
     list_rotation # logic/server.rb
   end
   
   # !stv
-  def stv m
-    update_stv
-    list_stv
+  def command_stv m
+    update_stv # logic/server.rb
+    list_stv # logic/server.rb
   end
   
+  # !status 
+  def command_status m
+    list_status # logic/server.rb
+  end
+
+  # Misc commands
   # !man
   def help m
     message "Player related commands: !add, !remove, !list, !need, !afk, !stats, !nick"
-    message "Captain related comands: !pick, !random, !captain, !format, !list, !state"
+    message "Captain related comands: !pick, !random, !captain, !format"
     message "Server related commands: !ip, !map, !mumble, !last, !rotation, !stv"
   end
-  
-  # !afk
-  def afk m
-    list_afk # logic/state.rb
-  end
 
+  # Admin commands
   # !changemap
   def admin_changemap m, map
     return unless require_admin m.user

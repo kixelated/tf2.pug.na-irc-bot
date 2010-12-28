@@ -56,6 +56,14 @@ module ServerLogic
   def list_stv
     message "STV demos can be found here: #{ const["stv"]["url"] }"
   end
+  
+  def list_status
+    const["servers"].each do |server_d|
+      server = Server.new server_d
+      message "#{ server.players - 1 } players on #{ server }" # -1 to factor in STV
+      server.close
+    end
+  end
 
   def list_server
     message "#{ @server.connect_info }"
@@ -82,6 +90,8 @@ module ServerLogic
     output = const["rotation"]["maps"].collect { |map| "#{ map["name"] }(#{ map["weight"] })" }
     message "Map(weight) rotation: #{ output.join(", ") }"
   end
+  
+  
   
   def next_server
     temp = const["servers"].push(const["servers"].shift).first

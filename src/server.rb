@@ -48,9 +48,13 @@ class Server
     @connected
   end
   
-  def in_use?
+  def players
     command("status") =~ /players : (\S+) /
-    return $1.to_i > const["settings"]["used"]
+    return $1.to_i
+  end
+  
+  def in_use?
+    players > const["settings"]["used"]
   end
   
   def connect_info
