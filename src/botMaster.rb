@@ -19,7 +19,7 @@ class BotMaster < Cinch::Bot
       c.auth_password = Constants.const["irc"]["auth_password"]
       c.auth_serv = Constants.const["irc"]["auth_serv"]
       
-      c.plugins.plugins = [ Pug, Quitter ]
+      c.plugins.plugins = [ Pug ]
       c.verbose = false
     end
     
