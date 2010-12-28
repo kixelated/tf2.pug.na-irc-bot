@@ -1,2 +1,0 @@
-adapter: sqlite3
-database: '../db/skeleton.sqlite3'

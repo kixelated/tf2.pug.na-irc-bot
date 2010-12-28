@@ -5,9 +5,13 @@ class BotManager
   include Singleton
   include Constants
   
+  attr_accessor :logger
+  
   def initialize
     @bots = []
     @queue = []
+    
+    @logger = nil
     @quit = false
   end
   
@@ -23,6 +27,7 @@ class BotManager
 
   def msg to, message, notice = false
     @queue << { :to => to, :message => message, :notice => notice }
+    logger.log message, :outgoing
   end
   
   def notice to, message

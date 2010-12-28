@@ -63,6 +63,7 @@ class Pug
   match /reset/i, method: :admin_reset
   match /endgame/i, method: :admin_endgame
   match /debug/i, method: :admin_debug
+  match /quit/i, method: :admin_quit
   
   def initialize *args
     super
@@ -193,7 +194,7 @@ class Pug
 
   # Misc commands
   # !man
-  def help m
+  def command_help m
     message "Player related commands: !add, !remove, !list, !need, !afk, !stats, !nick"
     message "Captain related comands: !pick, !random, !captain, !format"
     message "Server related commands: !ip, !map, !mumble, !last, !rotation, !stv"
@@ -264,11 +265,11 @@ class Pug
     # Add debug here
   end
   
-  # !auth
-  def admin_auth m
+  # !quit
+  def admin_quit m
     return unless require_admin m.user
-    
-    bot.msg Constants.const["irc"]["auth_serv"], "AUTH #{ Constants.const["irc"]["auth"] } #{ Constants.const["irc"]["auth_password"] }"
+  
+    BotManager.instance.quit
   end
 
   def require_admin user

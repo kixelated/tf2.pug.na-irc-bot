@@ -1,3 +1,7 @@
+database:
+  adapter: sqlite3
+  database: '../db/stats.sqlite3'
+
 irc:
   server: irc.gamesurge.net
   port: 6667
@@ -68,7 +72,7 @@ stv:
   ftp:
     ip: tf2pug.us
     user: demos@tf2pug.us
-    password: kuVgYXxYqydQ
+    password: secret
     dir:
   delete:
     remote: true
@@ -83,11 +87,11 @@ rotation:
       
     - name: granary
       file: cp_granary
-      weight: 12
+      weight: 14
       
     - name: gullywash
       file: cp_gullywash_imp3
-      weight: 10
+      weight: 8
       
     - name: viaduct
       file: koth_viaduct
@@ -95,6 +99,10 @@ rotation:
       
     - name: coldfront
       file: cp_coldfront
+      weight: 6
+      
+    - name: ashville
+      file: koth_ashville_rc1
       weight: 6
       
     - name: snakewater
@@ -105,13 +113,9 @@ rotation:
       file: cp_yukon
       weight: 4
       
-    - name: ashville
-      file: koth_ashville_rc1
-      weight: 4
-      
     - name: freight
       file: cp_freight_final2
-      weight: 4
+      weight: 2
     
 mumble:
   ip: chi6.eoreality.net
