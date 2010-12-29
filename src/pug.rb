@@ -75,6 +75,8 @@ class Pug
   end
   
   def event_join m
+    sleep const["delays"]["reward"] # sleep to give them a chance to auth, in case they join prior to authorizing
+    m.user.refresh
     reward_player m.user # logic/players.rb
   end
   

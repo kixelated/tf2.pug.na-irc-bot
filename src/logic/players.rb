@@ -3,47 +3,42 @@ require_relative '../util'
 
 module PlayersLogic
   def add_player user, classes
-    return unless classes
-    
     return notice user, "You cannot add at this time, please wait for picking to end." unless can_add? # logic/state.rb
+    notice user, "You are not authorized with Gamesurge. You can still play in the channel, but any accumulated stats may be lost and will not transfer if you change your nick. Please follow this guide to register and authorize with Gamesurge: http://www.gamesurge.net/newuser/" unless user.authed?
     
+    # clean up the classes, removing any invalid or duplicate items
     classes.collect! { |clss| clss.downcase }
-    rej = classes.reject! { |clss| not const["teams"]["classes"].key? clss }
+    classes.reject! { |clss| not const["teams"]["classes"].key? clss }
     classes.uniq!
     
-    notice user, "Invalid classes, possible options are #{ const["teams"]["classes"].keys.join(", ") }" if rej
-    return if classes.empty?
+    return notice user, "Invalid classes, possible options are #{ const["teams"]["classes"].keys.join(", ") }" if classes.empty?
 
     user.refresh unless user.authed? # just in case they authed but the cache hasn't been updated
+    u = User.find_by_auth(user.authname) if user.authed? # find by authname
+    u = User.where(:name => user.nick, :auth => nil).first unless u # find by nick if that fails
     
-    u = User.find_by_auth(user.authname) if user.authed?
-    u = User.where(:name => user.nick, :auth => nil).first unless u
-    u = create_player user.authname, user.nick unless u
+    unless u # if both fail, we need to create a new account for the individual
+      notice user, "Welcome to #tf2.pug.na! The channel has certain quality standards, and we ask that you have a good amount of experience and understanding of the 6v6 format before playing here. If you do not yet meet these requirements, please type !remove and try another system like tf2lobby.com"
+      notice user, "If you are still interested in playing here, there are a few rules that you can find on our wiki page. Please ask questions and use the !man command to list all of the avaliable commands. Teams will be drafted by captains when there are enough players added, so hang tight and don't fret if you are not picked."
 
-    u.update_attributes(:auth => user.authname) if user.authed? and u.auth == nil
-    
+      u = User.create(:auth => user.authname, :name => user.nick)
+    end
+
+    # add the player to the pug
     @signups[user.nick] = classes
     @auth[user.nick] = u
   end
   
-  def create_player auth = nil, nick
-    notice nick, "Welcome to #tf2.pug.na! The channel has certain quality standards, and we ask that you have a good amount of experience and understanding of the 6v6 format before playing here. If you do not yet meet these requirements, please type !remove and try another system like tf2lobby.com"
-    notice nick, "If you are still interested in playing here, there are a few rules that you can find on our wiki page. Please ask questions and use the !man command to list all of the avaliable commands. Teams will be drafted by captains when there are enough players added, so hang tight and don't fret if you are not picked."
-
-    User.create(:auth => auth, :name => nick)
-  end
-  
   def update_player user, nick
-    return notice user, "You must be registered with GameSurge in order to play in this channel. http://www.gamesurge.net/newuser/" unless user.authed?
+    return notice user, "You must be registered with GameSurge in order to change your nick. http://www.gamesurge.net/newuser/" unless user.authed?
     
     player = User.find_by_auth(user.authname)
     return notice user, "Could not find an account registered to your authname, please !add up at least once." unless player
     return notice user, "Your name has not changed." if player.name == nick
  
     message "#{ player.name } is now known as #{ nick }"
- 
-    player.name = nick
-    player.save
+    
+    player.update_attributes(:name => nick)
   end
   
   def remove_player nick
@@ -123,11 +118,12 @@ module PlayersLogic
     end
   end
 
-  def list_stats nick
-    u = User.find_by_name(nick)
-    u = User.find_by_auth(User(nick).authname) unless u or !User(nick) or !User(nick).authname
+  def list_stats name
+    u = User.where(:name => name).order("auth ASC").first # give priority to authorized accounts
+    u = User.find_by_auth(name) unless u
+    u = User.find_by_auth(User(name).authname) unless u or !User(name) or !User(name).authname
 
-    return message "There are no records of the user #{ nick }" unless u
+    return message "There are no records of the user #{ name }" unless u
     
     total = u.players.count
     output = calculate_ratios(u).collect { |clss, percent| "#{ (percent * 100).round }% #{ clss }" }

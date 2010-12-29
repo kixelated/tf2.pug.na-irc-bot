@@ -23,6 +23,7 @@ delays:
   afk: 45
   picking: 45
   server: 30
+  reward: 5
   
 settings:
   afk: 600

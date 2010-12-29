@@ -8,4 +8,7 @@ class User < ActiveRecord::Base
   
   has_many :players
   has_many :stats, :through => :players
+  
+  validates :auth, :unique => true
+  validates :name, :presence => true, :unique => { :scope => :auth }
 end

@@ -84,6 +84,7 @@ module PickingLogic
     unless player
       player = @lookup[player_nick.to_i] if player_nick.to_i > 0
       return notice(user, "Could not find #{ player_nick }.") unless player
+      return notice(user, "#{ player } has already been picked.") unless @signups.key? player
     end
     
     return notice(user, "Invalid class #{ player_class }.") unless pick_class_valid? player_class
