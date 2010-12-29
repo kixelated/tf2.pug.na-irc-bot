@@ -24,6 +24,7 @@ delays:
   picking: 45
   server: 30
   reward: 5
+  manager: 0.05
   
 settings:
   afk: 600
@@ -67,7 +68,6 @@ servers:
       dir: orangebox/tf
       
 stv:
-  ip: tf2pug.us
   url: http://tf2pug.us/demos
   path: ../stv/
   ftp:

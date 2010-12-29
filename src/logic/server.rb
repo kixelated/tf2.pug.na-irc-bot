@@ -27,9 +27,8 @@ module ServerLogic
   end
   
   def update_stv
-    return message "Update already in progress" if @updating
-  
     @updating = true
+    
     const["servers"].each do |server_d|
       server = Server.new server_d
       
@@ -49,7 +48,6 @@ module ServerLogic
     end
     
     STV.disconnect
-    
     @updating = false
   end
   
@@ -90,8 +88,6 @@ module ServerLogic
     output = const["rotation"]["maps"].collect { |map| "#{ map["name"] }(#{ map["weight"] })" }
     message "Map(weight) rotation: #{ output.join(", ") }"
   end
-  
-  
   
   def next_server
     temp = const["servers"].push(const["servers"].shift).first

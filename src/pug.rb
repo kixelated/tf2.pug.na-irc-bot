@@ -185,7 +185,7 @@ class Pug
   
   # !stv
   def command_stv m
-    update_stv # logic/server.rb
+    update_stv unless @updating and not m.user.opped? # logic/server.rb
     list_stv # logic/server.rb
   end
   

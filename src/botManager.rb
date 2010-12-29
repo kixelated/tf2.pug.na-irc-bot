@@ -41,9 +41,11 @@ class BotManager
         bot = @bots.push(@bots.shift).last
         
         bot.msg tosend[:to], tosend[:message], tosend[:notice]
+        
+        sleep(1.0 / (const["messengers"]["mps"].to_f * @bots.size.to_f))
+      else
+        sleep(const["messengers"]["manager"])
       end
-      
-      sleep(1.0 / (const["messengers"]["mps"].to_f * @bots.size.to_f)) # doubles as the delay and a way to reduce throttling
     end
   end
 end
