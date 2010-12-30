@@ -1,3 +1,5 @@
+require 'chronic_duration'
+
 require_relative '../server'
 require_relative '../stv'
 
@@ -79,9 +81,7 @@ module ServerLogic
   
   def list_last
     return message "A match has not been played since the bot was restarted." unless @last
-    time = (Time.now - @last).to_i
-    
-    return message "The last match was started #{ time / 3600 } hours and #{ time / 60 % 60 } minutes ago"
+    message "The last match was started #{ ChronicDuration.output((Time.now - @last).to_i, :format => :long) } ago"
   end
   
   def list_rotation

@@ -23,7 +23,6 @@ delays:
   afk: 45
   picking: 45
   server: 30
-  reward: 5
   manager: 0.05
   
 settings:
@@ -120,7 +119,7 @@ rotation:
       
     - name: obscure
       file: cp_obscure_final
-      weight: 2
+      weight: 1
       
     - name: follower
       file: cp_follower

@@ -19,11 +19,14 @@ class Pug
   include StateLogic
   include ServerLogic
   
+  # events
   listen_to :channel, method: :event_channel
   listen_to :join, method: :event_join
   listen_to :part, method: :event_part
   listen_to :quit, method: :event_quit
   listen_to :nick, method: :event_nick
+  
+  timer 30, method: :event_timer
   
   # player-related commands
   match /add (.+)/i, method: :command_add
@@ -34,6 +37,7 @@ class Pug
   match /afk/i, method: :command_afk
   match /stats ([\S]+)/i, method: :command_stats
   match /nick ([\S]+)/i, method: :command_nick
+  match /reward/i, method: :command_reward
 
   # picking-related commands
   match /pick ([\S]+) ([\S]+)/i, method: :command_pick
@@ -64,19 +68,19 @@ class Pug
   match /endgame/i, method: :admin_endgame
   match /debug/i, method: :admin_debug
   match /quit/i, method: :admin_quit
+  match /restrict ([\S]+) (.+)/i, method: :admin_restrict
   
   def initialize *args
     super
     setup # variables.rb 
   end
   
+  # Events
   def event_channel m
     update_spoken m.user # logic/state.rb
   end
   
   def event_join m
-    sleep const["delays"]["reward"] # sleep to give them a chance to auth, in case they join prior to authorizing
-    m.user.refresh
     reward_player m.user # logic/players.rb
   end
   
@@ -90,6 +94,10 @@ class Pug
   
   def event_nick m
     list_players if replace_player m.user.last_nick, m.user # logic/player.rb
+  end
+  
+  def event_timer
+    update_restrictions
   end
 
   # Player-related commands
@@ -134,6 +142,11 @@ class Pug
   # !nick
   def command_nick m, nick
     update_player m.user, nick # logic/players.rb
+  end
+  
+  # !reward
+  def command_reward m
+    notice m.user, "You need #{ const["reward"]["min"] } games and #{ const["reward"]["ratio"].to_f * 100 }% on #{ const["reward"]["classes"].join(" + ") } to get voice." unless reward_player m.user
   end
   
   # Picking-related commands
@@ -272,6 +285,13 @@ class Pug
     return unless require_admin m.user
   
     BotManager.instance.quit
+  end
+  
+  # !restrict
+  def admin_restrict m, nick, duration
+    return unless require_admin m.user
+    
+    restrict_player m.user, nick, duration
   end
 
   def require_admin user

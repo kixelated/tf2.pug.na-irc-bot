@@ -44,7 +44,7 @@ class BotManager
         
         sleep(1.0 / (const["messengers"]["mps"].to_f * @bots.size.to_f))
       else
-        sleep(const["messengers"]["manager"])
+        sleep(const["delays"]["manager"].to_f)
       end
     end
   end

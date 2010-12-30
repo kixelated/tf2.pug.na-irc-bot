@@ -1,8 +1,12 @@
+require 'chronic_duration'
+
 require_relative '../model/user'
 require_relative '../util'
 
 module PlayersLogic
   def add_player user, classes
+    return notice user, "Invalid classes, possible options are #{ const["teams"]["classes"].keys.join(", ") }" unless classes
+  
     return notice user, "You cannot add at this time, please wait for picking to end." unless can_add? # logic/state.rb
     notice user, "You are not authorized with Gamesurge. You can still play in the channel, but any accumulated stats may be lost and will not transfer if you change your nick. Please follow this guide to register and authorize with Gamesurge: http://www.gamesurge.net/newuser/" unless user.authed?
     
@@ -12,17 +16,19 @@ module PlayersLogic
     classes.uniq!
     
     return notice user, "Invalid classes, possible options are #{ const["teams"]["classes"].keys.join(", ") }" if classes.empty?
-
+    
     user.refresh unless user.authed? # just in case they authed but the cache hasn't been updated
-    u = User.find_by_auth(user.authname) if user.authed? # find by authname
+    u = User.find_by_auth(user.authname) # find by authname
     u = User.where(:name => user.nick, :auth => nil).first unless u # find by nick if that fails
     
-    unless u # if both fail, we need to create a new account for the individual
+    unless u # if those two fail, create a new account for the individual
       notice user, "Welcome to #tf2.pug.na! The channel has certain quality standards, and we ask that you have a good amount of experience and understanding of the 6v6 format before playing here. If you do not yet meet these requirements, please type !remove and try another system like tf2lobby.com"
       notice user, "If you are still interested in playing here, there are a few rules that you can find on our wiki page. Please ask questions and use the !man command to list all of the avaliable commands. Teams will be drafted by captains when there are enough players added, so hang tight and don't fret if you are not picked."
 
       u = User.create(:auth => user.authname, :name => user.nick)
     end
+    
+    return notice user, "You are restricted from playing in this channel." if u.restriction
 
     # add the player to the pug
     @signups[user.nick] = classes
@@ -39,6 +45,7 @@ module PlayersLogic
     message "#{ player.name } is now known as #{ nick }"
     
     player.update_attributes(:name => nick)
+    @auth[user.nick] = player if @auth[user.nick]
   end
   
   def remove_player nick
@@ -65,6 +72,27 @@ module PlayersLogic
       return if sum < const["reward"]["ratio"].to_f
       
       Channel(const["irc"]["channel"]).voice user
+      return true
+    end
+  end
+  
+  def restrict_player user, nick, duration
+    u = User.find_by_name(nick)
+    duration = ChronicDuration.parse(duration)
+    
+    return notice user, "Could not find user." unless u
+    return notice user, "Unknown duration." unless duration
+    
+    remove_player nick
+    u.restriction = Restriction.create(:time => (Time.now.to_i + duration))
+    
+    message "#{ nick } has been restricted for #{ ChronicDuration.output(duration, :format => :long) }."
+  end
+  
+  def update_restrictions 
+    Restriction.where("time < ?", Time.now.to_i).each do |r|
+      message "#{ r.user.name } is no longer restricted."
+      r.delete
     end
   end
   
@@ -119,8 +147,8 @@ module PlayersLogic
   end
 
   def list_stats name
-    u = User.where(:name => name).order("auth ASC").first # give priority to authorized accounts
-    u = User.find_by_auth(name) unless u
+    u = User.where("name = ? AND auth != NULL", name).first # give priority to authorized accounts
+    u = User.find_by_name(name) unless u
     u = User.find_by_auth(User(name).authname) unless u or !User(name) or !User(name).authname
 
     return message "There are no records of the user #{ name }" unless u
