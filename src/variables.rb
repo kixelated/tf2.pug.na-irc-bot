@@ -18,7 +18,7 @@ module Variables
     @teams = []
     @lookup = {}
     
-    @last = nil
+    @last = Match.last.time if Match.last
     @state = const["states"]["waiting"]
     @pick = 0
     

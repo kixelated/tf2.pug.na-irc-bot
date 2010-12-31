@@ -102,8 +102,8 @@ class Pug
 
   # Player-related commands
   # !add
-  def command_add m, args
-    if add_player m.user, args.split(/ /) # logic/players.rb
+  def command_add m, classes
+    if add_player m.user, classes.split(/ /) # logic/players.rb
       list_players # logic/players.rb
       attempt_afk # logic/state.rb
     end
@@ -241,10 +241,10 @@ class Pug
   end
 
   # !force
-  def admin_force m, player, args
+  def admin_force m, player, classes
     return unless require_admin m.user
     
-    if add_player User(player), args.split(/ /) # logic/players.rb
+    if add_player User(player), classes.split(/ /) # logic/players.rb
       list_players # logic/players.rb
       attempt_afk # logic/state.rb
     end

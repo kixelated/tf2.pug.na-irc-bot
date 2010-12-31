@@ -102,7 +102,7 @@ module PickingLogic
     
     return notice(user, "Invalid class #{ clss }.") unless pick_class_valid? clss
     return notice(user, "The class #{ clss } is full.") unless pick_class_avaliable? clss
-    return notice(user, "You cannot pick one of the remaining medics.") if @debug and pick_medic_conflicting? nick, clss
+    return notice(user, "You cannot pick one of the remaining medics.") if pick_medic_conflicting? player, clss
 
     current_team.signups[player] = clss
     @signups.delete player
@@ -123,17 +123,21 @@ module PickingLogic
   end
   
   def final_pick
-    end_picking # logic/state.rb
-    update_captains
-    print_teams
-
-    start_server # logic/server.rb
-    announce_server # logic/server.rb
-    announce_teams
+    end_picking
     
-    create_match # takes a while
-    end_game # logic/state.rb
-    list_players # logic/players.rb
+    server = Thread.new { start_server }
+    
+    update_captains
+    print_teams # update_captains (indicates dependencies)
+    create_match # update_captains
+    
+    server.join
+    
+    announce_teams # update_captains, start_server
+    announce_server # start_server
+
+    end_game
+    list_players
   end
   
   def update_captains

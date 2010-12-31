@@ -80,7 +80,6 @@ module ServerLogic
   end
   
   def list_last
-    return message "A match has not been played since the bot was restarted." unless @last
     message "The last match was started #{ ChronicDuration.output((Time.now - @last).to_i, :format => :long) } ago"
   end
   
