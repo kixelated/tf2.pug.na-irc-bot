@@ -7,6 +7,7 @@ require_relative '../model/user'
 module PickingLogic
   def choose_captains
     possible_captains = get_classes["captain"]
+    @signups_all = @signups.reject { |k, v| false } # Ghetto way of copying a hash
 
     const["teams"]["count"].times do |i|
       captain = possible_captains.delete_at rand(possible_captains.length)
@@ -23,7 +24,7 @@ module PickingLogic
     end
     
     output = @teams.collect { |team| team.my_colourize team.captain }
-    message "Captains are #{ output.join(", ") }"
+    message "Captains are #{ output * ", " }"
   end
   
   def update_lookup
@@ -40,7 +41,7 @@ module PickingLogic
     # Displays the classes that are not yet full for this team
     classes_needed(current_team.get_classes).each do |k, v| # logic/players.rb
       output = classes[k].collect { |player| "(#{ lookup_i[player] }) #{ player }" }
-      notice current_captain, "#{ bold rjust("#{ v } #{ k }:") } #{ output.join(", ") }"
+      notice current_captain, "#{ bold rjust("#{ v } #{ k }:") } #{ output * ", " }"
     end
   end
   
@@ -50,11 +51,11 @@ module PickingLogic
     message "It is #{ current_captain }'s turn to pick"
   end
   
-  def pick_random user, player_class
-    classes = get_classes[player_class]
-    player = classes[rand(classes.length)]
+  def pick_random user, clss
+    classes = get_classes[clss]
+    nick = classes[rand(classes.length)]
     
-    pick_player user, player, player_class
+    pick_player user, nick, clss
   end
 
   def can_pick? nick
@@ -70,30 +71,43 @@ module PickingLogic
     const["teams"]["classes"].key? clss
   end
   
-  def pick_class_avaliable? player_class
-    classes_needed(current_team.get_classes).key? player_class # logic/players.rb
+  def pick_class_avaliable? clss
+    classes_needed(current_team.get_classes).key? clss # logic/players.rb
+  end
+  
+  def pick_medic_conflicting? nick, clss
+    return false unless @signups[nick].include? "medic"
+  
+    needed = 0
+    medics = get_classes["medic"].size - 1 # the current pick is a medic
+    
+    @teams.each { |team| needed += 1 unless team.signups.values.include? "medic" or @signups_all[team.captain].include? "medic" }
+    needed -= 1 if clss == "medic" and !@signups_all[current_team.captain].include? "medic" # special case where team has a captain who can med
+  
+    return medics < needed
   end
 
-  def pick_player user, player_nick, player_class
+  def pick_player user, nick, clss
     return notice(user, "Picking has not started.") unless state? "picking" # logic/state.rb
     return notice(user, "It is not your turn to pick.") unless can_pick? user.nick
 
-    player_class.downcase!
-    player = find_player player_nick
+    clss.downcase!
+    player = find_player nick
     
     unless player
-      player = @lookup[player_nick.to_i] if player_nick.to_i > 0
-      return notice(user, "Could not find #{ player_nick }.") unless player
+      player = @lookup[nick.to_i] if nick.to_i > 0
+      return notice(user, "Could not find #{ nick }.") unless player
       return notice(user, "#{ player } has already been picked.") unless @signups.key? player
     end
     
-    return notice(user, "Invalid class #{ player_class }.") unless pick_class_valid? player_class
-    return notice(user, "The class #{ player_class } is full.") unless pick_class_avaliable? player_class
+    return notice(user, "Invalid class #{ clss }.") unless pick_class_valid? clss
+    return notice(user, "The class #{ clss } is full.") unless pick_class_avaliable? clss
+    return notice(user, "You cannot pick one of the remaining medics.") if @debug and pick_medic_conflicting? nick, clss
 
-    current_team.signups[player] = player_class
+    current_team.signups[player] = clss
     @signups.delete player
     
-    message "#{ current_team.my_colourize user.nick } picked #{ player } as #{ player_class }"
+    message "#{ current_team.my_colourize user.nick } picked #{ player } as #{ clss }"
     
     next_pick
   end
@@ -174,7 +188,7 @@ module PickingLogic
     (const["teams"]["total"] - const["teams"]["count"]).times do |i|
       output << (colourize "#{ i }", const["teams"]["details"][pick_format(i)]["colour"])
     end
-    message "The picking format is: #{ output.join(" ") }"
+    message "The picking format is: #{ output * " " }"
   end
   
   def current_captain

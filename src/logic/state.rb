@@ -26,7 +26,7 @@ module StateLogic
     @afk = check_afk @signups.keys
     return if @afk.empty?
   
-    message "#{ colourize rjust("AFK players:"), const["colours"]["yellow"] } #{ @afk.join(", ") }"
+    message "#{ colourize rjust("AFK players:"), const["colours"]["yellow"] } #{ @afk * ", " }"
     
     @afk.each do |p|
       private p, "Warning, you are considered afk by the bot. Say anything in the channel within the next #{ const["delays"]["afk"] } seconds to avoid being removed."
@@ -104,7 +104,7 @@ module StateLogic
   end
   
   def list_afk
-    message "#{ rjust "AFK players:" } #{ check_afk(@signups.keys).join(", ") }"
+    message "#{ rjust "AFK players:" } #{ check_afk(@signups.keys) * ", " }"
   end
 
   def state s

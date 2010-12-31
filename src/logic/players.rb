@@ -5,7 +5,7 @@ require_relative '../util'
 
 module PlayersLogic
   def add_player user, classes
-    return notice user, "Invalid classes, possible options are #{ const["teams"]["classes"].keys.join(", ") }" unless classes
+    return notice user, "Invalid classes, possible options are #{ const["teams"]["classes"].keys * ", " }" unless classes
   
     return notice user, "You cannot add at this time, please wait for picking to end." unless can_add? # logic/state.rb
     notice user, "You are not authorized with Gamesurge. You can still play in the channel, but any accumulated stats may be lost and will not transfer if you change your nick. Please follow this guide to register and authorize with Gamesurge: http://www.gamesurge.net/newuser/" unless user.authed?
@@ -15,7 +15,7 @@ module PlayersLogic
     classes.reject! { |clss| not const["teams"]["classes"].key? clss }
     classes.uniq!
     
-    return notice user, "Invalid classes, possible options are #{ const["teams"]["classes"].keys.join(", ") }" if classes.empty?
+    return notice user, "Invalid classes, possible options are #{ const["teams"]["classes"].keys * ", " }" if classes.empty?
     
     user.refresh unless user.authed? # just in case they authed but the cache hasn't been updated
     u = User.find_by_auth(user.authname) # find by authname
@@ -76,6 +76,10 @@ module PlayersLogic
     end
   end
   
+  def explain_reward user
+    notice user, "You need #{ const["reward"]["min"] } games and #{ (const["reward"]["ratio"].to_f * 100).round }% on #{ const["reward"]["classes"] * " + " } to get voice."
+  end
+  
   def restrict_player user, nick, duration
     u = User.find_by_name(nick)
     duration = ChronicDuration.parse(duration)
@@ -113,14 +117,14 @@ module PlayersLogic
       "#{ nick }#{ special }"
     end
     
-    message "#{ rjust("#{ @signups.size } users added:") } #{ output.values.join(", ") }"
+    message "#{ rjust("#{ @signups.size } users added:") } #{ output.values * ", " }"
   end
 
   def list_players_detailed
     classes = get_classes
 
     const["teams"]["classes"].each_key do |k|
-      message "#{ colourize rjust("#{ k }:"), const["colours"]["lgrey"] } #{ classes[k].join(", ") }" unless classes[k].empty?
+      message "#{ colourize rjust("#{ k }:"), const["colours"]["lgrey"] } #{ classes[k] * ", " }" unless classes[k].empty?
     end
   end
  
@@ -130,7 +134,7 @@ module PlayersLogic
     
     o = output.collect { |k, v| "#{ v } #{ k }" } # Format the output
 
-    message "#{ rjust "Required classes:" } #{ o.join(", ") }"
+    message "#{ rjust "Required classes:" } #{ o * ", " }"
   end
   
   def calculate_ratios user
@@ -156,7 +160,7 @@ module PlayersLogic
     total = u.players.count
     output = calculate_ratios(u).collect { |clss, percent| "#{ (percent * 100).round }% #{ clss }" }
 
-    message "#{ u.name }#{ "*" unless u.auth } has #{ u.players.count } games played: #{ output.join(", ") }"
+    message "#{ u.name }#{ "*" unless u.auth } has #{ u.players.count } games played: #{ output * ", " }"
   end
 
   def minimum_players?

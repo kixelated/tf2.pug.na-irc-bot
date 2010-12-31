@@ -10,7 +10,8 @@ module Variables
     next_map
   
     @signups = {}
-    @auth = {} # A backup of nicks to authnames in case somebody disconnects during picking
+    @signups_all = {}
+    @auth = {}
     @spoken = {}
     @afk = []
 
@@ -22,5 +23,6 @@ module Variables
     @pick = 0
     
     @updating = false
+    @debug = false
   end
 end

@@ -86,7 +86,7 @@ module ServerLogic
   
   def list_rotation
     output = const["rotation"]["maps"].collect { |map| "#{ map["name"] }(#{ map["weight"] })" }
-    message "Map(weight) rotation: #{ output.join(", ") }"
+    message "Map(weight) rotation: #{ output * ", " }"
   end
   
   def next_server

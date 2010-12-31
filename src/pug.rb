@@ -146,7 +146,7 @@ class Pug
   
   # !reward
   def command_reward m
-    notice m.user, "You need #{ const["reward"]["min"] } games and #{ const["reward"]["ratio"].to_f * 100 }% on #{ const["reward"]["classes"].join(" + ") } to get voice." unless reward_player m.user
+    explain_reward m.user unless reward_player m.user
   end
   
   # Picking-related commands
@@ -277,7 +277,7 @@ class Pug
   def admin_debug m
     return unless require_admin m.user
     
-    # Add debug here
+    @debug = !@debug
   end
   
   # !quit
