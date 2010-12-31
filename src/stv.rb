@@ -10,11 +10,6 @@ class STV
     @server = server
   end
 
-  def demos
-    @down = open @server
-    @down.nlst.reject { |filename| !(filename =~ /.+\.dem/) }
-  end
-  
   def open ftp
     Net::FTP.new(ftp["ip"]).tap do |conn|
       conn.login ftp["user"], ftp["password"]
@@ -26,29 +21,29 @@ class STV
     conn.close if conn
   end
   
+  def demos
+    @down.nlst.reject { |filename| !(filename =~ /.+\.dem/) }
+  end
+  
   def update
-    stv = const["stv"] # saves some typing
-    filepath = stv["path"]
-    
-    @@up = open stv["ftp"] # class variable so the connection can be shared
-    @down = open @server
-
     demos.each do |filename|
-      file = filepath + filename
+      file = const["stv"]["path"] + filename
     
       @down.getbinaryfile filename, file
-      @down.delete filename if stv["delete"]["remote"]
-      @@up.putbinaryfile file, filename
-      FileUtils.rm file if stv["delete"]["local"]
+      @down.delete filename if const["stv"]["delete"]["remote"]
+      @up.putbinaryfile file, filename
+      FileUtils.rm file if const["stv"]["delete"]["local"]
     end
   end
   
-  def disconnect
-    close @down
+  def connect
+    @up = open const["stv"]["ftp"]
+    @down = open @server
   end
   
-  def self.disconnect
-    @@up.close if @@up
+  def disconnect
+    close @up
+    close @down
   end
 end
 

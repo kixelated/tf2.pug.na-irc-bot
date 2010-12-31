@@ -5,18 +5,21 @@ require_relative '../stv'
 
 module ServerLogic
   def start_server
+    @server.connect
+    
     while @server.in_use?
       message "Server #{ @server.to_s } is in use. Trying the next server in #{ const["delays"]["server"] } seconds."
-      next_server
+      @server.disconnect
       
       sleep const["delays"]["server"]
+      
+      next_server
+      @server.connect
     end
     
     @server.clvl @map["file"]
     @server.cpswd @server.password
-    
-    @prev_maps << @map
-    @prev_maps.shift if @prev_maps.size > const["rotation"]["exclude"]
+    @server.disconnect
   end
   
   def announce_server
@@ -28,28 +31,38 @@ module ServerLogic
     @map = map
   end
   
+  def each_server
+    threads = []
+    const["servers"].each do |server_d|
+      threads << Thread.new(Server.new(server_d), server_d) do |server, server_d|
+        server.connect
+        yield server, server_d
+        server.disconnect
+      end
+    end
+    threads.each { |thread| thread.join }
+  end
+  
   def update_stv
     @updating = true
     
-    const["servers"].each do |server_d|
-      server = Server.new server_d
-      
-      unless server.in_use?
+    each_server do |server, server_d|
+      if server.in_use?
+        message "#{ server } is in use, please wait until the pug has ended."
+      else
         stv = STV.new server_d["ftp"]
+        stv.connect
         
         count = stv.demos.size
-        message "Uploading #{ count } demos from #{ server.to_s }."
+        if count
+          message "Uploading #{ count } demos from #{ server.to_s }."
+          stv.update
+        end
         
-        stv.update if count
         stv.disconnect
-      else
-        message "#{ server.to_s } is currently in use."
       end
-      
-      server.close
     end
     
-    STV.disconnect
     @updating = false
   end
   
@@ -58,10 +71,8 @@ module ServerLogic
   end
   
   def list_status
-    const["servers"].each do |server_d|
-      server = Server.new server_d
+    each_server do |server, server_d|
       message "#{ server.players - 1 } players on #{ server }" # -1 to factor in STV
-      server.close
     end
   end
 
@@ -90,12 +101,13 @@ module ServerLogic
   
   def next_server
     temp = const["servers"].push(const["servers"].shift).first
-    
-    @server.close
     @server = Server.new temp
   end
   
   def next_map 
+    @prev_maps << @map
+    @prev_maps.shift if @prev_maps.size > const["rotation"]["exclude"]
+  
     maps = const["rotation"]["maps"].reject { |map| @prev_maps.include? map }
    
     weight = 0

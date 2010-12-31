@@ -12,27 +12,22 @@ class Server
     @port = details["port"]
     @password = details["password"]
     @rcon = details["rcon"] 
-
-    @connected = false
   end
   
   def connect
     @conn = RCon::Query::Source.new(ip, port)
-    @connected = @conn.auth rcon
+    @conn.auth rcon
   end
   
-  def close
+  def disconnect
     @conn.disconnect if @conn
-    @connected = false
   end
   
   def command cmd
-    connect unless connected? 
     @conn.command cmd
   end
   
   def cvar name
-    connect unless connected?
     @conn.cvar name
   end
 
@@ -43,11 +38,7 @@ class Server
   def cpswd pswd
     command "password #{ pswd }"
   end
-  
-  def connected?
-    @connected
-  end
-  
+
   def players
     command("status") =~ /players : (\S+) /
     return $1.to_i
