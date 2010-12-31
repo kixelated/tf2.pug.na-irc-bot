@@ -198,7 +198,7 @@ class Pug
   
   # !stv
   def command_stv m
-    update_stv unless @updating and not m.user.opped? # logic/server.rb
+    update_stv unless @updating or require_admin m.user # logic/server.rb
     list_stv # logic/server.rb
   end
   
@@ -278,6 +278,7 @@ class Pug
     return unless require_admin m.user
     
     @debug = !@debug
+    message "Debug state is #{ @debug }."
   end
   
   # !quit
