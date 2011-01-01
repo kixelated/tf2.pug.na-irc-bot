@@ -8,9 +8,9 @@ This bot requires Ruby 1.9.2. Please check your ruby version with the -v flag, a
 
 There are a few gems required to run the bot. Navigate to the "gems" directory and run the following command:
 
-    gem install sqlite3 activerecord rcon chronic_duration ./cinch-1.0.3.gem
+    gem install sqlite3 activerecord rcon chronic_duration
 
-The cinch gem is not an official release (no such version as 1.0.3), it must be installed locally. The sqlite3 gem is experimental and may break, but you can install sqlite3-ruby gem instead (requires sqlite3 installed on the system).
+The sqlite3 gem is experimental and may break, but you can install sqlite3-ruby gem instead (requires sqlite3 installed on the system).
 
 
 Configuration
@@ -24,5 +24,5 @@ Execution
 
 Navigate to the src directory and run the bot with the command:
 
-    ruby bot.rb
+    ruby -Icinch/lib bot.rb
 
