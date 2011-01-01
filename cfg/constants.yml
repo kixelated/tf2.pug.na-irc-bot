@@ -2,12 +2,14 @@ database:
   adapter: sqlite3
   database: '../db/stats.sqlite3'
 
+internet:
+  local_host:
+
 irc:
   server: irc.gamesurge.net
   port: 6667
-  local_host:
   
-  nick: IRCTrashcanBot
+  nick: TF2CompanionBot
   channel: '#tf2.pug.na'
   
   auth: PugNaBot
@@ -16,7 +18,7 @@ irc:
   
 messengers:
   count: 1
-  nick: IRCTrashcanBo
+  nick: TF2MessengerBo
   mps: 0.5
 
 delays: 
@@ -51,6 +53,7 @@ servers:
     rcon: secret
     ftp:
       ip: 205.234.152.155
+      port: 21
       user: pugna
       password: secret
       dir: orangebox/tf
@@ -62,6 +65,7 @@ servers:
     rcon: secret
     ftp:
       ip: 96.8.114.74
+      port: 21
       user: pugna
       password: secret
       dir: orangebox/tf
@@ -71,6 +75,7 @@ stv:
   path: ../stv/
   ftp:
     ip: tf2pug.us
+    port: 21
     user: demos@tf2pug.us
     password: secret
     dir:
@@ -91,7 +96,7 @@ rotation:
       
     - name: gullywash
       file: cp_gullywash_imp3
-      weight: 6
+      weight: 8
       
     - name: viaduct
       file: koth_viaduct

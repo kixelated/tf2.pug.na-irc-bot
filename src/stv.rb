@@ -10,9 +10,11 @@ class STV
     @server = server
   end
 
-  def open ftp
-    Net::FTP.open(ftp["ip"], ftp["user"], ftp["password"]).tap do |conn|
-      conn.chdir ftp["dir"] if ftp["dir"]
+  def open details
+    Net::FTP.new.tap do |conn|
+      conn.set_socket TCPSocket.new(details["ip"], details["port"], const["internet"]["local_host"])
+      conn.login details["user"], details["password"]
+      conn.chdir details["dir"] if details["dir"]
     end
   end
   

@@ -14,6 +14,7 @@ module Variables
     @auth = {}
     @spoken = {}
     @afk = []
+    @toremove = []
 
     @teams = []
     @lookup = {}

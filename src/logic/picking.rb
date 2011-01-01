@@ -40,7 +40,7 @@ module PickingLogic
     
     # Displays the classes that are not yet full for this team
     classes_needed(current_team.get_classes).each do |k, v| # logic/players.rb
-      output = classes[k].collect { |player| "(#{ lookup_i[player] }) #{ player }" }
+      output = classes[k].collect { |player| "(#{ lookup_i[player] }) #{ player }" unless @toremove.include? player }
       notice current_captain, "#{ bold rjust("#{ v } #{ k }:") } #{ output * ", " }"
     end
   end
@@ -133,8 +133,8 @@ module PickingLogic
     
     server.join
     
-    announce_teams # update_captains, start_server
     announce_server # start_server
+    announce_teams # update_captains, start_server
 
     end_game
     list_players

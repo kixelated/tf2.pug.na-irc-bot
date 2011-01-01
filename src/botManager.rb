@@ -12,7 +12,6 @@ class BotManager
     @queue = []
     
     @logger = nil
-    @quit = false
   end
   
   def add bot
@@ -22,7 +21,6 @@ class BotManager
   def quit
     @bots.each { |bot| bot.quit }
     @bots.clear
-    @quit = true
   end
 
   def msg to, message, notice = false
@@ -35,8 +33,8 @@ class BotManager
   end
   
   def start
-    while not @quit
-      unless @queue.empty? or @bots.size == 0
+    while @bots.size > 0
+      unless @queue.empty?
         tosend = @queue.shift
         bot = @bots.push(@bots.shift).last
         

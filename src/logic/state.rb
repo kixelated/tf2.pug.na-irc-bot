@@ -94,6 +94,7 @@ module StateLogic
     
     @auth.reject! { |k, v| !@signups.key? k }
     @spoken.reject! { |k, v| !@signups.key? k }
+    @toremove.each { |nick| remove_player nick }
 
     next_server
     next_map

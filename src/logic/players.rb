@@ -49,7 +49,10 @@ module PlayersLogic
   end
   
   def remove_player nick
-    return notice nick, "You cannot remove at this time." unless can_remove? # logic/state.rb
+    unless can_remove?
+      @toremove << nick if @signups.key? nick
+      return notice nick, "You cannot remove at this time, but captains will be informed not to pick you."
+    end
 
     @signups.delete nick
     @auth.delete nick
