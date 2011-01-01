@@ -11,8 +11,7 @@ class STV
   end
 
   def open ftp
-    Net::FTP.new(ftp["ip"]).tap do |conn|
-      conn.login ftp["user"], ftp["password"]
+    Net::FTP.open(ftp["ip"], ftp["user"], ftp["password"]).tap do |conn|
       conn.chdir ftp["dir"] if ftp["dir"]
     end
   end

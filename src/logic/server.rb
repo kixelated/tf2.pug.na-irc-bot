@@ -54,9 +54,11 @@ module ServerLogic
         stv.connect
         
         count = stv.demos.size
-        if count
-          message "Uploading #{ count } demos from #{ server.to_s }."
+        if count > 0
+          message "Uploading #{ count } demos from #{ server }."
           stv.update
+        else
+          message "No new demos on #{ server }."
         end
         
         stv.disconnect

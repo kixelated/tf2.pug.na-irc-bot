@@ -198,8 +198,8 @@ class Pug
   
   # !stv
   def command_stv m
-    update_stv unless @updating or require_admin m.user # logic/server.rb
     list_stv # logic/server.rb
+    update_stv unless @updating # logic/server.rb
   end
   
   # !status 
