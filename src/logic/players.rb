@@ -6,8 +6,9 @@ require_relative '../util'
 module PlayersLogic
   def add_player user, classes
     return notice user, "Invalid classes, possible options are #{ const["teams"]["classes"].keys * ", " }" unless classes
-  
     return notice user, "You cannot add at this time, please wait for picking to end." unless can_add? # logic/state.rb
+    
+    user.refresh unless user.authed?
     notice user, "You are not authorized with Gamesurge. You can still play in the channel, but any accumulated stats may be lost and will not transfer if you change your nick. Please follow this guide to register and authorize with Gamesurge: http://www.gamesurge.net/newuser/" unless user.authed?
     
     # clean up the classes, removing any invalid or duplicate items
@@ -36,6 +37,7 @@ module PlayersLogic
   end
   
   def update_player user, nick
+    user.refresh unless user.authed?
     return notice user, "You must be registered with GameSurge in order to change your nick. http://www.gamesurge.net/newuser/" unless user.authed?
     
     player = User.find_by_auth(user.authname)
@@ -63,11 +65,16 @@ module PlayersLogic
   end
   
   def reward_player user
-    if u = User.find_by_auth(user.authname)
+    user.refresh unless user.authed?
+
+    if user.authed?
+      u = User.find_by_auth(user.authname)
+      return unless u
+     
       sum = 0.0
       total = u.players.count
       
-      return if total < const["reward"]["min"]
+      return if total < const["reward"]["min"].to_i
       
       ratio = calculate_ratios u
       const["reward"]["classes"].each { |clss| sum += ratio[clss] }
@@ -154,7 +161,8 @@ module PlayersLogic
   end
 
   def list_stats name
-    u = User.where("name = ? AND auth != NULL", name).first # give priority to authorized accounts
+    u = User.find_by_auth(name)
+    u = User.where("name = ? AND auth != NULL", name).first unless u # give priority to authorized accounts
     u = User.find_by_name(name) unless u
     u = User.find_by_auth(User(name).authname) unless u or !User(name) or !User(name).authname
 

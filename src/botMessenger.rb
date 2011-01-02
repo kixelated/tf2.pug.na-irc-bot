@@ -15,6 +15,8 @@ class BotMessenger < Cinch::Bot
       c.local_host = Constants.const["internet"]["local_host"]
       
       c.channels = [ Constants.const["irc"]["channel"] ] 
+      
+      c.encoding = :irc
       c.verbose = false
     end
     

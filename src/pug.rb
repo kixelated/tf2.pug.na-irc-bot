@@ -69,6 +69,8 @@ class Pug
   match /debug/i, method: :admin_debug
   match /quit/i, method: :admin_quit
   match /restrict ([\S]+) (.+)/i, method: :admin_restrict
+  match /auth/i, method: :admin_auth
+  match /cookie(?: ([\S]+))?/i, method: :admin_cookie
   
   def initialize *args
     super
@@ -93,6 +95,7 @@ class Pug
   end
   
   def event_nick m
+    return unless @signups.key? m.user.nick 
     list_players if replace_player m.user.last_nick, m.user # logic/player.rb
   end
   
@@ -128,7 +131,7 @@ class Pug
   # !stats
   def command_stats m, user
     if user == "me"
-      list_stats m.user.nick # logic/players.rb
+      list_stats m.user.authname # logic/players.rb
     else
       list_stats user # logic/players.rb
     end
@@ -293,6 +296,24 @@ class Pug
     return unless require_admin m.user
     
     restrict_player m.user, nick, duration
+  end
+  
+  # !auth
+  def admin_auth m
+    return unless require_admin m.user
+  
+    bot.msg Constants.const["irc"]["auth_serv"], "AUTH #{ Constants.const["irc"]["auth"] } #{ Constants.const["irc"]["auth_password"] }"
+  end
+  
+  # !cookie
+  def admin_cookie m, pass
+    return unless require_admin m.user
+    
+    unless pass
+      bot.msg Constants.const["irc"]["auth_serv"], "AUTHCOOKIE #{ Constants.const["irc"]["auth"] }"
+    else
+      bot.msg Constants.const["irc"]["auth_serv"], "COOKIE #{ Constants.const["irc"]["auth"] } #{ pass }"
+    end
   end
 
   def require_admin user

@@ -21,7 +21,9 @@ class BotMaster < Cinch::Bot
       
       c.channels = [ Constants.const["irc"]["channel"] ]
       c.plugins.plugins = [ Pug ]
-      c.verbose = false
+      
+      c.encoding = :irc
+      c.verbose = true
     end
     
     on :connect do 
@@ -29,7 +31,6 @@ class BotMaster < Cinch::Bot
     end
 
     BotManager.instance.add self
-    BotManager.instance.logger = logger
   end
 end
 
