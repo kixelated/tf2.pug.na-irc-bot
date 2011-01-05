@@ -12,6 +12,12 @@ There are a few gems required to run the bot. Navigate to the "gems" directory a
 
 The sqlite3 gem is experimental and may break, but you can install sqlite3-ruby gem instead (requires sqlite3 installed on the system).
 
+The last step is to download Cinch. We are using experimental changes to the IRC library and it uses a submodule to keep the files up to date. Use the following commands to update Cinch:
+
+    git submodule init
+    git submodule update
+    
+If things worked correctly, there should be files in src/cinch.
 
 Configuration
 -------------

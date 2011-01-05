@@ -9,15 +9,15 @@ irc:
   server: irc.gamesurge.net
   port: 6667
   
-  nick: TF2CompanionBot
-  channel: '#tf2.pug.na'
+  nick: TF2CompanionTest
+  channel: '#tf2.pug.na.beta'
   
   auth: PugNaBot
   auth_password: secret
   auth_serv: AuthServ@Services.GameSurge.net
   
 messengers:
-  count: 1
+  count: 0
   nick: TF2MessengerBo
   mps: 0.5
 
