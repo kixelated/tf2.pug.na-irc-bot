@@ -35,14 +35,14 @@ class Team < ActiveRecord::Base
   
   def format_team bg = const["colours"]["black"]
     output = @signups.collect { |k, v| "#{ k } as #{ my_colourize v, bg }" }
-    "#{ format_name }: #{ output.join(", ") if output }"
+    "#{ format_name bg }: #{ output.join(", ") if output }"
   end
   
   def get_classes
     @signups.invert_proper
   end
   
-  def format_name
+  def format_name bg = const["colours"]["black"]
     my_colourize @name
   end
   
