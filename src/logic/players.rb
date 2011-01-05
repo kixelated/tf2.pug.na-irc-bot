@@ -19,9 +19,10 @@ module PlayersLogic
   
     user.refresh unless user.authed?
     
-    u = update_user user if user.authed?
-    u = find_user user unless u
+    u = find_user user
     u = create_user user unless u
+    
+    update_user user, u if user.authed? and not u.auth 
     
     return notice user, "You are restricted from playing in this channel." if u.restriction
     
@@ -43,11 +44,8 @@ module PlayersLogic
     return u
   end
   
-  def update_user user
-    u = find_user user
-    u.update_attributes(:auth => user.authname) unless u.auth 
-    
-    return u
+  def update_user user, u
+    u.update_attributes(:auth => user.authname)
   end
   
   def create_user user
