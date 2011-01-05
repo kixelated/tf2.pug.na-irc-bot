@@ -110,11 +110,21 @@ module PlayersLogic
     remove_player nick
     u.restriction = Restriction.create(:time => (Time.now.to_i + duration))
     
-    message "#{ nick } has been restricted for #{ ChronicDuration.output(duration, :format => :long) }."
+    message "#{ u.name } has been restricted for #{ ChronicDuration.output(duration, :format => :long) }."
+  end
+  
+  def authorize_player user, nick
+    u = find_user User(nick)
+    
+    return notice user, "Could not find user." unless u
+    return notice user, "User is not restricted." unless u.restriction
+    
+    u.restriction.delete
+    message "#{ u.name } is no longer restricted."
   end
   
   def update_restrictions 
-    Restriction.where("time < ?", Time.now.to_i).each do |r|
+    Restriction.includes("user").where("time < ?", Time.now.to_i).each do |r|
       message "#{ r.user.name } is no longer restricted."
       r.delete
     end

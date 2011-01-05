@@ -69,7 +69,7 @@ class Pug
   match /debug/i, method: :admin_debug
   match /quit/i, method: :admin_quit
   match /restrict ([\S]+) (.+)/i, method: :admin_restrict
-  match /auth/i, method: :admin_auth
+  match /authorize ([\S]+)/i, method: :admin_authorize
   match /cookie(?: ([\S]+))?/i, method: :admin_cookie
   
   def initialize *args
@@ -307,11 +307,11 @@ class Pug
     restrict_player m.user, nick, duration
   end
   
-  # !auth
-  def admin_auth m
+  # 
+  def admin_authorize m, nick
     return unless require_admin m.user
-  
-    bot.msg Constants.const["irc"]["auth_serv"], "AUTH #{ Constants.const["irc"]["auth"] } #{ Constants.const["irc"]["auth_password"] }"
+    
+    authorize_player m.user, nick
   end
   
   # !cookie
