@@ -82,23 +82,7 @@ module StateLogic
   
   def end_picking
     state "server"
-  end
-  
-  def end_game
-    @teams.clear
-    @lookup.clear
-
-    @last = Time.now
-    state "waiting"
-    @pick = 0
-    
-    @auth.reject! { |k, v| !@signups.key? k }
-    @spoken.reject! { |k, v| !@signups.key? k }
-    @toremove.each { |nick| remove_player nick }
-
-    next_server
-    next_map
-  end
+  end 
   
   def reset_game
     setup

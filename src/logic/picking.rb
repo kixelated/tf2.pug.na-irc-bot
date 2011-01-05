@@ -182,7 +182,7 @@ module PickingLogic
   def announce_teams
     @teams.each do |team|
       team.signups.each do |nick, clss|
-        private nick, "You have been picked for #{ team.format_name } as #{ clss }. The server info is: #{ @server.connect_info }" 
+        private nick, "You have been picked for #{ team.format_name 0 } as #{ clss }. The server info is: #{ @server.connect_info }" 
       end
     end
   end

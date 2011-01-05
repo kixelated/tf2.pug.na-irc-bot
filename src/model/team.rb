@@ -33,8 +33,8 @@ class Team < ActiveRecord::Base
     colourize str, @colour, bg
   end
   
-  def format_team
-    output = @signups.collect { |k, v| "#{ k } as #{ my_colourize v }" }
+  def format_team bg = const["colours"]["black"]
+    output = @signups.collect { |k, v| "#{ k } as #{ my_colourize v, bg }" }
     "#{ format_name }: #{ output.join(", ") if output }"
   end
   

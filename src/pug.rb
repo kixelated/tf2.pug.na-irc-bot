@@ -29,19 +29,19 @@ class Pug
   timer 30, method: :event_timer
   
   # player-related commands
-  match /add (.+)/i, method: :command_add
+  match /add(?: (.+))?/i, method: :command_add
   match /remove/i, method: :command_remove
   match /list/i, method: :command_list
   match /players/i, method: :command_list
   match /need/i, method: :command_need
   match /afk/i, method: :command_afk
-  match /stats ([\S]+)/i, method: :command_stats
-  match /nick ([\S]+)/i, method: :command_nick
+  match /stats(?: ([\S]+))?/i, method: :command_stats
+  match /nick(?: ([\S]+))?/i, method: :command_nick
   match /reward/i, method: :command_reward
 
   # picking-related commands
-  match /pick ([\S]+) ([\S]+)/i, method: :command_pick
-  match /random ([\S]+)/i, method: :command_random
+  match /pick(?: ([\S]+) ([\S]+))?/i, method: :command_pick
+  match /random(?: ([\S]+))?/i, method: :command_random
   match /captain/i, method: :command_captain
   match /format/i, method: :command_format
 
@@ -106,6 +106,8 @@ class Pug
   # Player-related commands
   # !add
   def command_add m, classes
+    return notice(m.user, "Add to the pug: !add <class1> <class2> <etc>") unless classes
+  
     if add_player m.user, classes.split(/ /) # logic/players.rb
       list_players # logic/players.rb
       attempt_afk # logic/state.rb
@@ -130,11 +132,8 @@ class Pug
   
   # !stats
   def command_stats m, user
-    if user == "me"
-      list_stats m.user.authname # logic/players.rb
-    else
-      list_stats user # logic/players.rb
-    end
+    name = user or m.user.nick
+    list_stats name # logic/players.rb
   end
   
   # !afk
@@ -144,22 +143,29 @@ class Pug
   
   # !nick
   def command_nick m, nick
+    return notice(m.user, "Change you name in the database: !nick <newname>") unless nick
+  
     update_player m.user, nick # logic/players.rb
   end
   
   # !reward
   def command_reward m
+    m.user.refresh unless m.user.authed?
     explain_reward m.user unless reward_player m.user
   end
   
   # Picking-related commands
   # !pick
   def command_pick m, player, player_class
+    return notice(m.user, "Pick a player for your team: !pick <name> <class> OR !pick <num> <class>") unless player and player_class
+  
     pick_player m.user, player, player_class # logic/picking.rb
   end
   
   # !random
   def command_random m, clss
+    return notice(m.user, "Pick a random player for a class: !random <class>") unless clss
+  
     pick_random m.user, clss # logic/picking.rb
   end
   
