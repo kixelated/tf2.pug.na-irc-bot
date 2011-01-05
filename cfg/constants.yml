@@ -12,7 +12,7 @@ irc:
   nick: TF2CompanionTest
   channel: '#tf2.pug.na.beta'
   
-  auth: PugNaBot
+  auth:
   auth_password: secret
   auth_serv: AuthServ@Services.GameSurge.net
   

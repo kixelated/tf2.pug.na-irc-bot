@@ -36,8 +36,8 @@ module PlayersLogic
   
   def find_user user
     u = User.find_by_auth(user.authname) if user.authed?
-    u = User.where("name = ? AND auth != NULL", user.name).first unless u # give priority to authed accounts
-    u = User.find_by_name(user.name) unless u
+    u = User.where("name = ? AND auth != NULL", user.nick).first unless u # give priority to authed accounts
+    u = User.find_by_name(user.nick) unless u
     
     return u
   end
@@ -171,10 +171,10 @@ module PlayersLogic
     end
   end
 
-  def list_stats name
-    u = find_user User(name)
+  def list_stats user
+    u = find_user user
 
-    return message "There are no records of the user #{ name }" unless u
+    return message "There are no records of the user #{ user.nick }" unless u
     
     total = u.players.count
     output = calculate_ratios(u).collect { |clss, percent| "#{ (percent * 100).round }% #{ clss }" }

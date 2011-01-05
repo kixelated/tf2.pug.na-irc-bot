@@ -132,8 +132,11 @@ class Pug
   
   # !stats
   def command_stats m, user
-    name = user or m.user.nick
-    list_stats name # logic/players.rb
+    if user
+      list_stats User(user) # logic/players.rb
+    else
+      list_stats m.user # logic/players.rb
+    end
   end
   
   # !afk
