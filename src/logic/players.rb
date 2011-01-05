@@ -19,9 +19,10 @@ module PlayersLogic
   
     user.refresh unless user.authed?
     
-    u = find_user user
+    u = update_user user if user.authed?
+    u = find_user user unless u
     u = create_user user unless u
-  
+    
     return notice user, "You are restricted from playing in this channel." if u.restriction
     
     # add the player to the pug
@@ -38,6 +39,13 @@ module PlayersLogic
     u = User.find_by_auth(user.authname) if user.authed?
     u = User.where("name = ? AND auth != NULL", user.nick).first unless u # give priority to authed accounts
     u = User.find_by_name(user.nick) unless u
+    
+    return u
+  end
+  
+  def update_user user
+    u = find_user user
+    u.update_attributes(:auth => user.authname) unless u.auth 
     
     return u
   end
