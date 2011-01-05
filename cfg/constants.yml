@@ -53,7 +53,6 @@ servers:
     rcon: secret
     ftp:
       ip: 205.234.152.155
-      port: 21
       user: pugna
       password: secret
       dir: orangebox/tf
@@ -65,7 +64,6 @@ servers:
     rcon: secret
     ftp:
       ip: 96.8.114.74
-      port: 21
       user: pugna
       password: secret
       dir: orangebox/tf
@@ -75,7 +73,6 @@ stv:
   path: ../stv/
   ftp:
     ip: tf2pug.us
-    port: 21
     user: demos@tf2pug.us
     password: secret
     dir:

@@ -11,9 +11,8 @@ class STV
   end
 
   def open details
-    Net::FTP.new.tap do |conn|
-      conn.set_socket TCPSocket.new(details["ip"], details["port"], const["internet"]["local_host"])
-      conn.login details["user"], details["password"]
+    Net::FTP.open(details["ip"], details["password"], details["user"]).tap do |conn|
+      conn.passive = true
       conn.chdir details["dir"] if details["dir"]
     end
   end
@@ -47,4 +46,3 @@ class STV
     close @down
   end
 end
-
