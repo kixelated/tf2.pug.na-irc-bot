@@ -39,9 +39,10 @@ module PickingLogic
     lookup_i = @lookup.invert
     
     # Displays the classes that are not yet full for this team
-    classes_needed(current_team.get_classes).each do |k, v| # logic/players.rb
-      output = classes[k].collect { |player| "(#{ lookup_i[player] }) #{ player }" unless @toremove.include? player }
-      notice current_captain, "#{ bold rjust("#{ v } #{ k }:") } #{ output * ", " }"
+    classes_needed(current_team.get_classes).each do |clss, count| # logic/players.rb
+      output = classes[clss].reject { |player| @toremove.include? player }
+      output.collect! { |player| "(#{ lookup_i[player] }) #{ player }" }
+      notice current_captain, "#{ bold rjust("#{ count } #{ clss }:") } #{ output * ", " }"
     end
   end
   
