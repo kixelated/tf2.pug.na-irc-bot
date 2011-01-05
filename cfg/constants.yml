@@ -1,6 +1,6 @@
 database:
   adapter: sqlite3
-  database: '../db/stats.sqlite3'
+  database: '../db/skeleton.sqlite3'
 
 internet:
   local_host:
