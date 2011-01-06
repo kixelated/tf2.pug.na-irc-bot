@@ -160,7 +160,7 @@ module PickingLogic
       # Create each player's statistics
       other_captains = @teams.collect { |team| team.captain }.reject { |captain| captain == team.captain }
 
-      @signups.each do |signup, classes|
+      @signups_all.each do |signup, classes|
         classes.each do |clss|
           db.execute("insert into picks (captain, player, match, class, picked, opponent_picked, order) values (?, ?, ?, ?, ?, ?, NULL)",
                      @auth[team.captain], u, clss, match.id, 0, 0)
