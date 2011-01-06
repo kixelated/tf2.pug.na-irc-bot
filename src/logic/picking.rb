@@ -149,21 +149,35 @@ module PickingLogic
  
   def create_match
     match = Match.create :time => Time.now
-    
+    db = SQLite3::Database.new(Constants.const["database"])
+
     @teams.each do |team|
       team.save # teams have not been saved up to this point just in case of !endgame
       match.teams << team
       
       # Create each player's statistics
+      other_captains = @teams.collect { |team| team.captain }.reject { |captain| captain == team.captain }
+
+      @signups.each do |signup|
+        db.execute("insert into picks (captain, player, match, picked, opponent_picked) values (?, ?, ?, ?, ?)",
+                   @auth[team.captain], u, match.id, 0, 0)
+      end
       team.signups.each do |nick, clss|
         u = @auth[nick]
         team.users << u
-      
+        db.execute("insert into picks (captain, player, match, picked, opponent_picked) values (?, ?, ?, ?, ?)",
+                   @auth[team.captain], u, match.id, 1, 0)
+        other_captains.each do |other_captain|
+          db.execute("insert into picks (captain, player, match, picked, opponent_picked) values (?, ?, ?, ?, ?)",
+                     @auth[team.captain], u, match.id, 0, 1)
+        end
+
         p = create_player_record u, match, team
         create_stat_record p, "captain" if nick == team.captain # captain gets counted twice
         create_stat_record p, clss
       end
     end
+    db.commit()
   end
   
   def create_player_record user, match, team
