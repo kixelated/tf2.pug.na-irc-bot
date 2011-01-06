@@ -75,7 +75,7 @@ stv:
     ip: tf2pug.us
     user: demos@tf2pug.us
     password: secret
-    dir:
+    temp: temp/
   delete:
     remote: true
     local: false

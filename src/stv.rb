@@ -27,11 +27,15 @@ class STV
   
   def update
     demos.each do |filename|
-      file = const["stv"]["path"] + filename
+      file = "#{ const["stv"]["path"] }#{ filename }"
+      tempfile = "#{ const["stv"]["temp"] }#{ file }"
     
       @down.getbinaryfile filename, file
       @down.delete filename if const["stv"]["delete"]["remote"]
-      @up.putbinaryfile file, filename
+
+      @up.putbinaryfile tempfile, filename
+      @up.rename tempfile, file if const["stv"]["temp"]
+      
       FileUtils.rm file if const["stv"]["delete"]["local"]
     end
   end
