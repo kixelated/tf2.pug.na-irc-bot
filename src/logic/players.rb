@@ -31,7 +31,7 @@ module PlayersLogic
       @signups[user.nick] = classes
       @auth[user.nick] = u
     else
-      @toadd[user.nick] = classes
+      @toadd[user] = classes
       notice user, "You cannot add at this time, but you will be added once the picking process is over."
     end
   end
