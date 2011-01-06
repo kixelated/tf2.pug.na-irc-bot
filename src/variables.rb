@@ -19,6 +19,7 @@ module Variables
     @toremove = []
 
     @teams = []
+    @pick_order = []
     @lookup = {}
     
     @last = Match.last.time if Match.last
