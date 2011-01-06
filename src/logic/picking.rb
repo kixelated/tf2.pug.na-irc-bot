@@ -158,18 +158,20 @@ module PickingLogic
       # Create each player's statistics
       other_captains = @teams.collect { |team| team.captain }.reject { |captain| captain == team.captain }
 
-      @signups.each do |signup|
-        db.execute("insert into picks (captain, player, match, picked, opponent_picked) values (?, ?, ?, ?, ?)",
-                   @auth[team.captain], u, match.id, 0, 0)
+      @signups.each do |signup, classes|
+        classes.each do |clss|
+          db.execute("insert into picks (captain, player, match, class, picked, opponent_picked) values (?, ?, ?, ?, ?, ?)",
+                     @auth[team.captain], u, clss, match.id, 0, 0)
+          end
       end
       team.signups.each do |nick, clss|
         u = @auth[nick]
         team.users << u
-        db.execute("insert into picks (captain, player, match, picked, opponent_picked) values (?, ?, ?, ?, ?)",
-                   @auth[team.captain], u, match.id, 1, 0)
+        db.execute("insert into picks (captain, player, match, class, picked, opponent_picked) values (?, ?, ?, ?, ?, ?)",
+                   @auth[team.captain], u, clss, match.id, 1, 0)
         other_captains.each do |other_captain|
-          db.execute("insert into picks (captain, player, match, picked, opponent_picked) values (?, ?, ?, ?, ?)",
-                     @auth[team.captain], u, match.id, 0, 1)
+          db.execute("insert into picks (captain, player, match, class, picked, opponent_picked) values (?, ?, ?, ?, ?, ?)",
+                     @auth[team.captain], u, clss, match.id, 0, 1)
         end
 
         p = create_player_record u, match, team
