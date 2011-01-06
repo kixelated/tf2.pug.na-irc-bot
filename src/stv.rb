@@ -11,7 +11,7 @@ class STV
   end
 
   def open details
-    Net::FTP.open(details["ip"], details["password"], details["user"]).tap do |conn|
+    Net::FTP.open(details["ip"], details["user"], details["password"]).tap do |conn|
       conn.passive = true
       conn.chdir details["dir"] if details["dir"]
     end
