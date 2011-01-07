@@ -1,4 +1,5 @@
 require 'cinch'
+
 require_relative 'constants'
 require_relative 'botManager'
 require_relative 'pug'

@@ -1,3 +1,5 @@
+require 'bundler/setup'
+
 require_relative 'constants'
 require_relative 'botMaster'
 require_relative 'botMessenger'

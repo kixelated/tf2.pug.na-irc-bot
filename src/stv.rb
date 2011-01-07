@@ -28,7 +28,7 @@ class STV
   
   def update server
     demos.each do |filename|
-      file = "#{ server.name }/#{ filename }"
+      file = "#{ server.name }-#{ filename }"
       filezip = "#{ file }.zip"
       fileup = "#{ file }.temp"
       

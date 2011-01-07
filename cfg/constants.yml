@@ -17,7 +17,7 @@ irc:
   auth_serv: AuthServ@Services.GameSurge.net
   
 messengers:
-  count: 0
+  count: 1
   nick: TF2MessengerBo
   mps: 0.5
 
