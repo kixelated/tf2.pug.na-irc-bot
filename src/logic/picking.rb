@@ -162,17 +162,17 @@ module PickingLogic
 
       @signups_all.each do |signup, classes|
         classes.each do |clss|
-          db.execute("insert into picks (captain, player, match, class, picked, opponent_picked, order) values (?, ?, ?, ?, ?, ?, NULL)",
+          db.execute("insert into picks (captain, player, match, class, picked, opponent_picked, order) values (?, ?, ?, (select id from tfclasses where name = ?), ?, ?, NULL)",
                      @auth[team.captain], u, clss, match.id, 0, 0)
           end
       end
       team.signups.each do |nick, clss|
         u = @auth[nick]
         team.users << u
-        db.execute("insert into picks (captain, player, match, class, picked, opponent_picked, order) values (?, ?, ?, ?, ?, ?, ?)",
+        db.execute("insert into picks (captain, player, match, class, picked, opponent_picked, order) values (?, ?, ?, (select id from tfclasses where name = ?), ?, ?, ?)",
                    @auth[team.captain], u, clss, match.id, 1, 0, @pick_order.find(u))
         other_captains.each do |other_captain|
-          db.execute("insert into picks (captain, player, match, class, picked, opponent_picked, order) values (?, ?, ?, ?, ?, ?, ?)",
+          db.execute("insert into picks (captain, player, match, class, picked, opponent_picked, order) values (?, ?, ?, (select id from tfclasses where name = ?), ?, ?, ?)",
                      @auth[team.captain], u, clss, match.id, 0, 1, @pick_order.find(u))
         end
 
