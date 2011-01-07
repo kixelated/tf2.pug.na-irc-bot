@@ -40,8 +40,8 @@ module Variables
     @auth.reject! { |k, v| !@signups.key? k }
     @spoken.reject! { |k, v| !@signups.key? k }
     
-    @toadd.each { |nick, classes| add_player nick, classes }
-    @toremove.each { |nick| remove_player nick }
+    @toadd.each { |nick, classes| add_player User(nick), classes }
+    @toremove.each { |nick| remove_player User(nick) }
     
     @toadd.clear
     @toremove.clear

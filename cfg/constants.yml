@@ -70,12 +70,11 @@ servers:
       
 stv:
   url: http://tf2pug.us/demos
-  path: ../stv/
+  storage: ../stv/
   ftp:
     ip: tf2pug.us
     user: demos@tf2pug.us
     password: secret
-    temp: temp/
   delete:
     remote: true
     local: false

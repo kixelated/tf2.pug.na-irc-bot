@@ -1,5 +1,6 @@
 require 'net/ftp'
 require 'fileutils'
+require 'zip/zipfilesystem'
 
 require_relative 'constants'
 
@@ -27,16 +28,25 @@ class STV
   
   def update
     demos.each do |filename|
-      file = "#{ const["stv"]["path"] }#{ filename }"
-      tempfile = "#{ const["stv"]["temp"] }#{ file }"
-    
-      @down.getbinaryfile filename, file
-      @down.delete filename if const["stv"]["delete"]["remote"]
+      filezip = "#{ filename }.zip"
+      fileup = "#{ filename }.temp"
 
-      @up.putbinaryfile tempfile, filename
-      @up.rename tempfile, file if const["stv"]["temp"]
+      # Download file and zip it
+      @down.getbinaryfile filename, filename
+      Zip::ZipFile.open(filezip, Zip::ZipFile::CREATE) do |zipfile|
+        zipfile.file.open(filename, "w") { |f| f.puts "Hello world" } # TODO Actually write the file.
+      end
+
+      # Upload the file with a temp file extension and rename it after uploading
+      @up.putbinaryfile filezip, fileup
+      @up.rename fileup, filezip
       
-      FileUtils.rm file if const["stv"]["delete"]["local"]
+      # Move or delete local files
+      FileUtils.mv filezip, const["stv"]["storage"] + filezip unless const["stv"]["delete"]["local"]
+      FileUtils.rm [ filename, filezip ], :force => true
+      
+      # Delete remote files
+      @down.delete filename if const["stv"]["delete"]["remote"]
     end
   end
   

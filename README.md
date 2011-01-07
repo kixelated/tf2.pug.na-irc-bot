@@ -6,18 +6,14 @@ Installation
 
 This bot requires Ruby 1.9.2. Please check your ruby version with the -v flag, as 1.8.7 is the typical installation.
 
-There are a few gems required to run the bot. Navigate to the "gems" directory and run the following command:
+There are a few gems required to run the bot, and the bundler gem will install and manage these gems for you. Open terminal and run the following command:
 
-    gem install sqlite3 activerecord rcon chronic_duration
+    gem install bundler
 
-The sqlite3 gem is experimental and may break, but you can install sqlite3-ruby gem instead (requires sqlite3 installed on the system).
+Once bundler is installed, change to the "src" directory and run the command:
 
-The last step is to download Cinch. We are using experimental changes to the IRC library and it uses a submodule to keep the files up to date. Use the following commands to update Cinch:
+    bundle install
 
-    git submodule init
-    git submodule update
-    
-If things worked correctly, there should be files in src/cinch.
 
 Configuration
 -------------
