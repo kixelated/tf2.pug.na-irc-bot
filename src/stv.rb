@@ -1,6 +1,6 @@
 require 'net/ftp'
 require 'fileutils'
-require 'zippy'
+require 'zip/zipfilesystem'
 
 require_relative 'constants'
 
@@ -31,18 +31,20 @@ class STV
       file = "#{ server.name }/#{ filename }"
       filezip = "#{ file }.zip"
       fileup = "#{ file }.temp"
+      
+      storage = "#{ const["stv"]["storage"] }"
 
       # Download file and zip it
-      @down.getbinaryfile filename, filename
-      Zippy.create(filezip, filename => File.open(filename))
+      @down.getbinaryfile filename, storage + filename
+      Zip::ZipFile.open(storage + filezip, Zip::ZipFile::CREATE) { |zipfile| zipfile.add(filename, storage + filename) }
 
       # Upload the file with a temp file extension and rename it after uploading
-      @up.putbinaryfile filezip, fileup
+      @up.putbinaryfile storage + filezip, fileup
       @up.rename fileup, filezip
       
-      # Move or delete local files
-      FileUtils.mv filezip, const["stv"]["storage"] + filezip unless const["stv"]["delete"]["local"]
-      FileUtils.rm [ filename, filezip ], :force => true
+      # Delete local files
+      FileUtils.rm storage + filename
+      FileUtils.rm storage + filezip unless const["stv"]["delete"]["local"]
       
       # Delete remote files
       @down.delete filename if const["stv"]["delete"]["remote"]
