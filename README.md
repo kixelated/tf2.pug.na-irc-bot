@@ -26,5 +26,5 @@ Execution
 
 Navigate to the src directory and run the bot with the command:
 
-    ruby -Icinch/lib bot.rb
+    ruby bot.rb
 

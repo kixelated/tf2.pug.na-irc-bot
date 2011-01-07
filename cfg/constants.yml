@@ -52,7 +52,7 @@ servers:
     password: tf2pug
     rcon: secret
     ftp:
-      ip: 205.234.152.155
+      ip: chicago1.tf2pug.eoreality.net
       user: pugna
       password: secret
       dir: orangebox/tf
@@ -63,7 +63,18 @@ servers:
     password: tf2pug
     rcon: secret
     ftp:
-      ip: 96.8.114.74
+      ip: dallas1.tf2pug.eoreality.net
+      user: pugna
+      password: secret
+      dir: orangebox/tf
+     
+  - name: chicago2
+    ip: chicago2.tf2pug.eoreality.net
+    port: 27015
+    password: tf2pug
+    rcon: secret
+    ftp:
+      ip: chicago2.tf2pug.eoreality.net
       user: pugna
       password: secret
       dir: orangebox/tf

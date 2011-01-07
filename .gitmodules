@@ -1,3 +1,0 @@
-[submodule "src/cinch"]
-	path = src/cinch
-	url = https://github.com/cinchrb/cinch.git

@@ -23,7 +23,7 @@ class BotMaster < Cinch::Bot
       c.plugins.plugins = [ Pug ]
       
       c.encoding = :irc
-      c.verbose = true
+      c.verbose = false
     end
     
     on :connect do 
