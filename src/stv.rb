@@ -30,8 +30,8 @@ class STV
     demos.each do |filename|
       file = "#{ server.name }-#{ filename }"
       filezip = "#{ file }.zip"
-      fileup = "#{ file }.temp"
-      
+      filetemp = "#{ file }.temp"
+
       storage = "#{ const["stv"]["storage"] }"
 
       # Download file and zip it
@@ -39,13 +39,17 @@ class STV
       Zip::ZipFile.open(storage + filezip, Zip::ZipFile::CREATE) { |zipfile| zipfile.add(filename, storage + filename) }
 
       # Upload the file with a temp file extension and rename it after uploading
-      @up.putbinaryfile storage + filezip, fileup
-      @up.rename fileup, filezip
+      @up.putbinaryfile storage + filezip, filetemp
+      @up.rename filetemp, filezip
       
       # Delete local files
       FileUtils.rm storage + filename
       FileUtils.rm storage + filezip unless const["stv"]["delete"]["local"]
       
+      # Delete local files
+      FileUtils.rm storage + filename
+      FileUtils.rm storage + filezip if const["stv"]["delete"]["local"]
+
       # Delete remote files
       @down.delete filename if const["stv"]["delete"]["remote"]
     end
