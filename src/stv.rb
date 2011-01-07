@@ -1,6 +1,6 @@
 require 'net/ftp'
 require 'fileutils'
-require 'zip/zipfilesystem'
+require 'zippy'
 
 require_relative 'constants'
 
@@ -26,16 +26,15 @@ class STV
     @down.nlst.reject { |filename| !(filename =~ /.+\.dem/) }
   end
   
-  def update
+  def update server
     demos.each do |filename|
-      filezip = "#{ filename }.zip"
-      fileup = "#{ filename }.temp"
+      file = "#{ server.name }/#{ filename }"
+      filezip = "#{ file }.zip"
+      fileup = "#{ file }.temp"
 
       # Download file and zip it
       @down.getbinaryfile filename, filename
-      Zip::ZipFile.open(filezip, Zip::ZipFile::CREATE) do |zipfile|
-        zipfile.file.open(filename, "w") { |f| f.puts "Hello world" } # TODO Actually write the file.
-      end
+      Zippy.create(filezip, filename => File.open(filename))
 
       # Upload the file with a temp file extension and rename it after uploading
       @up.putbinaryfile filezip, fileup

@@ -27,6 +27,8 @@ GEM
     rubyzip (0.9.4)
     sqlite3-ruby (1.3.2-x86-mingw32)
     tzinfo (0.3.23)
+    zippy (0.1.0)
+      rubyzip (>= 0.9.1)
 
 PLATFORMS
   x86-mingw32
@@ -36,5 +38,5 @@ DEPENDENCIES
   chronic_duration
   cinch!
   rcon
-  rubyzip
   sqlite3-ruby
+  zippy

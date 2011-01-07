@@ -56,7 +56,7 @@ module ServerLogic
         count = stv.demos.size
         if count > 0
           message "Uploading #{ count } demos from #{ server }."
-          stv.update
+          stv.update server
         else
           message "No new demos on #{ server }."
         end
