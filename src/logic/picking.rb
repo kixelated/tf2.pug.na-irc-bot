@@ -151,34 +151,45 @@ module PickingLogic
 
   def create_match
     match = Match.create :time => Time.now
-    db = SQLite3::Database.new(Constants.const["database"])
 
     @teams.each do |team|
       team.save # teams have not been saved up to this point just in case of !endgame
       match.teams << team
 
       # Create each player's statistics
-      other_captains = @teams.collect { |team| team.captain }.reject { |captain| captain == team.captain }
-
-      @signups_all.each do |signup, classes|
-        classes.each do |clss|
-          db.execute("insert into picks (captain, player, match, class, picked, opponent_picked, order) values (?, ?, ?, (select id from tfclasses where name = ?), ?, ?, NULL)",
-                     @auth[team.captain], u, clss, match.id, 0, 0)
-          end
-      end
       team.signups.each do |nick, clss|
         u = @auth[nick]
         team.users << u
+
+        p = create_player_record u, match, team
+        create_stat_record p, "captain" if nick == team.captain # captain gets counted twice
+        create_stat_record p, clss
+      end
+    end
+
+    # Now store the picking statitistics.  This has to be separate
+    # because we access the db directly, and we don't want transaction
+    # deadlock.
+    db = SQLite3::Database.new(const["database"])
+    # Add an unpicked record for everyone who added.
+    @signups_all.each do |signup, classes|
+      classes.each do |clss|
+        db.execute("insert into picks (captain, player, match, class, picked, opponent_picked, order) values (?, ?, ?, (select id from tfclasses where name = ?), ?, ?, NULL)",
+                   @auth[team.captain], u, clss, match.id, 0, 0)
+      end
+    end
+    # Now go back and update the records of those who were picked (ON
+    # CONFLICT REPLACE set on PK).
+    @teams.each do |team|
+      team.signups.each do |nick, clss|
+        other_captains = @teams.collect { |team| team.captain }.reject { |captain| captain == team.captain }
+        u = @auth[nick]
         db.execute("insert into picks (captain, player, match, class, picked, opponent_picked, order) values (?, ?, ?, (select id from tfclasses where name = ?), ?, ?, ?)",
                    @auth[team.captain], u, clss, match.id, 1, 0, @pick_order.find(u))
         other_captains.each do |other_captain|
           db.execute("insert into picks (captain, player, match, class, picked, opponent_picked, order) values (?, ?, ?, (select id from tfclasses where name = ?), ?, ?, ?)",
                      @auth[team.captain], u, clss, match.id, 0, 1, @pick_order.find(u))
         end
-
-        p = create_player_record u, match, team
-        create_stat_record p, "captain" if nick == team.captain # captain gets counted twice
-        create_stat_record p, clss
       end
     end
     db.commit()
