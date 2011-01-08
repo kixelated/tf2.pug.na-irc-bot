@@ -1,5 +1,6 @@
-PATH
-  remote: gems/cinch
+GIT
+  remote: git://github.com/cinchrb/cinch.git
+  revision: b221ee0b368717d75f36351d9b14a381cb1431ca
   specs:
     cinch (1.0.2)
 

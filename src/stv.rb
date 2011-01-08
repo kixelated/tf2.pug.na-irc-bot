@@ -44,10 +44,6 @@ class STV
       
       # Delete local files
       FileUtils.rm storage + filename
-      FileUtils.rm storage + filezip unless const["stv"]["delete"]["local"]
-      
-      # Delete local files
-      FileUtils.rm storage + filename
       FileUtils.rm storage + filezip if const["stv"]["delete"]["local"]
 
       # Delete remote files
