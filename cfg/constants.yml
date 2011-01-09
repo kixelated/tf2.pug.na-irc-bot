@@ -118,7 +118,7 @@ rotation:
       weight: 4
       
     - name: yukon
-      file: cp_yukon
+      file: cp_yukon_final
       weight: 2
 
     - name: ashville
@@ -126,7 +126,7 @@ rotation:
       weight: 2
       
     - name: freight
-      file: cp_freight_final2
+      file: cp_freight_final1
       weight: 2
       
     - name: obscure
