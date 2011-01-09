@@ -30,7 +30,7 @@ class STV
     demos.each do |filename|
       file = "#{ server.name }-#{ filename }"
       filezip = "#{ file }.zip"
-      filetemp = "#{ file }.temp"
+      filetemp = "#{ file }.tmp"
 
       storage = "#{ const["stv"]["storage"] }"
 

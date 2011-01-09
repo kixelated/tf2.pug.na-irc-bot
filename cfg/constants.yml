@@ -98,7 +98,7 @@ rotation:
       weight: 16
       
     - name: granary
-      file: cp_granary
+      file: cp_granary_beta2
       weight: 10
  
     - name: viaduct
@@ -106,7 +106,7 @@ rotation:
       weight: 6
       
     - name: snakewater
-      file: cp_snakewater_b7
+      file: cp_snakewater_b9
       weight: 6
       
     - name: gullywash
@@ -129,8 +129,16 @@ rotation:
       file: cp_freight_final1
       weight: 2
       
+    - name: mainline
+      file: cp_mainline_rc6
+      weight: 2
+      
     - name: obscure
       file: cp_obscure_final
+      weight: 2
+      
+    - name: bazillion
+      file: cp_bazillion_b10
       weight: 1
       
     - name: follower
@@ -138,7 +146,7 @@ rotation:
       weight: 1
       
     - name: well
-      file: cp_well
+      file: cp_well_beta
       weight: 1
     
 mumble:
