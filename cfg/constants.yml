@@ -100,14 +100,14 @@ rotation:
     - name: granary
       file: cp_granary_beta2
       weight: 10
- 
-    - name: viaduct
-      file: koth_viaduct
-      weight: 6
       
     - name: snakewater
       file: cp_snakewater_b9
       weight: 6
+      
+    - name: viaduct
+      file: koth_viaduct
+      weight: 4
       
     - name: gullywash
       file: cp_gullywash_imp3
