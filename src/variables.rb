@@ -25,6 +25,7 @@ module Variables
     @state = const["states"]["waiting"]
     @pick = 0
     
+    @lastspam = Time.now
     @updating = false
     @debug = false
   end

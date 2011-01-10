@@ -148,6 +148,10 @@ rotation:
     - name: well
       file: cp_well_beta
       weight: 1
+      
+    - name: wildfire
+      file: ctf_wildfire_rc
+      weight: 1
     
 mumble:
   ip: chi6.eoreality.net

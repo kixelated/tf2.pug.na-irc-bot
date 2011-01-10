@@ -5,7 +5,7 @@ require_relative '../stv'
 
 module ServerLogic
   def start_server
-    @server.connect
+    connect_server
     
     while @server.in_use?
       message "Server #{ @server.to_s } is in use. Trying the next server in #{ const["delays"]["server"] } seconds."
@@ -14,7 +14,7 @@ module ServerLogic
       sleep const["delays"]["server"]
       
       next_server
-      @server.connect
+      connect_server
     end
     
     @server.clvl @map["file"]
@@ -35,9 +35,14 @@ module ServerLogic
     threads = []
     const["servers"].each do |server_d|
       threads << Thread.new(Server.new(server_d), server_d) do |server, server_d|
-        server.connect
-        yield server, server_d
-        server.disconnect
+        begin
+          server.connect
+          yield server, server_d
+          server.disconnect
+        rescue => e  
+          puts e.message  
+          puts e.backtrace.inspect  
+        end
       end
     end
     threads.each { |thread| thread.join }
@@ -99,6 +104,16 @@ module ServerLogic
   def list_rotation
     output = const["rotation"]["maps"].collect { |map| "#{ map["name"] }(#{ map["weight"] })" }
     message "Map(weight) rotation: #{ output * ", " }"
+  end
+  
+  def connect_server
+    while true
+      begin 
+        return @server.connect
+      rescue
+        next_server
+      end
+    end
   end
   
   def next_server

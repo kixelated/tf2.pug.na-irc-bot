@@ -32,7 +32,7 @@ class Pug
   match /add(?: (.+))?/i, method: :command_add
   match /remove/i, method: :command_remove
   match /list/i, method: :command_list
-  match /players/i, method: :command_list
+  match /players/i, method: :command_players
   match /need/i, method: :command_need
   match /afk/i, method: :command_afk
   match /stats(?: ([\S]+))?/i, method: :command_stats
@@ -109,7 +109,7 @@ class Pug
     return notice(m.user, "Add to the pug: !add <class1> <class2> <etc>") unless classes
   
     if add_player m.user, classes.split(/ /) # logic/players.rb
-      list_players # logic/players.rb
+      list_players unless spam_prevent # logic/players.rb
       attempt_afk # logic/state.rb
     end
   end
@@ -119,10 +119,14 @@ class Pug
     list_players if remove_player m.user.nick # logic/players.rb
   end
   
-  # !list, !players
+  # !list
   def command_list m
-    list_players # logic/players.rb
     list_players_detailed # logic/players.rb
+  end
+  
+  # !players
+  def command_players m
+    list_players # logic/players.rb
   end
   
   # !need
@@ -328,6 +332,15 @@ class Pug
   def require_admin user
     return notice user, "That is an admin-only command." unless Channel(const["irc"]["channel"]).opped? user
     true
+  end
+  
+  def spam_prevent
+    if (Time.now - @lastspam).to_i > 2
+      @lastspam = Time.now
+      return false
+    end
+    
+    return true
   end
 
   def message msg
