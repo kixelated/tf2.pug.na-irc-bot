@@ -19,7 +19,6 @@ public OnPluginStart() {
   mp_timelimit = FindConVar("mp_timelimit");
 
   HookEvent("teamplay_win_panel", Event_TeamPlayWinPanel);
-  
 	CreateTimer(5.0, ExtendLimit, _, TIMER_REPEAT);
 }
 
