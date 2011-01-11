@@ -45,7 +45,7 @@ class Server
   end
   
   def timeleft
-    command("timeleft") =~ /Time Remaining:  (\S+?),/
+    command("timeleft") =~ /map:  (\S+?),/
     return $1.to_i
   end
   
