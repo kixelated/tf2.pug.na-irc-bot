@@ -79,7 +79,8 @@ module ServerLogic
   
   def list_status
     each_server do |server, server_d|
-      message "#{ server.players - 1 } players on #{ server }" # -1 to factor in STV
+      players = server.players - 1 # -1 to factor in STV
+      message "#{ players } players on #{ server }#{ ", #{ server.timeleft } left" if players }" 
     end
   end
 

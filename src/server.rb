@@ -40,7 +40,12 @@ class Server
   end
 
   def players
-    command("status") =~ /players : (\S+) /
+    command("status") =~ /players : (\S+?) /
+    return $1.to_i
+  end
+  
+  def timeleft
+    command("timeleft") =~ /Time Remaining:  (\S+?),/
     return $1.to_i
   end
   
