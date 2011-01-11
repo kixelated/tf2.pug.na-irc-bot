@@ -46,7 +46,7 @@ class Server
   
   def timeleft
     command("timeleft") =~ /map:  (\S+?),/
-    return $1.to_i
+    return $1.to_s
   end
   
   def in_use?

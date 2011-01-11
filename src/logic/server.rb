@@ -80,7 +80,7 @@ module ServerLogic
   def list_status
     each_server do |server, server_d|
       players = server.players - 1 # -1 to factor in STV
-      message "#{ players } players on #{ server }#{ ", #{ server.timeleft } left" if players }" 
+      message "#{ players } players on #{ server }#{ ", #{ server.timeleft } left" if players > const["settings"]["used"] }" 
     end
   end
 
