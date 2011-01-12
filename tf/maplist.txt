@@ -7,7 +7,7 @@ cp_well_beta
 cp_yukon_final
 koth_viaduct
 ctf_wildfire_rc
-cp_bazillion_b10
+cp_bazillion_b11
 cp_follower
 cp_gullywash_imp3
 cp_mainline_rc6

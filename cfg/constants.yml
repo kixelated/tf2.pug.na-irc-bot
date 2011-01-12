@@ -138,7 +138,7 @@ rotation:
       weight: 2
       
     - name: bazillion
-      file: cp_bazillion_b10
+      file: cp_bazillion_b11
       weight: 1
       
     - name: follower

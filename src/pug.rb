@@ -121,6 +121,7 @@ class Pug
   
   # !list
   def command_list m
+    list_players # logic/players.rb
     list_players_detailed # logic/players.rb
   end
   
