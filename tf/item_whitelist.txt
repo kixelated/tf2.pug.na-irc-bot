@@ -15,17 +15,17 @@
 
 "item_whitelist"
 {
-  "unlisted_items_default_to" "1"
+  "unlisted_items_default_to"   "1"
 
-  "The Sandman" "0"
-  "Mad Milk"  "0"
-  "The Ullapool Caber"  "1"
-  "Gloves of Running Urgently"  "1"
-  "Fists of Steel"  "1"
-  "The Wrangler"  "1"
+  "The Sandman"                 "0"
+  "Mad Milk"                    "0"
+  "The Ullapool Caber"          "0"
+  "Gloves of Running Urgently"  "0"
+  "Fists of Steel"              "0"
+  "The Wrangler"                "0"
    
-  "The Grenadier's Softcap" "0"
-  "The Attendant" "0"
-  "Ol' Snaggletooth"  "1"
-  "The Familiar Fez"	"1"
+  "The Grenadier's Softcap"     "0"
+  "The Attendant"               "0"
+  "Ol' Snaggletooth"            "0"
+  "The Familiar Fez"            "0"
 }
