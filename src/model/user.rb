@@ -9,8 +9,8 @@ class User < ActiveRecord::Base
   
   has_one :restriction
   has_many :players
-  has_many :stats, :through => :players
+  has_many :stats, through: "players"
   
-  validates :auth, :uniqueness => { :allow_nil => true }
-  validates :name, :presence => true, :uniqueness => { :scope => :auth }
+  validates :auth, uniqueness: { allow_nil: true }
+  validates :name, presence: true, uniqueness: { scope: "auth" }
 end

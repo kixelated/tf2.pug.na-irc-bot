@@ -19,8 +19,8 @@ class BotManager
     @bots.clear
   end
 
-  def msg to, message, notice = false
-    @queue << { :to => to, :message => message, :notice => notice }
+  def msg recipient, message, notice = false
+    @queue << { to: recipient, message: message, notice: notice }
   end
   
   def notice to, message

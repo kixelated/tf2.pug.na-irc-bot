@@ -15,13 +15,13 @@ class Team < ActiveRecord::Base
   has_and_belongs_to_many :users # TODO: Create join table.
   
   has_many :players
-  has_many :stats, :through => :players
+  has_many :stats, through: "players"
 
   attr_accessor :captain, :colour, :signups
   
   def set_captain captain
     @captain = captain
-    @signups = { captain => "captain" }
+    @signups = { captain: "captain" }
   end
 
   def set_details info
