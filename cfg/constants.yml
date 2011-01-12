@@ -103,15 +103,15 @@ rotation:
       
     - name: snakewater
       file: cp_snakewater_b9
-      weight: 6
+      weight: 8
       
     - name: viaduct
       file: koth_viaduct
-      weight: 4
+      weight: 5
       
     - name: gullywash
       file: cp_gullywash_imp3
-      weight: 4
+      weight: 5
       
     - name: coldfront
       file: cp_coldfront
@@ -119,11 +119,11 @@ rotation:
       
     - name: yukon
       file: cp_yukon_final
-      weight: 2
+      weight: 3
 
     - name: ashville
       file: koth_ashville_rc1
-      weight: 2
+      weight: 3
       
     - name: freight
       file: cp_freight_final1
