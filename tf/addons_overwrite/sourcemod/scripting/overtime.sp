@@ -30,7 +30,6 @@ public PointScoredEvent(Handle:event, const String:name[], bool:dontBroadcast) {
   
   if (overtime && blue_score != red_score) {
     overtime = false;
-    
     ServerCommand("sm_extend_time -10");
   }
 }
