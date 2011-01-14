@@ -12,18 +12,18 @@ irc:
   nick: TF2CompanionTest
   channel: '#tf2.pug.na.beta'
   
-  auth:
+  auth: PugNaBot
   auth_password: secret
   auth_serv: AuthServ@Services.GameSurge.net
   
 messengers:
-  count: 1
-  nick: TF2MessengerBo
+  count: 2
+  nick: TF2MessengerTes
   mps: 0.5
 
 delays: 
   afk: 45
-  picking: 45
+  picking: 60
   server: 30
   manager: 0.05
   
@@ -88,22 +88,22 @@ stv:
     password: secret
   delete:
     remote: true
-    local: false
+    local: true
 
 rotation:
   exclude: 3
   maps:
     - name: badlands
       file: cp_badlands
-      weight: 16
+      weight: 10
       
     - name: granary
       file: cp_granary_beta2
-      weight: 10
+      weight: 8
       
     - name: snakewater
       file: cp_snakewater_b9
-      weight: 8
+      weight: 6
       
     - name: viaduct
       file: koth_viaduct
@@ -144,13 +144,13 @@ rotation:
     - name: follower
       file: cp_follower
       weight: 1
-      
-    - name: well
-      file: cp_well_beta
-      weight: 1
-      
+
     - name: wildfire
       file: ctf_wildfire_rc
+      weight: 1
+      
+    - name: turbine
+      file: ctf_turbine_pro_b1
       weight: 1
     
 mumble:

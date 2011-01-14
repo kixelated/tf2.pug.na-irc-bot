@@ -18,13 +18,14 @@ module PickingLogic
       
       @teams << team
       @signups.delete captain
-
-      notice captain, "You have been selected as a captain. When it is your turn to pick, you can choose players with the '!pick num' or '!pick name' command."
-      notice captain, "Remember, you will play the class that you do not pick, so be sure to pick a medic if you do not wish to play medic."
     end
     
     output = @teams.collect { |team| team.my_colourize team.captain }
     message "Captains are #{ output * ", " }"
+    
+    @teams.each do |team|
+      notice team.captain, "You have been selected as a captain. When it is your turn to pick, you can choose players with the '!pick num' or '!pick name' command. Remember, you will play the class that you do not pick, so be sure to pick a medic if you do not wish to play medic."
+    end
   end
   
   def update_lookup
