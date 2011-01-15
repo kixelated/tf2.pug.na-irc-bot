@@ -19,6 +19,7 @@ module Variables
     @toremove = []
 
     @teams = []
+    @pick_order = []
     @lookup = {}
     
     @last = Match.last.time if Match.last
@@ -37,6 +38,7 @@ module Variables
     @last = Time.now
     state "waiting"
     @pick = 0
+    @pick_order = []
     
     @auth.reject! { |k, v| !@signups.key? k }
     @spoken.reject! { |k, v| !@signups.key? k }
