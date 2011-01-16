@@ -59,18 +59,18 @@ class Pug
   match /man/i, method: :command_help
   
   # admin commands
-  match /force ([\S]+) (.+)/i, method: :admin_force
+  match /fadd ([\S]+) (.+)/i, method: :admin_forceadd
+  match /fpick(?: ([\S]+) ([\S]+))?/i, method: :admin_forcepick
   match /replace ([\S]+) ([\S]+)/i, method: :admin_replace
-  match /changemap ([\S]+)/i, method: :admin_changemap
+  match /restrict ([\S]+) (.+)/i, method: :admin_restrict
+  match /authorize ([\S]+)/i, method: :admin_authorize
+  match /cookie(?: ([\S]+))?/i, method: :admin_cookie
+  #TODO: match /changemap ([\S]+)/i, method: :admin_changemap
   match /nextmap/i, method: :admin_nextmap
   match /nextserver/i, method: :admin_nextserver
   match /reset/i, method: :admin_reset
   match /endgame/i, method: :admin_endgame
-  match /debug/i, method: :admin_debug
   match /quit/i, method: :admin_quit
-  match /restrict ([\S]+) (.+)/i, method: :admin_restrict
-  match /authorize ([\S]+)/i, method: :admin_authorize
-  match /cookie(?: ([\S]+))?/i, method: :admin_cookie
   
   def initialize *args
     super
@@ -257,14 +257,21 @@ class Pug
     list_server
   end
 
-  # !force
-  def admin_force m, player, classes
+  # !fadd
+  def admin_forceadd m, player, classes
     return unless require_admin m.user
     
     if add_player User(player), classes.split(/ /) # logic/players.rb
       list_players # logic/players.rb
       attempt_afk # logic/state.rb
     end
+  end
+  
+  # !fpick 
+  def admin_forcepick m, player, player_class
+    return unless require_admin m.user
+  
+    pick_player User(current_captain), player, player_class # logic/picking.rb
   end
   
   # !replace
@@ -335,15 +342,6 @@ class Pug
     true
   end
   
-  def spam_prevent
-    if (Time.now - @lastspam).to_i > 2
-      @lastspam = Time.now
-      return false
-    end
-    
-    return true
-  end
-
   def message msg
     BotManager.instance.msg const["irc"]["channel"], colourize(msg.to_s)
     false
