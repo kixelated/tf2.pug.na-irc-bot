@@ -25,8 +25,8 @@ module Variables
     @last = Match.last.time if Match.last
     @state = const["states"]["waiting"]
     @pick = 0
-    
-    @lastspam = Time.now
+
+    @show_list = false
     @updating = false
     @debug = false
   end

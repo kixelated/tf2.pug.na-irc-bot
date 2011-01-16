@@ -30,6 +30,7 @@ module PlayersLogic
     if can_add?
       @signups[user.nick] = classes
       @auth[user.nick] = u
+      @show_list = true
     else
       @toadd[user.nick] = classes
       notice user, "You cannot add at this time, but you will be added once the picking process is over."
@@ -74,9 +75,12 @@ module PlayersLogic
       @toremove << nick if @signups.key? nick
       return notice nick, "You cannot remove at this time, but captains will be informed not to pick you."
     end
-
-    @signups.delete nick
-    @auth.delete nick
+    
+    if @signups.key? nick
+      @signups.delete nick
+      @auth.delete nick
+      @show_list = true
+    end
   end
   
   def replace_player nick, replacement

@@ -26,7 +26,8 @@ class Pug
   listen_to :quit, method: :event_quit
   listen_to :nick, method: :event_nick
   
-  timer 30, method: :event_timer
+  timer 1, method: :event_list
+  timer 30, method: :event_restriction
   
   # player-related commands
   match /add(?: (.+))?/i, method: :command_add
@@ -96,10 +97,15 @@ class Pug
   
   def event_nick m
     return unless @signups.key? m.user.nick 
-    list_players if replace_player m.user.last_nick, m.user # logic/player.rb
+    replace_player m.user.last_nick, m.user # logic/player.rb
   end
   
-  def event_timer
+  def event_list
+    list_players if @show_list
+    @show_list = false
+  end
+  
+  def event_restriction
     update_restrictions
   end
 
@@ -108,15 +114,12 @@ class Pug
   def command_add m, classes
     return notice(m.user, "Add to the pug: !add <class1> <class2> <etc>") unless classes
   
-    if add_player m.user, classes.split(/ /) # logic/players.rb
-      list_players unless spam_prevent # logic/players.rb
-      attempt_afk # logic/state.rb
-    end
+    attempt_afk if add_player m.user, classes.split(/ /)
   end
 
   # !remove
   def command_remove m
-    list_players if remove_player m.user.nick # logic/players.rb
+    remove_player m.user.nick # logic/players.rb
   end
   
   # !list
@@ -261,10 +264,7 @@ class Pug
   def admin_forceadd m, player, classes
     return unless require_admin m.user
     
-    if add_player User(player), classes.split(/ /) # logic/players.rb
-      list_players # logic/players.rb
-      attempt_afk # logic/state.rb
-    end
+    attempt_afk if add_player User(player), classes.split(/ /) # logic/players.rb
   end
   
   # !fpick 
@@ -278,7 +278,7 @@ class Pug
   def admin_replace m, user, replacement
     return unless require_admin m.user
     
-    list_players if replace_player user, User(replacement) # logic/picking.rb
+    replace_player user, User(replacement) # logic/picking.rb
   end
   
   # !endgame
