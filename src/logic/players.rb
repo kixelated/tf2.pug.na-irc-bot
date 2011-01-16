@@ -46,14 +46,14 @@ module PlayersLogic
   end
   
   def update_user user, u
-    u.update_attributes(auth: user.authname)
+    u.update_attributes(:auth => user.authname)
   end
   
   def create_user user
     notice user, "Welcome to #tf2.pug.na! The channel has certain quality standards, and we ask that you have a good amount of experience and understanding of the 6v6 format before playing here. If you do not yet meet these requirements, please type !remove and try another system like tf2lobby.com"
     notice user, "If you are still interested in playing here, there are a few rules that you can find on our wiki page. Please ask questions and use the !man command to list all of the avaliable commands. Teams will be drafted by captains when there are enough players added, so hang tight and don't fret if you are not picked."
 
-    User.create(auth: user.authname, name: user.nick)
+    User.create(:auth => user.authname, :name => user.nick)
   end
 
   def update_player user, nick
@@ -66,7 +66,7 @@ module PlayersLogic
  
     message "#{ player.name } is now known as #{ nick }"
     
-    player.update_attributes(name: nick)
+    player.update_attributes(:name => nick)
     @auth[user.nick] = player if @auth[user.nick]
   end
   
@@ -119,7 +119,7 @@ module PlayersLogic
     remove_player nick
     
     u.restriction.delete if u.restriction
-    u.restriction = Restriction.create(time: Time.now.to_i + duration)
+    u.restriction = Restriction.create(:time => (Time.now.to_i + duration))
     
     message "#{ u.name } has been restricted for #{ ChronicDuration.output(duration) }."
   end

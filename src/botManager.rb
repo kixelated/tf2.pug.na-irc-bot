@@ -20,7 +20,7 @@ class BotManager
   end
 
   def msg recipient, message, notice = false
-    @queue << { to: recipient, message: message, notice: notice }
+    @queue << { :to => recipient, :message => message, :notice => notice }
   end
   
   def notice to, message

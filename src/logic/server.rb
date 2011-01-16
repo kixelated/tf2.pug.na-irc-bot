@@ -99,7 +99,7 @@ module ServerLogic
   end
   
   def list_last
-    message "The last match was started #{ ChronicDuration.output((Time.now - @last).to_i, format: "long") } ago"
+    message "The last match was started #{ ChronicDuration.output((Time.now - @last).to_i) } ago"
   end
   
   def list_rotation

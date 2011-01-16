@@ -160,7 +160,7 @@ module PickingLogic
 
   # I hate this function
   def create_match
-    match = Match.create(time: Time.now)
+    match = Match.create(:time => Time.now)
     captains = @teams.collect { |team| team.captain }
     
     team_lookup = {}
@@ -182,9 +182,9 @@ module PickingLogic
       classes << "captain" if captains.include? nick
       
       team.users << u if team
-      player = u.players.create(match: match, team: team)
+      player = u.players.create(:match => match, :team => team)
       
-      classes.each { |clss| player.picks.create(tfclass: Tfclass.find_by_name(clss)) }
+      classes.each { |clss| player.picks.create(:tfclass => Tfclass.find_by_name(clss)) }
       @signups_all[nick].each { |clss| player.signups << Tfclass.find_by_name(clss) }
     end
   end
