@@ -1,10 +1,16 @@
 require_relative '../model/team'
 require_relative '../model/match'
 require_relative '../model/player'
-require_relative '../model/stat'
+require_relative '../model/pick'
 require_relative '../model/user'
 
 module PickingLogic
+  def start_picking
+    update_lookup
+    choose_captains
+    tell_captain
+  end
+
   def choose_captains
     possible_captains = get_classes["captain"]
     @signups_all = @signups.reject { |k, v| false } # Ghetto way of copying a hash
@@ -110,8 +116,8 @@ module PickingLogic
     return notice(user, "You cannot pick one of the remaining medics.") if pick_medic_conflicting? player, clss
 
     current_team.signups[player] = clss
-    @pick_order << player
     @signups.delete player
+    @pick_order << player
 
     message "#{ current_team.my_colourize user.nick } picked #{ player } as #{ clss }"
 
@@ -152,64 +158,35 @@ module PickingLogic
     end
   end
 
+  # I hate this function
   def create_match
-    match = Match.create time: Time.now
-
+    match = Match.create(time: Time.now)
+    captains = @teams.collect { |team| team.captain }
+    
+    team_lookup = {}
     @teams.each do |team|
       team.save # teams have not been saved up to this point just in case of !endgame
       match.teams << team
-
-      # Create each player's statistics
-      team.signups.each do |nick, clss|
-        u = @auth[nick]
-        team.users << u
-
-        p = create_player_record u, match, team
-        create_stat_record p, "captain" if nick == team.captain # captain gets counted twice
-        create_stat_record p, clss
-      end
+      
+      # cache team signups for easy lookup
+      team.signups.each_key { |nick| team_lookup[nick] = team }
     end
+    
+    # order matters, as the id will determine the pick order
+    (captains + @pick_order + @signups.keys).each do |nick|
+      u = @auth[nick]
+      team = team_lookup[nick] # returns nil for fat kids
 
-    # Now store the picking statistics.  This has to be separate
-    # because we access the db directly, and we don't want transaction
-    # deadlock.
-    db = SQLite3::Database.new(const["database"]["database"])
-    db.transaction do |db|
-      # Add an unpicked record for everyone who added.
-      @signups_all.each do |nick, classes|
-        u = @auth[nick]
-        classes.each do |clss|
-          next if clss == "captain"
-          @teams.collect { |team| team.captain }.each do |captain|
-            db.execute("insert into picks (captain, user, class, match, picked, opponent_picked, pick_order) values (?, ?, (select id from tfclasses where name = ?), ?, ?, ?, NULL)",
-                       @auth[captain].id, u.id, clss, match.id, 0, 0)
-          end
-        end
-      end
-      # Now go back and update the records of those who were picked
-      # (using ON CONFLICT REPLACE on PK).
-      @teams.each do |team|
-        team.signups.each do |nick, clss|
-          u = @auth[nick]
-
-          other_captains = @teams.collect { |team| team.captain }.reject { |captain| captain == team.captain }
-          db.execute("insert into picks (captain, user, class, match, picked, opponent_picked, pick_order) values (?, ?, (select id from tfclasses where name = ?), ?, ?, ?, ?)",
-                     @auth[team.captain].id, u.id, clss, match.id, 1, 0, @pick_order.index(u.name))
-          other_captains.each do |other_captain|
-            db.execute("insert into picks (captain, user, class, match, picked, opponent_picked, pick_order) values (?, ?, (select id from tfclasses where name = ?), ?, ?, ?, ?)",
-                       @auth[other_captain].id, u.id, clss, match.id, 0, 1, @pick_order.index(u.name))
-          end
-        end
-      end
+      classes = []
+      classes << team.signups[nick] if team
+      classes << "captain" if captains.include? nick
+      
+      team.users << u if team
+      player = u.players.create(match: match, team: team)
+      
+      classes.each { |clss| player.picks.create(tfclass: Tfclass.find_by_name(clss)) }
+      @signups_all[nick].each { |clss| player.signups << Tfclass.find_by_name(clss) }
     end
-  end
-
-  def create_player_record user, match, team
-    user.players.create(match: match, team: team)
-  end
-
-  def create_stat_record player, clss
-    player.stats.create(tfclass: Tfclass.find_by_name(clss))
   end
 
   def print_teams

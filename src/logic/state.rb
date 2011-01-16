@@ -65,21 +65,14 @@ module StateLogic
   def attempt_picking
     if state? "delay"
       if minimum_players? 
+        state "picking"
         start_picking
       else
         state "waiting"
       end
     end
   end
-  
-  def start_picking
-    state "picking"
-    
-    update_lookup # logic/picking.rb
-    choose_captains # logic/picking.rb
-    tell_captain # logic/picking.rb
-  end
-  
+
   def end_picking
     state "server"
   end 

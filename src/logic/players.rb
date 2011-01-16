@@ -130,7 +130,7 @@ module PlayersLogic
   end
   
   def update_restrictions 
-    Restriction.includes("user").where("time < ?", Time.now.to_i).each do |r|
+    Restriction.includes(:user).where("time < ?", Time.now.to_i).each do |r|
       message "#{ r.user.name } is no longer restricted."
       r.delete
     end
@@ -173,16 +173,16 @@ module PlayersLogic
     message "#{ rjust "Required classes:" } #{ o * ", " }"
   end
   
+  def calculate_total user
+    user.players.count(:team_id)
+  end
+  
   def calculate_ratios user
-    total = user.players.count
-    classes = user.stats.group("tfclass_id").count
-    # TODO: .include("tf2class")
-
+    total = calculate_total user
+    classes = user.picks.group(:tfclass).count
+    
     Hash.new.tap do |ratios|
-      classes.each do |clss, count|
-        temp = Tfclass.find(clss).name
-        ratios[temp] = count.to_f / total.to_f
-      end
+      classes.each { |tfclass, count| ratios[tfclass.name] = count.to_f / total.to_f }
       ratios.default = 0
     end
   end
@@ -192,10 +192,10 @@ module PlayersLogic
 
     return message "There are no records of the user #{ user.nick }" unless u
     
-    total = u.players.count
+    total = calculate_total u
     output = calculate_ratios(u).collect { |clss, percent| "#{ (percent * 100).round }% #{ clss }" }
 
-    message "#{ u.name }#{ "*" unless u.auth } has #{ u.players.count } games played: #{ output * ", " }"
+    message "#{ u.name }#{ "*" unless u.auth } has #{ total } games played: #{ output * ", " }"
   end
 
   def minimum_players?

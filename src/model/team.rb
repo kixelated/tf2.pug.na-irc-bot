@@ -5,7 +5,7 @@ require_relative '../util'
 require_relative 'match'
 require_relative 'player'
 require_relative 'user'
-require_relative 'stat'
+require_relative 'pick'
 
 class Team < ActiveRecord::Base
   include Constants
@@ -15,7 +15,7 @@ class Team < ActiveRecord::Base
   has_and_belongs_to_many :users # TODO: Create join table.
   
   has_many :players
-  has_many :stats, through: "players"
+  has_many :picks, through: :players
 
   attr_accessor :captain, :colour, :signups
   
