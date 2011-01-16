@@ -10,7 +10,7 @@ There are a few gems required to run the bot, and the bundler gem will install a
 
     gem install bundler
 
-Once bundler is installed, change to the "src" directory and run the command:
+Once bundler is installed, run the command:
 
     bundle install
 
@@ -24,7 +24,7 @@ Configure your bot by editing cfg/constants.cfg. Please use another channel and 
 Execution
 ---------
 
-Navigate to the src directory and run the bot with the command:
+Navigate to the "src" directory and run the bot with the command:
 
     ruby bot.rb
 
