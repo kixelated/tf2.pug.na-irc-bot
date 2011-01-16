@@ -22,8 +22,7 @@ class BotMaster < Cinch::Bot
       
       c.channels = [ Constants.const["irc"]["channel"] ]
       c.plugins.plugins = [ Pug ]
-      
-      c.encoding = :irc
+
       c.verbose = false
     end
     
