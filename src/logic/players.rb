@@ -116,11 +116,12 @@ module PlayersLogic
     
     return notice user, "Could not find user." unless u
     return notice user, "Unknown duration." unless duration
-    
     remove_player nick
+    
+    u.restriction.delete if u.restriction
     u.restriction = Restriction.create(time: Time.now.to_i + duration)
     
-    message "#{ u.name } has been restricted for #{ ChronicDuration.output(duration, format: "long") }."
+    message "#{ u.name } has been restricted for #{ ChronicDuration.output(duration) }."
   end
   
   def authorize_player user, nick

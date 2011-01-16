@@ -21,7 +21,7 @@ class Team < ActiveRecord::Base
   
   def set_captain captain
     @captain = captain
-    @signups = { captain: "captain" }
+    @signups = { captain => "captain" }
   end
 
   def set_details info

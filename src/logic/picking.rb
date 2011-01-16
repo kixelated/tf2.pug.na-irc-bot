@@ -118,7 +118,7 @@ module PickingLogic
     current_team.signups[player] = clss
     @signups.delete player
     @pick_order << player
-
+    
     message "#{ current_team.my_colourize user.nick } picked #{ player } as #{ clss }"
 
     next_pick
