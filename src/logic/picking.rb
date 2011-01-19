@@ -47,7 +47,7 @@ module PickingLogic
 
     # Display all of the players
     output = @signups.keys.collect { |player| "(#{ lookup_i[player] }) #{ player }" }
-    notice current_captain, "#{ bold "all: " } #{ output * ", " }"
+    notice current_captain, "#{ bold rjust("all: ") } #{ output * ", " }"
 
     # Displays the classes that are not yet full for this team
     classes_needed(current_team.get_classes).each do |clss, count| # logic/players.rb
