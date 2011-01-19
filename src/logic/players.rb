@@ -73,7 +73,7 @@ module PlayersLogic
   def remove_player nick
     unless can_remove?
       @toremove << nick if @signups.key? nick
-      return notice nick, "You cannot remove at this time, but captains will be informed not to pick you."
+      return notice nick, "You cannot remove at this time, but will be removed after picking is over."
     end
     
     if @signups.key? nick
