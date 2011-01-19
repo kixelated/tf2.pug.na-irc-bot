@@ -24,10 +24,11 @@ class Pug
   listen_to :join, method: :event_join
   listen_to :part, method: :event_part
   listen_to :quit, method: :event_quit
+  listen_to :kick, method: :event_kick
   listen_to :nick, method: :event_nick
   
-  timer 1, method: :event_list
-  timer 30, method: :event_restriction
+  timer 1, method: :timer_list
+  timer 30, method: :timer_restriction
   
   # player-related commands
   match /add(?: (.+))?/i, method: :command_add
@@ -95,17 +96,21 @@ class Pug
     command_remove m
   end
   
+  def event_kick m
+    command_remove m
+  end
+  
   def event_nick m
     return unless @signups.key? m.user.nick 
     replace_player m.user.last_nick, m.user # logic/player.rb
   end
   
-  def event_list
+  def timer_list
     list_players if @show_list
     @show_list = false
   end
   
-  def event_restriction
+  def timer_restriction
     update_restrictions
   end
 
