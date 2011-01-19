@@ -43,7 +43,7 @@ class Team < ActiveRecord::Base
   end
   
   def format_name bg = const["colours"]["black"]
-    my_colourize @name
+    my_colourize @name, bg
   end
   
   def to_s
