@@ -1,18 +1,10 @@
-require 'bundler/setup'
-
+require_relative 'console'
 require_relative 'logic/server'
-require_relative 'constants'
 
-class STVWrapper
+class DownloadSTV < Console
   include ServerLogic
-  include Constants
-  
-  def message msg
-    puts msg
-  end
 end
 
-stv = STVWrapper.new
-
+stv = DownloadSTV.new
 stv.update_stv
 stv.list_stv
