@@ -129,24 +129,16 @@ rotation:
       file: cp_freight_final1
       weight: 2
       
-    - name: mainline
-      file: cp_mainline_rc6
-      weight: 2
-      
     - name: obscure
       file: cp_obscure_final
       weight: 2
-      
-    - name: bazillion
-      file: cp_bazillion_b11
-      weight: 1
       
     - name: follower
       file: cp_follower
       weight: 1
       
-    - name: wildfire
-      file: ctf_wildfire_rc
+    - name: mainline
+      file: cp_mainline_rc6
       weight: 1
       
     - name: turbine
