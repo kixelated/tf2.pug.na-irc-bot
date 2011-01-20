@@ -28,3 +28,4 @@ Navigate to the "src" directory and run the bot with the command:
 
     ruby bot.rb
 
+Banned squider.
