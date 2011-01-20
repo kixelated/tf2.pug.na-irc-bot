@@ -47,7 +47,7 @@ teams:
     
 servers:
   - name: chicago1
-    ip: chicago1.tf2pug.eoreality.net
+    ip: chicago1.tf2pug.us
     port: 27015
     password: tf2pug
     rcon: secret
@@ -58,7 +58,7 @@ servers:
       dir: orangebox/tf
     
   - name: dallas1
-    ip: dallas1.tf2pug.eoreality.net
+    ip: dallas1.tf2pug.us
     port: 27015
     password: tf2pug
     rcon: secret
@@ -69,7 +69,7 @@ servers:
       dir: orangebox/tf
      
   - name: chicago2
-    ip: chicago2.tf2pug.eoreality.net
+    ip: chicago2.tf2pug.us
     port: 27015
     password: tf2pug
     rcon: secret
