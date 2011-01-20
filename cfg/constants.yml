@@ -95,54 +95,42 @@ rotation:
   maps:
     - name: badlands
       file: cp_badlands
-      weight: 16
+      weight: 8
       
     - name: granary
-      file: cp_granary
-      weight: 12
+      file: cp_granary_beta2
+      weight: 5
       
     - name: snakewater
       file: cp_snakewater_b9
-      weight: 10
+      weight: 4
       
     - name: viaduct
       file: koth_viaduct
-      weight: 8
+      weight: 3
       
     - name: gullywash
       file: cp_gullywash_imp3
-      weight: 8
+      weight: 3
       
     - name: coldfront
       file: cp_coldfront
-      weight: 6
+      weight: 2
       
     - name: yukon
       file: cp_yukon_final
-      weight: 4
+      weight: 2
 
     - name: ashville
       file: koth_ashville_rc1
-      weight: 4
+      weight: 1
       
     - name: freight
       file: cp_freight_final1
-      weight: 2
+      weight: 1
       
     - name: obscure
       file: cp_obscure_final
-      weight: 2
-      
-    - name: follower
-      file: cp_follower
-      weight: 1
-      
-    - name: mainline
-      file: cp_mainline_rc6
-      weight: 1
-      
-    - name: turbine
-      file: ctf_turbine_pro_b1
       weight: 1
     
 mumble:
