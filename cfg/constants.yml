@@ -13,7 +13,7 @@ irc:
   channel: '#tf2.pug.na.beta'
   
   auth: PugNaBot
-  auth_password: 0ON05haq
+  auth_password: secret
   auth_serv: AuthServ@Services.GameSurge.net
   
 messengers:
@@ -50,33 +50,33 @@ servers:
     ip: chicago1.tf2pug.eoreality.net
     port: 27015
     password: tf2pug
-    rcon: P719L4K4HOqL77
+    rcon: secret
     ftp:
       ip: chicago1.tf2pug.eoreality.net
       user: pugna
-      password: LD4ysPKm
+      password: secret
       dir: orangebox/tf
     
   - name: dallas1
     ip: dallas1.tf2pug.eoreality.net
     port: 27015
     password: tf2pug
-    rcon: P719L4K4HOqL77
+    rcon: secret
     ftp:
       ip: dallas1.tf2pug.eoreality.net
       user: pugna
-      password: LD4ysPKm
+      password: secret
       dir: orangebox/tf
      
   - name: chicago2
     ip: chicago2.tf2pug.eoreality.net
     port: 27015
     password: tf2pug
-    rcon: P719L4K4HOqL77
+    rcon: secret
     ftp:
       ip: chicago2.tf2pug.eoreality.net
       user: pugna2
-      password: dd1f359
+      password: secret
       dir: orangebox/tf
       
 stv:
@@ -85,7 +85,7 @@ stv:
   ftp:
     ip: tf2pug.us
     user: demos@tf2pug.us
-    password: kuVgYXxYqydQ
+    password: secret
   delete:
     remote: true
     local: true
