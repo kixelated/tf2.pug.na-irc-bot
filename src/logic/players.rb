@@ -98,14 +98,14 @@ module PlayersLogic
     
     ratio = calculate_ratios u
     sum = const["reward"]["classes"].inject { |sum, clss| sum + ratio[clss] }
-    return if sum < const["reward"]["ratio"].to_f
+    return if sum < const["reward"]["ratio"]
     
     Channel(const["irc"]["channel"]).voice user
     return true
   end
   
   def explain_reward user
-    notice user, "You need #{ const["reward"]["min"] } games and #{ (const["reward"]["ratio"].to_f * 100).round }% on #{ const["reward"]["classes"] * " + " } to get voice."
+    notice user, "You need #{ const["reward"]["min"] } games and #{ (const["reward"]["ratio"] * 100).round }% on #{ const["reward"]["classes"] * " + " } to get voice."
   end
   
   def restrict_player user, nick, duration
@@ -186,7 +186,7 @@ module PlayersLogic
     classes = user.picks.group(:tfclass).count
     
     Hash.new.tap do |ratios|
-      classes.each { |tfclass, count| ratios[tfclass.name] = count.to_f / total.to_f }
+      classes.each { |tfclass, count| ratios[tfclass.name] = count / total }
       ratios.default = 0
     end
   end

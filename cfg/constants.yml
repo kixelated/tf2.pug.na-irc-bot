@@ -140,7 +140,7 @@ mumble:
 
 reward:
   min: 10
-  ratio: .3
+  ratio: 0.3
   classes:
     - medic
     - captain
