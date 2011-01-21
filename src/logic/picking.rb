@@ -13,7 +13,7 @@ module PickingLogic
 
   def choose_captains
     possible_captains = get_classes["captain"]
-    @signups_all = @signups.reject { |k, v| false } # Ghetto way of copying a hash
+    @signups_all = @signups.dup # so we have a copy of the signups
 
     const["teams"]["count"].times do |i|
       captain = possible_captains.delete_at rand(possible_captains.length)

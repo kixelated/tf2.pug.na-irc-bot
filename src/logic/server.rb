@@ -79,7 +79,7 @@ module ServerLogic
   
   def list_status
     each_server do |server, server_d|
-      players = server.players - 1 # -1 to factor in STV
+      players = server.players - 1 # to factor in STV
       message "#{ players } players on #{ server }#{ ", #{ server.timeleft } left" if players > const["settings"]["used"] }" 
     end
   end
@@ -118,8 +118,7 @@ module ServerLogic
   end
   
   def next_server
-    temp = const["servers"].push(const["servers"].shift).first
-    @server = Server.new temp
+    @server = Server.new const["servers"].push(const["servers"].shift).first
   end
   
   def next_map 
@@ -127,14 +126,12 @@ module ServerLogic
     @prev_maps.shift if @prev_maps.size > const["rotation"]["exclude"]
   
     maps = const["rotation"]["maps"].reject { |map| @prev_maps.include? map }
-   
-    weight = 0
-    maps.each { |map| weight += map["weight"] }
+    weight = maps.inject { |sum, map| sum + map['weight'] } 
   
     num = rand weight
     maps.each do |map|
       num -= map["weight"]
-      return (@map = map) if num < 0
+      return (@map = map) if num <= 0
     end
   end
   

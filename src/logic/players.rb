@@ -59,7 +59,7 @@ module PlayersLogic
     User.create(:auth => user.authname, :name => user.nick)
   end
 
-  def update_player user, nick
+  def update_nick user, nick
     user.refresh unless user.authed?
     return notice user, "You must be registered with GameSurge in order to change your nick. http://www.gamesurge.net/newuser/" unless user.authed?
     
@@ -92,17 +92,13 @@ module PlayersLogic
   
   def reward_player user
     u = find_user user
-
     return unless u
      
-    sum = 0.0
     total = calculate_total u
-    
     return if total < const["reward"]["min"].to_i
     
     ratio = calculate_ratios u
-    const["reward"]["classes"].each { |clss| sum += ratio[clss] }
-    
+    sum = const["reward"]["classes"].inject { |sum, clss| sum + ratio[clss] }
     return if sum < const["reward"]["ratio"].to_f
     
     Channel(const["irc"]["channel"]).voice user
@@ -175,10 +171,9 @@ module PlayersLogic
   def list_classes_needed
     output = classes_needed(get_classes, const["teams"]["count"])
     output["players"] = const["teams"]["total"] - @signups.size if @signups.size < const["teams"]["total"]
-    
-    o = output.collect { |k, v| "#{ v } #{ k }" } # Format the output
+    output.collect! { |k, v| "#{ v } #{ k }" } # Format the output
 
-    message "#{ rjust "Required classes:" } #{ o * ", " }"
+    message "#{ rjust "Required classes:" } #{ output * ", " }"
   end
   
   def calculate_total user
@@ -197,7 +192,6 @@ module PlayersLogic
 
   def list_stats user
     u = find_user user
-
     return message "There are no records of the user #{ user.nick }" unless u
     
     total = calculate_total u

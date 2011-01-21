@@ -161,7 +161,7 @@ class Pug
   def command_nick m, nick
     return notice(m.user, "Change you name in the database: !nick <newname>") unless nick
   
-    update_player m.user, nick # logic/players.rb
+    update_nick m.user, nick # logic/players.rb
   end
   
   # !reward
