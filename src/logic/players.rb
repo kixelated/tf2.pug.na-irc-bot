@@ -5,26 +5,29 @@ require_relative '../util'
 
 module PlayersLogic
   def add_player user, classes
-    return notice user, "Invalid classes, possible options are #{ const["teams"]["classes"].keys * ", " }" unless classes
+    return notice user, "No classes entered. Usage: !add #{ const["teams"]["classes"].keys * " " }" unless classes
         
     user.refresh unless user.authed?
     notice user, "You are not authorized with Gamesurge. You can still play in the channel, but any accumulated stats may be lost and will not transfer if you change your nick. Please follow this guide to register and authorize with Gamesurge: http://www.gamesurge.net/newuser/" unless user.authed?
     
-    # clean up the classes, removing any invalid or duplicate items
-    classes.collect! { |clss| clss.downcase }
-    classes.reject! { |clss| not const["teams"]["classes"].key? clss }
-    classes.uniq!
+    classes.collect! { |clss| clss.downcase } # convert classes to lowercase
+    classes.uniq! # remove duplicate classes
     
-    return notice user, "Invalid classes, possible options are #{ const["teams"]["classes"].keys * ", " }" if classes.empty?
-  
+    rej = classes.reject! { |clss| not const["teams"]["classes"].key? clss } # remove invalid classes
+    notice user, "Invalid classes. Possible options are #{ const["teams"]["classes"].keys * ", " }" if rej
+
     user.refresh unless user.authed?
-    
     u = find_user user
     u = create_user user unless u
-    
     update_user user, u if user.authed? and not u.auth 
+   
+    total = calculate_total u
+    cap = classes.delete("captain") if total < const["captain"]["min"]
     
     return notice user, "You are restricted from playing in this channel." if u.restriction
+    notice user, "You must have #{ const["captain"]["min"] } games played to add as captain." if cap
+    
+    return if classes.empty?
     
     # add the player to the pug
     if can_add?
@@ -93,7 +96,7 @@ module PlayersLogic
     return unless u
      
     sum = 0.0
-    total = u.players.count
+    total = calculate_total u
     
     return if total < const["reward"]["min"].to_i
     

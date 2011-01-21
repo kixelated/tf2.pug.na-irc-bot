@@ -144,6 +144,9 @@ reward:
   classes:
     - medic
     - captain
+    
+captain:
+  min: 10
 
 states:
   waiting: 0
