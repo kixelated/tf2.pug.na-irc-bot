@@ -16,7 +16,6 @@ module PlayersLogic
     rej = classes.reject! { |clss| not const["teams"]["classes"].key? clss } # remove invalid classes
     notice user, "Invalid classes. Possible options are #{ const["teams"]["classes"].keys * ", " }" if rej
 
-    user.refresh unless user.authed?
     u = find_user user
     u = create_user user unless u
     update_user user, u if user.authed? and not u.auth 
@@ -145,9 +144,11 @@ module PlayersLogic
   end
   
   def classes_needed players, multiplier = 1
-    required = const["teams"]["classes"].collect_proper { |k, v| v * multiplier - players[k].size }
-    required.reject! { |k, v| v <= 0 } # Remove any negative or zero values
-    required
+    const["teams"]["classes"].inject({}) do |required, (clss, count)|
+      temp = count * multiplier - players[clss].size
+      required[clss] = temp if temp > 0
+      required
+    end
   end
   
   def list_players
