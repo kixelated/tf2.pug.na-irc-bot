@@ -62,12 +62,12 @@ class Pug
   
   # admin commands
   match /fadd ([\S]+) (.+)/i, method: :admin_forceadd
-  match /fpick(?: ([\S]+) ([\S]+))?/i, method: :admin_forcepick
+  match /fpick ([\S]+) ([\S]+)/i, method: :admin_forcepick
   match /replace ([\S]+) ([\S]+)/i, method: :admin_replace
   match /restrict ([\S]+) (.+)/i, method: :admin_restrict
   match /authorize ([\S]+)/i, method: :admin_authorize
   match /cookie(?: ([\S]+))?/i, method: :admin_cookie
-  #TODO: match /changemap ([\S]+)/i, method: :admin_changemap
+  match /fmap ([\S]+) ([\S]+)/i, method: :admin_forcemap
   match /nextmap/i, method: :admin_nextmap
   match /nextserver/i, method: :admin_nextserver
   match /reset/i, method: :admin_reset
@@ -241,11 +241,11 @@ class Pug
   end
 
   # Admin commands
-  # !changemap
-  def admin_changemap m, map
+  # !fmap
+  def admin_forcemap m, map, file
     return unless require_admin m.user
     
-    change_map map
+    change_map map, file
     list_map
   end
   

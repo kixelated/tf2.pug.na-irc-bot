@@ -27,8 +27,8 @@ module ServerLogic
     advertisement
   end
   
-  def change_map map
-    @map = map
+  def change_map map, file
+    @map = { "name" => map, "file" => file, "weight" => 0 }
   end
   
   def each_server
