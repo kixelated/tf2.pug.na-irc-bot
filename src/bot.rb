@@ -12,13 +12,13 @@ end
 #main.join
 
 Constants.const["messengers"]["count"].times do |i|
-  sleep(10)
+  sleep(5)
 
   Thread.new do
     BotMessenger.new(i).start
   end
 end
 
-sleep(10)
+sleep(5)
 
 BotManager.instance.start

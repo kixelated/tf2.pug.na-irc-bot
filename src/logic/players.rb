@@ -94,10 +94,10 @@ module PlayersLogic
     return unless u
      
     total = calculate_total u
-    return if total < const["reward"]["min"].to_i
+    return if total < const["reward"]["min"]
     
     ratio = calculate_ratios u
-    sum = const["reward"]["classes"].inject { |sum, clss| sum + ratio[clss] }
+    sum = const["reward"]["classes"].inject(0.0) { |sum, clss| sum + ratio[clss] }
     return if sum < const["reward"]["ratio"]
     
     Channel(const["irc"]["channel"]).voice user
@@ -171,10 +171,10 @@ module PlayersLogic
  
   def list_classes_needed
     output = classes_needed(get_classes, const["teams"]["count"])
-    output["players"] = const["teams"]["total"] - @signups.size if @signups.size < const["teams"]["total"]
-    output.collect! { |k, v| "#{ v } #{ k }" } # Format the output
+    output["player"] = const["teams"]["total"] - @signups.size if @signups.size < const["teams"]["total"]
+    output.collect_proper! { |k, v| "#{ v } #{ k }" } # Format the output
 
-    message "#{ rjust "Required classes:" } #{ output * ", " }"
+    message "#{ rjust "Required classes:" } #{ output.values * ", " }"
   end
   
   def calculate_total user
@@ -184,9 +184,9 @@ module PlayersLogic
   def calculate_ratios user
     total = calculate_total user
     classes = user.picks.group(:tfclass).count
-    
+
     Hash.new.tap do |ratios|
-      classes.each { |tfclass, count| ratios[tfclass.name] = count / total }
+      classes.each { |tfclass, count| ratios[tfclass.name] = count.to_f / total.to_f }
       ratios.default = 0
     end
   end

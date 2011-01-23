@@ -126,7 +126,7 @@ module ServerLogic
     @prev_maps.shift if @prev_maps.size > const["rotation"]["exclude"]
   
     maps = const["rotation"]["maps"].reject { |map| @prev_maps.include? map }
-    weight = maps.inject { |sum, map| sum + map['weight'] } 
+    weight = maps.inject(0) { |sum, map| sum + map["weight"] } 
   
     num = rand weight
     maps.each do |map|
