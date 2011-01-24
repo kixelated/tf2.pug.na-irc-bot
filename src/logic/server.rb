@@ -66,6 +66,7 @@ module ServerLogic
           message "No new demos on #{ server }."
         end
         
+        stv.purge
         stv.disconnect
       end
     end

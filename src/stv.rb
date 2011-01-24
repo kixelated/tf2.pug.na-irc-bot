@@ -22,8 +22,8 @@ class STV
     conn.close if conn
   end
   
-  def demos
-    @down.nlst.reject { |filename| !(filename =~ /.+\.dem/) }
+  def demos conn = @down
+    conn.nlst.reject { |filename| !(filename =~ /.+\.dem/) }
   end
   
   def update server
@@ -48,6 +48,15 @@ class STV
 
       # Delete remote files
       @down.delete filename if const["stv"]["delete"]["remote"]
+    end
+  end
+  
+  def purge
+    demos(@up).each do |filename|
+      if filename =~ /(.+?)-(.{4})(.{2})(.{2})-(.{2})(.{2})-(.+?)\.dem/
+        server, year, month, day, hour, min, map = $1, $2, $3, $4, $5, $6, $7
+        @up.delete filename if Time.mktime(year, month, day, hour, min) + 1209600 < Time.now
+      end
     end
   end
   
