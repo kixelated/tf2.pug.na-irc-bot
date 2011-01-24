@@ -15,10 +15,10 @@ module PickingLogic
     @signups_all = @signups.dup # so we have a copy of the signups
   
     captains = get_classes["captain"].shuffle
-    captains.sort_by! { |nick| not @signups[nick].include?("medic") } # give medics priority
+    captains.sort_by! { |nick| @signups[nick].include?("medic") ? 0 : 1 } # give medics priority
     captains = captains.first const["teams"]["count"] # select first 2* captains
 
-    captains.each do |captain|
+    captains.each_with_index do |captain, i|
       team = Team.new
       team.set_captain captain
       team.set_details const["teams"]["details"][i]
