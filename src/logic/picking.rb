@@ -12,12 +12,13 @@ module PickingLogic
   end
 
   def choose_captains
-    possible_captains = get_classes["captain"]
     @signups_all = @signups.dup # so we have a copy of the signups
+  
+    captains = get_classes["captain"].shuffle
+    captains.sort_by! { |nick| not @signups[nick].include?("medic") } # give medics priority
+    captains = captains.first const["teams"]["count"] # select first 2* captains
 
-    const["teams"]["count"].times do |i|
-      captain = possible_captains.delete_at rand(possible_captains.length)
-
+    captains.each do |captain|
       team = Team.new
       team.set_captain captain
       team.set_details const["teams"]["details"][i]
@@ -29,8 +30,8 @@ module PickingLogic
     output = @teams.collect { |team| team.my_colourize team.captain }
     message "Captains are #{ output * ", " }"
 
-    @teams.each do |team|
-      notice team.captain, "You have been selected as a captain. When it is your turn to pick, you can choose players with the '!pick num' or '!pick name' command. Remember, you will play the class that you do not pick, so be sure to pick a medic if you do not wish to play medic."
+    captains.each do |captain|
+      notice captain, "You have been selected as a captain. When it is your turn to pick, you can choose players with the '!pick num' or '!pick name' command. Remember, you will play the class that you do not pick, so be sure to pick a medic if you do not wish to play medic."
     end
   end
 
