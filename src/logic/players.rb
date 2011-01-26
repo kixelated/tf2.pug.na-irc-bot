@@ -33,7 +33,7 @@ module PlayersLogic
       @signups[user.nick] = classes
       @auth[user.nick] = u
       @show_list = true
-    else
+    elsif not @signups.key?(user.nick)
       @toadd[user.nick] = classes
       notice user, "You cannot add at this time, but you will be added once the picking process is over."
     end
@@ -86,7 +86,30 @@ module PlayersLogic
   end
   
   def replace_player nick, replacement
-    remove_player nick if add_player replacement, @signups[nick] 
+    u = find_user replacement
+    return unless u
+    
+    if @signups.key? nick
+      @signups[replacement.nick] = @signups.delete(nick)
+      @auth[replacement.nick] = u
+      
+      @auth.delete nick
+      @show_list = true
+    elsif state? "picking" and @signups_all.key? nick
+      @signups_all[replacement.nick] = @signups_all.delete(nick)
+      
+      @teams.each do |team|
+        if team.signups.key? nick
+          team.signups[replacement.nick] = team.signups.delete(nick)
+          if team.captain == nick
+            team.captain = replacement.nick
+            
+            list_captain
+            tell_captain if replacement.nick == current_captain
+          end
+        end
+      end
+    end
   end
   
   def reward_player user

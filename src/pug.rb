@@ -280,10 +280,10 @@ class Pug
   end
   
   # !replace
-  def admin_replace m, user, replacement
+  def admin_replace m, nick, replacement
     return unless require_admin m.user
     
-    replace_player user, User(replacement) # logic/picking.rb
+    replace_player nick, User(replacement) # logic/picking.rb
   end
   
   # !endgame
