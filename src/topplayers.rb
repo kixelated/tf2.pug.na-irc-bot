@@ -1,5 +1,6 @@
 require_relative 'model/player.rb'
 
-Player.find(:all, :select => "*, count(*) AS count, user_id", :group => "user_id", :order => "count DESC").each do |player|
-  puts "#{ player.count.to_s.rjust(3) } - #{ player.user.name }"
+match = Tfclass.first.signups.first.match_id
+Player.select("COUNT(*) AS total, COUNT(team_id) AS picked, user_id, team_id").includes(:user).group(:user_id).where("match_id >= #{ match }").order("total DESC").each do |player|
+  puts "#{ player.user.name } - #{ player.total } - #{ (100 * (player.total - player.picked).to_f / player.total.to_f).round(2) }%"
 end

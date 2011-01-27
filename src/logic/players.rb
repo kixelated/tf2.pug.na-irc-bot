@@ -39,6 +39,19 @@ module PlayersLogic
     end
   end
   
+  def add_player! user, classes
+    return if classes.empty?
+  
+    u = find_user user
+    u = create_user user unless u
+    update_user user, u if user.authed? and not u.auth 
+    
+    @signups[user.nick] = classes
+    @signups_all = classes if state? "picking"
+    @auth[user.nick] = u
+    @show_list = true
+  end
+  
   def find_user user
     u = User.find_by_auth(user.authname) if user.authed?
     u = User.where("name = ? AND auth != NULL", user.nick).first unless u # give priority to authed accounts
@@ -78,24 +91,19 @@ module PlayersLogic
       return notice nick, "You cannot remove at this time, but will be removed after picking is over."
     end
     
-    if @signups.key? nick
-      @signups.delete nick
-      @auth.delete nick
-      @show_list = true
-    end
+    @show_list = true if remove_player! nick
+  end
+  
+  def remove_player! nick
+    @auth.delete nick
+    @signups.delete nick
   end
   
   def replace_player nick, replacement
-    u = find_user replacement
-    return unless u
+    classes = remove_player! nick
+    return add_player! replacement, classes if classes
     
-    if @signups.key? nick
-      @signups[replacement.nick] = @signups.delete(nick)
-      @auth[replacement.nick] = u
-      
-      @auth.delete nick
-      @show_list = true
-    elsif state? "picking" and @signups_all.key? nick
+    if state? "picking" and @signups_all.key? nick
       @signups_all[replacement.nick] = @signups_all.delete(nick)
       
       @teams.each do |team|
@@ -104,7 +112,7 @@ module PlayersLogic
           if team.captain == nick
             team.captain = replacement.nick
             
-            list_captain
+            list_captain nil
             tell_captain if replacement.nick == current_captain
           end
         end
