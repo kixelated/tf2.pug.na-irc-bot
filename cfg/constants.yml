@@ -102,7 +102,7 @@ rotation:
       weight: 5
       
     - name: snakewater
-      file: cp_snakewater_b9
+      file: cp_snakewater_b10
       weight: 4
       
     - name: viaduct
