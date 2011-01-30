@@ -16,10 +16,6 @@ class BotMaster < Cinch::Bot
       c.nick = Constants.const["irc"]["nick"]
       c.local_host = Constants.const["internet"]["local_host"]
       
-      c.auth = Constants.const["irc"]["auth"]
-      c.auth_password = Constants.const["irc"]["auth_password"]
-      c.auth_serv = Constants.const["irc"]["auth_serv"]
-      
       c.channels = [ Constants.const["irc"]["channel"] ]
       c.plugins.plugins = [ Pug ]
 
