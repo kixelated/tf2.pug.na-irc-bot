@@ -1,24 +1,24 @@
 database:
   adapter: sqlite3
-  database: '../db/stats.sqlite3'
+  database: '../db/skeleton.sqlite3'
 
 internet:
-  local_host: your.mom.isfat.biz
+  local_host:
 
 irc:
   server: irc.gamesurge.net
   port: 6667
   
-  nick: TF2CompanionBot
-  channel: '#tf2.pug.na'
+  nick: TF2CompanionTest
+  channel: '#tf2.pug.na.beta'
   
-  auth: PugNaBot
   auth_password: secret
+  auth:
   auth_serv: AuthServ@Services.GameSurge.net
   
 messengers:
-  count: 2
-  nick: TF2MessengerBo
+  count: 1
+  nick: TF2MessengerTes
   mps: 0.5
 
 delays: 
