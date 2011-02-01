@@ -1,24 +1,24 @@
 database:
   adapter: sqlite3
-  database: '../db/skeleton.sqlite3'
+  database: '../db/stats.sqlite3'
 
 internet:
-  local_host:
+  local_host: your.mom.isfat.biz
 
 irc:
   server: irc.gamesurge.net
   port: 6667
   
-  nick: TF2CompanionTest
-  channel: '#tf2.pug.na.beta'
+  nick: TF2CompanionBot
+  channel: '#tf2.pug.na'
   
   auth: PugNaBot
-  auth_password: secret
+  auth_password: 0ON05haq
   auth_serv: AuthServ@Services.GameSurge.net
   
 messengers:
-  count: 1
-  nick: TF2MessengerTes
+  count: 2
+  nick: TF2MessengerBo
   mps: 0.5
 
 delays: 
@@ -50,33 +50,33 @@ servers:
     ip: chicago1.tf2pug.us
     port: 27015
     password: tf2pug
-    rcon: secret
+    rcon: FV8ITDt
     ftp:
       ip: chicago1.tf2pug.eoreality.net
       user: pugna
-      password: secret
+      password: LD4ysPKm
       dir: orangebox/tf
     
   - name: dallas1
     ip: dallas1.tf2pug.us
     port: 27015
     password: tf2pug
-    rcon: secret
+    rcon: FV8ITDt
     ftp:
       ip: dallas1.tf2pug.eoreality.net
       user: pugna
-      password: secret
+      password: LD4ysPKm
       dir: orangebox/tf
      
   - name: chicago2
     ip: chicago2.tf2pug.us
     port: 27015
     password: tf2pug
-    rcon: secret
+    rcon: FV8ITDt
     ftp:
       ip: chicago2.tf2pug.eoreality.net
       user: pugna2
-      password: secret
+      password: dd1f359
       dir: orangebox/tf
       
 stv:
@@ -85,7 +85,7 @@ stv:
   ftp:
     ip: tf2pug.us
     user: demos@tf2pug.us
-    password: secret
+    password: kuVgYXxYqydQ
   delete:
     remote: true
     local: true
