@@ -5,25 +5,20 @@ require_relative '../stv'
 
 module ServerLogic
   def start_server
-    connect_server
+    @server.update_server_info
     
-    while @server.in_use?
-      message "Server #{ @server.to_s } is in use. Trying the next server in #{ const["delays"]["server"] } seconds."
-      @server.disconnect
-      
-      sleep const["delays"]["server"]
+    while @server.server_info["number_of_players"] < const["settings"]["test"]
+      message "Server #{ @server.name } is in use. Trying the next server in #{ const["delays"]["server"] } seconds."
       
       next_server
-      connect_server
+      sleep const["delays"]["server"]
     end
     
-    @server.clvl @map["file"]
-    @server.cpswd @server.password
-    @server.disconnect
+    @server.rcon_exec "changelevel #{ @map['file'] }"
   end
   
   def announce_server
-    message "The pug will take place on #{ @server.to_s } with the map #{ @map["name"] }."
+    message "The pug will take place on #{ @server.name } with the map #{ @map["name"] }."
     advertisement
   end
   
@@ -31,30 +26,15 @@ module ServerLogic
     @map = { "name" => map, "file" => file, "weight" => 0 }
   end
   
-  def each_server
-    threads = []
-    const["servers"].each do |server_d|
-      threads << Thread.new(Server.new(server_d), server_d) do |server, server_d|
-        begin
-          server.connect
-          yield server, server_d
-          server.disconnect
-        rescue => e  
-          puts e.message  
-          puts e.backtrace.inspect  
-        end
-      end
-    end
-    threads.each { |thread| thread.join }
-  end
-  
   def update_stv
     @updating = true
     
-    each_server do |server, server_d|
-      if server.in_use?
+    @servers.each do |server|
+      server.update_server_info
+      unless server.server_info["number_of_players"] < const["settings"]["test"]
         message "#{ server } is in use, please wait until the pug has ended."
       else
+        # TODO
         stv = STV.new server_d["ftp"]
         stv.connect
         
@@ -79,14 +59,20 @@ module ServerLogic
   end
   
   def list_status
-    each_server do |server, server_d|
-      players = server.players - 1 # to factor in STV
-      message "#{ players } players on #{ server }#{ ", #{ server.timeleft } left" if players > const["settings"]["used"] }" 
+    @servers.each do |server|
+      server.update_server_info
+      info = server.server_info
+      
+      if server.server_info["number_of_players"] > 0
+        message "#{ server.name }: #{ info['number_of_players'] } players on #{ info['map_name'] } with #{ server.timeleft } left"
+      else 
+        message "#{ server.name }: Empty"
+      end
     end
   end
 
   def list_server
-    message "#{ @server.connect_info }"
+    message "#{ @server.to_s }"
     advertisement
   end  
   
@@ -107,19 +93,9 @@ module ServerLogic
     output = const["rotation"]["maps"].collect { |map| "#{ map["name"] }(#{ map["weight"] })" }
     message "Map(weight) rotation: #{ output * ", " }"
   end
-  
-  def connect_server
-    while true
-      begin 
-        return @server.connect
-      rescue
-        next_server
-      end
-    end
-  end
-  
+
   def next_server
-    @server = Server.new const["servers"].push(const["servers"].shift).first
+    @server = @servers.push(@servers.shift).first
   end
   
   def next_map 

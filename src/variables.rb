@@ -5,8 +5,10 @@ module Variables
   include Constants
 
   def setup
-    @server = Server.new const["servers"].first
+    @servers = const["servers"].collect { |details| Server.new details }
     @prev_maps = []
+    
+    next_server
     next_map
   
     @signups = {}

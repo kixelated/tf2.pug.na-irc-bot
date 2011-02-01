@@ -1,8 +1,13 @@
 source :rubygems
 
-gem "sqlite3"
+gem "cinch"
+
 gem "activerecord"
-gem "rcon"
+gem "sqlite3"
+
 gem "chronic_duration"
 gem "rubyzip"
-gem "cinch"
+
+gem "bzip2-ruby"
+gem "json"
+gem "steam-condenser"
