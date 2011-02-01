@@ -13,7 +13,7 @@ irc:
   channel: '#tf2.pug.na'
   
   auth: PugNaBot
-  auth_password: 0ON05haq
+  auth_password: secret
   auth_serv: AuthServ@Services.GameSurge.net
   
 messengers:
@@ -50,45 +50,50 @@ servers:
     ip: chicago1.tf2pug.us
     port: 27015
     password: tf2pug
-    rcon: FV8ITDt
+    rcon: secret
     ftp:
       ip: chicago1.tf2pug.eoreality.net
       user: pugna
-      password: LD4ysPKm
+      password: secret
       dir: orangebox/tf
     
   - name: dallas1
     ip: dallas1.tf2pug.us
     port: 27015
     password: tf2pug
-    rcon: FV8ITDt
+    rcon: secret
     ftp:
       ip: dallas1.tf2pug.eoreality.net
       user: pugna
-      password: LD4ysPKm
+      password: secret
       dir: orangebox/tf
      
   - name: chicago2
     ip: chicago2.tf2pug.us
     port: 27015
     password: tf2pug
-    rcon: FV8ITDt
+    rcon: secret
     ftp:
       ip: chicago2.tf2pug.eoreality.net
       user: pugna2
-      password: dd1f359
+      password: secret
       dir: orangebox/tf
-      
+
 stv:
   url: http://tf2pug.us/demos
   storage: ../stv/
   ftp:
     ip: tf2pug.us
     user: demos@tf2pug.us
-    password: kuVgYXxYqydQ
+    password: secret
   delete:
     remote: true
     local: true
+    
+mumble:
+  ip: tf2pug.commandchannel.com
+  port: 30153
+  password: tf2pug
 
 rotation:
   exclude: 3
@@ -102,7 +107,7 @@ rotation:
       weight: 5
       
     - name: snakewater
-      file: cp_snakewater_b9
+      file: cp_snakewater_b10
       weight: 4
       
     - name: viaduct
@@ -132,11 +137,6 @@ rotation:
     - name: obscure
       file: cp_obscure_final
       weight: 1
-    
-mumble:
-  ip: chi6.eoreality.net
-  port: 64746
-  password: tf2pug
 
 reward:
   min: 10
