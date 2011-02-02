@@ -100,26 +100,30 @@ rotation:
   maps:
     - name: badlands
       file: cp_badlands
-      weight: 8
+      weight: 16
       
     - name: granary
       file: cp_granary_beta2
-      weight: 5
+      weight: 10
       
     - name: snakewater
-      file: cp_snakewater_b10
-      weight: 4
+      file: cp_snakewater_b11
+      weight: 8
       
     - name: viaduct
       file: koth_viaduct
-      weight: 3
+      weight: 6
       
     - name: gullywash
       file: cp_gullywash_imp3
-      weight: 3
+      weight: 6
       
     - name: coldfront
       file: cp_coldfront
+      weight: 4
+      
+    - name: obscure
+      file: cp_obscure_final
       weight: 2
       
     - name: yukon
@@ -132,10 +136,6 @@ rotation:
       
     - name: freight
       file: cp_freight_final1
-      weight: 1
-      
-    - name: obscure
-      file: cp_obscure_final
       weight: 1
 
 reward:
