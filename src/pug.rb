@@ -98,7 +98,7 @@ class Pug
   end
   
   def event_kick m
-    command_remove m.params[1] # may be a better solution
+    remove_player m.params[1]
   end
   
   def event_nick m
