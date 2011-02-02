@@ -1,7 +1,8 @@
 require_relative 'logic/server'
 require_relative 'variables'
 
-class Console < ServerLogic
+class Console
+  include ServerLogic
   include Variables
  
   def message msg
