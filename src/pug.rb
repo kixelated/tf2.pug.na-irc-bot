@@ -72,6 +72,7 @@ class Pug
   match /nextserver/i, method: :admin_nextserver
   match /reset/i, method: :admin_reset
   match /endgame/i, method: :admin_endgame
+  match /reload/i, method: :admin_reload
   match /quit/i, method: :admin_quit
   
   def initialize *args
@@ -324,7 +325,7 @@ class Pug
     restrict_player m.user, nick, duration
   end
   
-  # 
+  # !authorize
   def admin_authorize m, nick
     return unless require_admin m.user
     
@@ -340,6 +341,14 @@ class Pug
     else
       bot.msg Constants.const["irc"]["auth_serv"], "COOKIE #{ Constants.const["irc"]["auth"] } #{ pass }"
     end
+  end
+  
+  # !reload
+  def admin_reload m
+    return unless require_admin m.user
+    
+    Constants.load_config
+    Constants.calculate
   end
 
   def require_admin user

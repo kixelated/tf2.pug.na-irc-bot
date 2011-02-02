@@ -1,8 +1,6 @@
 require 'yaml'
 
 module Constants
-  @@const = YAML.load_file '../cfg/constants.yml'
-
   def self.const
     @@const
   end
@@ -11,10 +9,15 @@ module Constants
     @@const
   end
   
+  def self.load_config
+    @@const = YAML.load_file '../cfg/constants.yml'
+  end
+  
   def self.calculate
     const["teams"]["count"] = const["teams"]["details"].size
     const["teams"]["total"] = const["teams"]["players"] * const["teams"]["count"]
   end
 end
 
+Constants.load_config
 Constants.calculate
