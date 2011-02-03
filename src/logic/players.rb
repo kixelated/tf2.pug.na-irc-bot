@@ -193,7 +193,7 @@ module PlayersLogic
   end
   
   def list_players_delay
-    list_players unless @show_list
+    list_players unless @show_list > 0
     @show_list += 1
   end
 
