@@ -24,7 +24,7 @@ messengers:
 delays: 
   afk: 45
   picking: 60
-  server: 10
+  server: 5
   manager: 0.05
   
 settings:
