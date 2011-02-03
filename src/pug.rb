@@ -107,8 +107,8 @@ class Pug
   end
   
   def timer_list
-    list_players if @show_list
-    @show_list = false
+    list_players if @show_list > 1
+    @show_list = 0
   end
   
   def timer_restriction
@@ -120,12 +120,15 @@ class Pug
   def command_add m, classes
     return notice(m.user, "Add to the pug: !add <class1> <class2> <etc>") unless classes
   
-    attempt_afk if add_player m.user, classes.split(/ /)
+    if add_player m.user, classes.split(/ /)
+      list_players_delay
+      attempt_afk 
+    end
   end
 
   # !remove
   def command_remove m
-    remove_player m.user.nick # logic/players.rb
+    list_players_delay if remove_player m.user.nick # logic/players.rb
   end
   
   # !list
@@ -284,15 +287,17 @@ class Pug
   def admin_replace m, nick, replacement
     return unless require_admin m.user
     
-    replace_player nick, User(replacement) # logic/picking.rb
+    list_players_delay if replace_player nick, User(replacement) # logic/picking.rb
   end
   
   # !endgame
   def admin_endgame m
     return unless require_admin m.user
     
+    message "Game has been ended."
+    
     end_game
-    message "Game has been ended, please add up again."
+    list_players
   end
   
   # !reset

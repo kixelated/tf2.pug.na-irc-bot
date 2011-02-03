@@ -29,7 +29,7 @@ module Variables
     @state = const["states"]["waiting"]
     @pick = 0
 
-    @show_list = false
+    @show_list = 0
     @updating = false
     @debug = false
   end

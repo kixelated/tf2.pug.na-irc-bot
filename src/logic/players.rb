@@ -34,7 +34,6 @@ module PlayersLogic
     if canadd
       @signups[user.nick] = classes
       @auth[user.nick] = u
-      @show_list = true
     elsif not @signups.key?(user.nick)
       @toadd[user.nick] = classes
       notice user, "You cannot add at this time, but you will be added once the picking process is over."
@@ -51,7 +50,6 @@ module PlayersLogic
     @signups[user.nick] = classes
     @signups_all = classes if state? "picking"
     @auth[user.nick] = u
-    @show_list = true
   end
   
   def find_user user
@@ -93,7 +91,7 @@ module PlayersLogic
       return notice nick, "You cannot remove at this time, but will be removed after picking is over."
     end
     
-    @show_list = true if remove_player! nick
+    remove_player! nick
   end
   
   def remove_player! nick
@@ -192,6 +190,11 @@ module PlayersLogic
     end
     
     message "#{ rjust("#{ @signups.size } users added:") } #{ output.values * ", " }"
+  end
+  
+  def list_players_delay
+    list_players unless @show_list
+    @show_list += 1
   end
 
   def list_players_detailed
