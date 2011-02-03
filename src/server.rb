@@ -21,6 +21,10 @@ class Server < SourceServer
   end
   
   def to_s
+    name
+  end
+  
+  def connect_info
     "connect #{ ip }:#{ port }; password #{ password }"
   end
 end

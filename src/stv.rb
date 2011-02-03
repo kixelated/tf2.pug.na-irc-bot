@@ -35,9 +35,9 @@ class STV
     conn.nlst.reject { |filename| !(filename =~ /.+\.dem/) }
   end
   
-  def update name
+  def update server
     demos.each do |filename|
-      file = "#{ name }-#{ filename }"
+      file = "#{ server }-#{ filename }"
       filezip = "#{ file }.zip"
       filetemp = "#{ file }.tmp"
 

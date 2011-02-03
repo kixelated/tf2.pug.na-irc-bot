@@ -12,7 +12,7 @@ module ServerLogic
         @server.update_server_info
         
         while @server.server_info["number_of_players"] >= const["settings"]["used"]
-          message "#{ @server.name } is in use. Trying the next server in #{ const["delays"]["server"] } seconds."
+          message "#{ @server } is in use. Trying the next server in #{ const["delays"]["server"] } seconds."
           
           next_server
           sleep const["delays"]["server"]
@@ -25,7 +25,7 @@ module ServerLogic
         
         started = true
       rescue
-        message "Error connecting to #{ @server.name }. Trying the next server in #{ const["delays"]["server"] } seconds."
+        message "Error connecting to #{ @server }. Trying the next server in #{ const["delays"]["server"] } seconds."
           
         next_server
         sleep const["delays"]["server"]
@@ -34,7 +34,7 @@ module ServerLogic
   end
   
   def announce_server
-    message "The pug will take place on #{ @server.name } with the map #{ @map['name'] }."
+    message "The pug will take place on #{ @server } with the map #{ @map['name'] }."
     advertisement
   end
   
@@ -55,8 +55,8 @@ module ServerLogic
         count = server.stv.demos.size
         
         if count > 0
-          message "Uploading #{ count } demos from #{ server.name }."
-          server.stv.update server.name
+          message "Uploading #{ count } demos from #{ server }."
+          server.stv.update server
         else
           message "No new demos on #{ server.name }."
         end
@@ -80,15 +80,15 @@ module ServerLogic
       
       if server.server_info["number_of_players"] >= const["settings"]["used"]
         server.authorize
-        message "#{ server.name }: #{ info['number_of_players'] } players on #{ info['map_name'] } with #{ server.timeleft } left"
+        message "#{ server }: #{ info['number_of_players'] } players on #{ info['map_name'] } with #{ server.timeleft } left"
       else
-        message "#{ server.name }: empty"
+        message "#{ server }: empty"
       end
     end
   end
 
   def list_server
-    message "#{ @server.to_s }"
+    message "#{ @server.connect_info }"
     advertisement
   end  
   
