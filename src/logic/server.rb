@@ -12,6 +12,8 @@ module ServerLogic
       
       next_server
       sleep const["delays"]["server"]
+      
+      @server.update_server_info
     end
     
     @server.authorize
