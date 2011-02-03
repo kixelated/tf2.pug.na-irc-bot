@@ -6,15 +6,24 @@ require_relative 'constants'
 
 class STV
   include Constants
+  
+  attr_accessor :ip, :user, :password, :dir
 
-  def initialize server
-    @server = server
+  def initialize details
+    @ip, @user, @password, @dir = *details
   end
 
-  def open details
-    Net::FTP.open(details["ip"], details["user"], details["password"]).tap do |conn|
+  def open_down
+    @down = Net::FTP.open(ip, user, password).tap do |conn|
       conn.passive = true
-      conn.chdir details["dir"] if details["dir"]
+      conn.chdir dir if dir
+    end
+  end
+  
+  def open_up
+    @up = Net::FTP.open(const["stv"]["ftp"]["ip"], const["stv"]["ftp"]["user"], const["stv"]["ftp"]["password"]).tap do |conn|
+      conn.passive = true
+      conn.chdir const["stv"]["ftp"]["dir"] if const["stv"]["ftp"]["dir"]
     end
   end
   
@@ -26,9 +35,9 @@ class STV
     conn.nlst.reject { |filename| !(filename =~ /.+\.dem/) }
   end
   
-  def update server
+  def update name
     demos.each do |filename|
-      file = "#{ server.name }-#{ filename }"
+      file = "#{ name }-#{ filename }"
       filezip = "#{ file }.zip"
       filetemp = "#{ file }.tmp"
 
@@ -61,8 +70,8 @@ class STV
   end
   
   def connect
-    @up = open const["stv"]["ftp"]
-    @down = open @server
+    open_up
+    open_down
   end
   
   def disconnect

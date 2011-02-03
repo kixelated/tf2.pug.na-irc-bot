@@ -1,5 +1,6 @@
 require_relative 'constants'
 require_relative 'server'
+require_relative 'model/match'
 
 module Variables
   include Constants

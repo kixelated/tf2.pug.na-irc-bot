@@ -1,9 +1,3 @@
-GIT
-  remote: git://github.com/qpingu/steam-condenser.git
-  revision: c0de01f4cace0906352709cb83ee479e519bd5f2
-  specs:
-    steam-condenser (0.12.0)
-
 GEM
   remote: http://rubygems.org/
   specs:
@@ -23,9 +17,10 @@ GEM
     chronic_duration (0.9.2)
     cinch (1.1.1)
     i18n (0.5.0)
-    json (1.5.1)
     rubyzip (0.9.4)
     sqlite3 (1.3.3)
+    steam-condenser (0.12.0)
+      bzip2-ruby (~> 0.2.7)
     tzinfo (0.3.24)
 
 PLATFORMS
@@ -33,10 +28,8 @@ PLATFORMS
 
 DEPENDENCIES
   activerecord
-  bzip2-ruby
   chronic_duration
   cinch
-  json
   rubyzip
   sqlite3
-  steam-condenser (= 0.12.0)!
+  steam-condenser
