@@ -13,14 +13,14 @@ GEM
     activesupport (3.0.3)
     arel (2.0.7)
     builder (2.1.2)
+    bzip2-ruby (0.2.7)
     chronic_duration (0.9.2)
     cinch (1.1.1)
     i18n (0.5.0)
-    ip (0.2.2)
-    rcon (0.2.1)
-      ip (>= 0.2.1)
     rubyzip (0.9.4)
     sqlite3 (1.3.3)
+    steam-condenser (0.12.0)
+      bzip2-ruby (~> 0.2.7)
     tzinfo (0.3.24)
 
 PLATFORMS
@@ -30,6 +30,6 @@ DEPENDENCIES
   activerecord
   chronic_duration
   cinch
-  rcon
   rubyzip
   sqlite3
+  steam-condenser

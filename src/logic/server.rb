@@ -5,69 +5,49 @@ require_relative '../stv'
 
 module ServerLogic
   def start_server
-    connect_server
+    @server.update_server_info
     
-    while @server.in_use?
-      message "Server #{ @server.to_s } is in use. Trying the next server in #{ const["delays"]["server"] } seconds."
-      @server.disconnect
-      
-      sleep const["delays"]["server"]
+    while @server.server_info["number_of_players"] >= const["settings"]["used"]
+      message "Server #{ @server.name } is in use. Trying the next server in #{ const["delays"]["server"] } seconds."
       
       next_server
-      connect_server
+      sleep const["delays"]["server"]
     end
     
-    @server.clvl @map["file"]
-    @server.cpswd @server.password
-    @server.disconnect
+    @server.authorize
+    @server.rcon_exec "changelevel #{ @map['file'] }"
   end
   
   def announce_server
-    message "The pug will take place on #{ @server.to_s } with the map #{ @map["name"] }."
+    message "The pug will take place on #{ @server.name } with the map #{ @map['name'] }."
     advertisement
   end
   
   def change_map map, file
-    @map = { "name" => map, "file" => file, "weight" => 0 }
-  end
-  
-  def each_server
-    threads = []
-    const["servers"].each do |server_d|
-      threads << Thread.new(Server.new(server_d), server_d) do |server, server_d|
-        begin
-          server.connect
-          yield server, server_d
-          server.disconnect
-        rescue => e  
-          puts e.message  
-          puts e.backtrace.inspect  
-        end
-      end
-    end
-    threads.each { |thread| thread.join }
+    @map = { 'name' => map, 'file' => file, 'weight' => 0 }
   end
   
   def update_stv
     @updating = true
     
-    each_server do |server, server_d|
-      if server.in_use?
+    thread_servers do |server|
+      server.update_server_info
+      
+      if server.server_info["number_of_players"] >= const["settings"]["used"]
         message "#{ server } is in use, please wait until the pug has ended."
       else
-        stv = STV.new server_d["ftp"]
-        stv.connect
+        server.stv.connect
+        count = server.stv.demos.size
         
-        count = stv.demos.size
         if count > 0
-          message "Uploading #{ count } demos from #{ server }."
-          stv.update server
+          message "Uploading #{ count } demos from #{ server.name }."
+          server.stv.update server.name
         else
-          message "No new demos on #{ server }."
+          message "No new demos on #{ server.name }."
         end
         
-        stv.purge
-        stv.disconnect
+        server.stv.purge
+        server.stv.disconnect
       end
     end
     
@@ -79,14 +59,21 @@ module ServerLogic
   end
   
   def list_status
-    each_server do |server, server_d|
-      players = server.players - 1 # to factor in STV
-      message "#{ players } players on #{ server }#{ ", #{ server.timeleft } left" if players > const["settings"]["used"] }" 
+    thread_servers do |server|
+      server.update_server_info
+      info = server.server_info
+      
+      if server.server_info["number_of_players"] >= const["settings"]["used"]
+        server.authorize
+        message "#{ server.name }: #{ info['number_of_players'] } players on #{ info['map_name'] } with #{ server.timeleft } left"
+      else
+        message "#{ server.name }: empty"
+      end
     end
   end
 
   def list_server
-    message "#{ @server.connect_info }"
+    message "#{ @server.to_s }"
     advertisement
   end  
   
@@ -107,19 +94,9 @@ module ServerLogic
     output = const["rotation"]["maps"].collect { |map| "#{ map["name"] }(#{ map["weight"] })" }
     message "Map(weight) rotation: #{ output * ", " }"
   end
-  
-  def connect_server
-    while true
-      begin 
-        return @server.connect
-      rescue
-        next_server
-      end
-    end
-  end
-  
+
   def next_server
-    @server = Server.new const["servers"].push(const["servers"].shift).first
+    @server = @servers.push(@servers.shift).first
   end
   
   def next_map 
@@ -134,6 +111,16 @@ module ServerLogic
       num -= map["weight"]
       return (@map = map) if num <= 0
     end
+  end
+  
+  def thread_servers
+    threads = []
+    @servers.each do |server|
+      threads << Thread.new(server) do |server|
+        yield server
+      end
+    end
+    threads.each { |thread| thread.join }
   end
   
   def advertisement

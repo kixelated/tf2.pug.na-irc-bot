@@ -1,63 +1,26 @@
-require 'rcon'
+require 'steam-condenser'
 require_relative 'constants'
 
-class Server
-  include Constants
-
-  attr_reader :ip, :port, :name, :password, :rcon
+class Server < SourceServer
+  attr_reader :ip, :port, :name, :password, :rcon_pass, :stv
   
-  def initialize details
-    @name = details["name"]
-    @ip = details["ip"]
-    @port = details["port"]
-    @password = details["password"]
-    @rcon = details["rcon"] 
+  def initialize(details)
+    @name, @ip, @port, @password, @rcon_pass, stv = *details.values
+    @stv = STV.new(stv.values)
+    
+    super ip, port
   end
   
-  def connect
-    @conn = RCon::Query::Source.new(ip, port)
-    @conn.auth rcon
-  end
-  
-  def disconnect
-    @conn.disconnect if @conn
-  end
-  
-  def command cmd
-    @conn.command cmd
-  end
-  
-  def cvar name
-    @conn.cvar name
-  end
-
-  def clvl map
-    command "changelevel #{ map }"
-  end
-  
-  def cpswd pswd
-    command "password #{ pswd }"
-  end
-
-  def players
-    command("status") =~ /players : (\S+?) /
-    return $1.to_i
+  def authorize
+    rcon_auth(rcon_pass)
   end
   
   def timeleft
-    command("timeleft") =~ /map:  (\S+?),/
+    rcon_exec("timeleft") =~ /map:  (\S+?),/
     return $1.to_s
   end
   
-  def in_use?
-    players > const["settings"]["used"]
-  end
-  
-  def connect_info
-    "connect #{ ip }:#{ port }; password #{ password }"
-  end
-  
   def to_s
-    name
+    "connect #{ ip }:#{ port }; password #{ password }"
   end
 end
