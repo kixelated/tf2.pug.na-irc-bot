@@ -103,7 +103,7 @@ rotation:
       weight: 16
       
     - name: granary
-      file: cp_granary_beta2
+      file: cp_granary
       weight: 10
       
     - name: snakewater
