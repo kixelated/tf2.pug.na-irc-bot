@@ -78,7 +78,7 @@ module ServerLogic
       server.update_server_info
       info = server.server_info
       
-      if server.server_info["number_of_players"] >= const["settings"]["used"]
+      if info and info["number_of_players"] >= const["settings"]["used"]
         server.authorize
         message "#{ server }: #{ info['number_of_players'] } players on #{ info['map_name'] } with #{ server.timeleft } left"
       else
