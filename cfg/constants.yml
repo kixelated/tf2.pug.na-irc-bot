@@ -91,8 +91,8 @@ stv:
     local: true
     
 mumble:
-  ip: tf2pug.commandchannel.com
-  port: 30153
+  ip: chi6.eoreality.net
+  port: 64746
   password: tf2pug
 
 rotation:
