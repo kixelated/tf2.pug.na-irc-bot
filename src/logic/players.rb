@@ -6,9 +6,7 @@ require_relative '../util'
 module PlayersLogic
   def add_player user, classes
     return notice user, "No classes entered. Usage: !add #{ const["teams"]["classes"].keys * " " }" unless classes
-        
-    canadd = can_add?
-        
+         
     user.refresh unless user.authed?
     notice user, "You are not authorized with Gamesurge. You can still play in the channel, but any accumulated stats may be lost and will not transfer if you change your nick. Please follow this guide to register and authorize with Gamesurge: http://www.gamesurge.net/newuser/" unless user.authed?
     
@@ -31,7 +29,7 @@ module PlayersLogic
     return if classes.empty?
     
     # add the player to the pug
-    if canadd
+    if can_add?
       @signups[user.nick] = classes
       @auth[user.nick] = u
     elsif not @signups.key?(user.nick)
