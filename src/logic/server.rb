@@ -24,8 +24,9 @@ module ServerLogic
         @server.rcon_exec "changelevel #{ @map['file'] }"
         
         started = true
-      rescue
+      rescue Exception => e
         message "Error connecting to #{ @server }. Trying the next server in #{ const["delays"]["server"] } seconds."
+        puts e.message
           
         next_server
         sleep const["delays"]["server"]
@@ -43,30 +44,36 @@ module ServerLogic
   end
   
   def update_stv
-    @updating = true
+    begin
+      @updating = true
     
-    thread_servers do |server|
-      server.update_server_info
-      
-      if server.server_info["number_of_players"] >= const["settings"]["used"]
-        message "#{ server } is in use, please wait until the pug has ended."
-      else
-        server.stv.connect
-        count = server.stv.demos.size
+      thread_servers do |server|
+        server.update_server_info
         
-        if count > 0
-          message "Uploading #{ count } demos from #{ server }."
-          server.stv.update server
+        if server.server_info["number_of_players"] >= const["settings"]["used"]
+          message "#{ server } is in use, please wait until the pug has ended."
         else
-          message "No new demos on #{ server.name }."
+          server.stv.connect
+          count = server.stv.demos.size
+          
+          if count > 0
+            message "Uploading #{ count } demos from #{ server }."
+            server.stv.update server
+          else
+            message "No new demos on #{ server.name }."
+          end
+          
+          server.stv.purge
+          server.stv.disconnect
         end
-        
-        server.stv.purge
-        server.stv.disconnect
       end
-    end
     
-    @updating = false
+      message "Finished uploading demos."
+    rescue Exception => e
+      puts e.message
+    ensure
+      @updating = false
+    end
   end
   
   def list_stv
