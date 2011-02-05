@@ -273,7 +273,7 @@ class Pug
   def admin_forceadd m, player, classes
     return unless require_admin m.user
     
-    attempt_afk if add_player User(player), classes.split(/ /) # logic/players.rb
+    attempt_afk if add_player! User(player), classes.split(/ /) # logic/players.rb
   end
   
   # !fpick 
