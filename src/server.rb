@@ -28,3 +28,5 @@ class Server < SourceServer
     "connect #{ ip }:#{ port }; password #{ password }"
   end
 end
+
+SteamSocket.timeout = 2000
