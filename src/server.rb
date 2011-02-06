@@ -29,4 +29,4 @@ class Server < SourceServer
   end
 end
 
-SteamSocket.timeout = 2000 # 1000 by default, just SpexHost can't handle it.
+SteamSocket.timeout = 4000 # 1000 by default, just SpexHost can't handle it.
