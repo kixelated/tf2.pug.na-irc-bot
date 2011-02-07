@@ -62,6 +62,7 @@ class Pug
   
   # admin commands
   match /fadd ([\S]+) (.+)/i, method: :admin_forceadd
+  match /fremove ([\S]+)/i, method: :admin_forceremove
   match /fpick ([\S]+) ([\S]+)/i, method: :admin_forcepick
   match /replace ([\S]+) ([\S]+)/i, method: :admin_replace
   match /restrict ([\S]+) (.+)/i, method: :admin_restrict
@@ -272,8 +273,18 @@ class Pug
   # !fadd
   def admin_forceadd m, player, classes
     return unless require_admin m.user
+
+    if add_player! User(player), classes.split(/ /) # logic/players.rb
+      list_players_delay
+      attempt_afk 
+    end
+  end
+  
+  # !fremove
+  def admin_forceremove m, player
+    return unless require_admin m.user
     
-    attempt_afk if add_player! User(player), classes.split(/ /) # logic/players.rb
+    list_players_delay if remove_player! player
   end
   
   # !fpick 
