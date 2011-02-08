@@ -93,7 +93,7 @@ module PickingLogic
     needed = 0
     medics = get_classes["medic"].size - 1 # the current pick is a medic
 
-    @teams.each { |team| needed += 1 unless team.signups.values.include? "medic" or @signups_all[team.captain].include? "medic" }
+    @teams.each { |team| needed += 1 unless team.signups.values.include?("medic") or @signups_all[team.captain].include?("medic") }
     needed -= 1 if clss == "medic" and !@signups_all[current_team.captain].include? "medic" # special case where team has a captain who can med
 
     return medics < needed
@@ -147,10 +147,10 @@ module PickingLogic
     server.join
 
     announce_server # find_server
-    announce_teams # update_captains, find_server
-
-    end_game
     list_players
+    
+    announce_teams # update_captains, find_server
+    end_game
   end
 
   def update_captains

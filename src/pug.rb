@@ -368,7 +368,7 @@ class Pug
   end
 
   def require_admin m
-    return notice user, "That is an admin-only command." unless m.channel.opped? m.user
+    return notice m.user, "That is an admin-only command." unless m.channel.opped? m.user
     true
   end
   
