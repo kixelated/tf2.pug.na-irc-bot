@@ -89,25 +89,4 @@ class Hash
       hash.default = []
     end
   end
-  
-  # Input: a => [b, c], d => [e] 
-  # Arg: a => [f]
-  # Output: a => [b, c, f], d => [e]
-  def merge_proper other
-    self.dup.tap do |hash|
-      other.each do |k, v|
-        hash[k] = (hash[k] || []) + v
-      end
-    end
-  end
-  
-  def merge_proper_array other
-    self.dup.tap do |hash|
-      other.each do |k, v|
-        v.each do |w|
-          hash[k] = (hash[k] || []) + w
-        end
-      end
-    end
-  end
 end

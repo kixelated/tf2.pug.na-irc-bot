@@ -87,7 +87,7 @@ module PlayersLogic
     return unless @signups.key? nick # player is not signed up or was picked already
     
     classes = remove_player! nick
-    unless can_remove? or minimum_players_picking?
+    unless can_remove? or minimum_players?(@signups_all)
       add_player! User(nick), classes # player is required and cannot remove
       
       @toremove << nick if @signups.key? nick
@@ -99,6 +99,7 @@ module PlayersLogic
   
   def remove_player! nick
     @auth.delete nick
+    @signups_all.delete nick
     @signups.delete nick
   end
   
@@ -240,8 +241,8 @@ module PlayersLogic
     message "#{ u.name }#{ "*" unless u.auth } has #{ total } games played: #{ output * ", " }"
   end
 
-  def minimum_players?
-    return false if @signups.size < const["teams"]["total"]
-    return classes_needed(get_classes).empty?
+  def minimum_players? players = @signups
+    return false if players.size < const["teams"]["total"]
+    return classes_needed(players.invert_proper_arr).empty?
   end
 end
