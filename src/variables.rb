@@ -7,6 +7,7 @@ module Variables
 
   def setup
     @servers = const["servers"].collect { |details| Server.new details }
+    @servers.select! { |server| begin; server.authorize; rescue; false; end }
     @prev_maps = []
     
     next_server

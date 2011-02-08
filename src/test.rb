@@ -16,9 +16,11 @@ console = Console.new
 
 console.setup
 20.times do |i|
-  console.start_server
+  console.find_server
   console.announce_server
   console.next_server
   console.next_map
+
+  puts "Sleeping for #{ 2**i } seconds."
   sleep 2**i
 end

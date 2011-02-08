@@ -138,7 +138,7 @@ module PickingLogic
   def final_pick
     end_picking
 
-    server = Thread.new { start_server }
+    server = Thread.new { find_server }
 
     update_captains
     print_teams # update_captains (indicates dependencies)
@@ -146,8 +146,8 @@ module PickingLogic
 
     server.join
 
-    announce_server # start_server
-    announce_teams # update_captains, start_server
+    announce_server # find_server
+    announce_teams # update_captains, find_server
 
     end_game
     list_players

@@ -4,34 +4,27 @@ require_relative '../server'
 require_relative '../stv'
 
 module ServerLogic
-  def start_server
+  def find_server
     started = false
     
-    while not started
-      begin
-        @server.update_server_info
-        
-        while @server.server_info["number_of_players"] >= const["settings"]["used"]
-          message "#{ @server } is in use. Trying the next server in #{ const["delays"]["server"] } seconds."
-          
-          next_server
-          sleep const["delays"]["server"]
-          
-          @server.update_server_info
-        end
-        
-        @server.authorize
-        @server.rcon_exec "changelevel #{ @map['file'] }"
-        
-        started = true
-      rescue Exception => e
-        message "Error connecting to #{ @server }. Trying the next server in #{ const["delays"]["server"] } seconds."
-        puts e.message
-          
-        next_server
-        sleep const["delays"]["server"]
-      end
-    end
+    begin
+      started = start_server
+    rescue Exception => e
+      next_server
+    
+      message "#{ e.message }. Trying the next server in #{ const["delays"]["server"] } seconds."
+      sleep const["delays"]["server"]
+    end while not started
+  end
+  
+  def start_server
+    @server.update_server_info
+    info = @server.server_info
+    
+    raise Exception.new("Could not connect to #{ @server }") unless info
+    raise Exception.new("#{ @server } in use") unless info["number_of_players"] < const["settings"]["used"]
+    
+    @server.rcon_exec "changelevel #{ @map['file'] }"
   end
   
   def announce_server
