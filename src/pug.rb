@@ -248,7 +248,7 @@ class Pug
   # Admin commands
   # !fmap
   def admin_forcemap m, map, file
-    return unless require_admin m.user
+    return unless require_admin m
     
     change_map map, file
     list_map
@@ -256,7 +256,7 @@ class Pug
   
   # !nextmap
   def admin_nextmap m
-    return unless require_admin m.user
+    return unless require_admin m
     
     next_map
     list_map
@@ -264,7 +264,7 @@ class Pug
   
   # !nextserver
   def admin_nextserver m
-    return unless require_admin m.user
+    return unless require_admin m
     
     next_server
     list_server
@@ -272,7 +272,7 @@ class Pug
 
   # !fadd
   def admin_forceadd m, player, classes
-    return unless require_admin m.user
+    return unless require_admin m
 
     if add_player! User(player), classes.split(/ /) # logic/players.rb
       list_players_delay
@@ -282,28 +282,28 @@ class Pug
   
   # !fremove
   def admin_forceremove m, player
-    return unless require_admin m.user
+    return unless require_admin m
     
     list_players_delay if remove_player! player
   end
   
   # !fpick 
   def admin_forcepick m, player, player_class
-    return unless require_admin m.user
+    return unless require_admin m
   
     pick_player User(current_captain), player, player_class # logic/picking.rb
   end
   
   # !replace
   def admin_replace m, nick, replacement
-    return unless require_admin m.user
+    return unless require_admin m
     
     list_players_delay if replace_player nick, User(replacement) # logic/picking.rb
   end
   
   # !endgame
   def admin_endgame m
-    return unless require_admin m.user
+    return unless require_admin m
     
     message "Game has been ended."
     
@@ -313,7 +313,7 @@ class Pug
   
   # !reset
   def admin_reset m
-    return unless require_admin m.user
+    return unless require_admin m
     
     reset_game
     message "Game has been reset, please add up again."
@@ -321,7 +321,7 @@ class Pug
 
   # !debug
   def admin_debug m
-    return unless require_admin m.user
+    return unless require_admin m
     
     @debug = !@debug
     message "Debug state is #{ @debug }."
@@ -329,28 +329,28 @@ class Pug
   
   # !quit
   def admin_quit m
-    return unless require_admin m.user
+    return unless require_admin m
   
     BotManager.instance.quit
   end
   
   # !restrict
   def admin_restrict m, nick, duration
-    return unless require_admin m.user
+    return unless require_admin m
     
     restrict_player m.user, nick, duration
   end
   
   # !authorize
   def admin_authorize m, nick
-    return unless require_admin m.user
+    return unless require_admin m
     
     authorize_player m.user, nick
   end
   
   # !cookie
   def admin_cookie m, pass
-    return unless require_admin m.user
+    return unless require_admin m
     
     unless pass
       bot.msg Constants.const["irc"]["auth_serv"], "AUTHCOOKIE #{ Constants.const["irc"]["auth"] }"
@@ -361,14 +361,14 @@ class Pug
   
   # !reload
   def admin_reload m
-    return unless require_admin m.user
+    return unless require_admin m
     
     Constants.load_config
     Constants.calculate
   end
 
-  def require_admin user
-    return notice user, "That is an admin-only command." unless Channel(const["irc"]["channel"]).opped? user
+  def require_admin m
+    return notice user, "That is an admin-only command." unless m.channel.opped? m.user
     true
   end
   
