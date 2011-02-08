@@ -84,12 +84,17 @@ module PlayersLogic
   end
   
   def remove_player nick
-    unless can_remove?
+    return unless @signups.key? nick # player is not signed up or was picked already
+    
+    classes = remove_player! nick
+    unless can_remove? or minimum_players_picking?
+      add_player! User(nick), classes # player is required and cannot remove
+      
       @toremove << nick if @signups.key? nick
       return notice nick, "You cannot remove at this time, but will be removed after picking is over."
+    else
+      return true
     end
-    
-    remove_player! nick
   end
   
   def remove_player! nick
@@ -172,8 +177,8 @@ module PlayersLogic
     @signups.invert_proper_arr
   end
   
-  def classes_needed players, multiplier = 1
-    const["teams"]["classes"].inject({}) do |required, (clss, count)|
+  def classes_needed(players, multiplier = const["teams"]["count"], requirements = const["teams"]["classes"])
+    requirements.inject({}) do |required, (clss, count)|
       temp = count * multiplier - players[clss].size
       required[clss] = temp if temp > 0
       required
@@ -204,7 +209,7 @@ module PlayersLogic
   end
  
   def list_classes_needed
-    output = classes_needed(get_classes, const["teams"]["count"])
+    output = classes_needed(get_classes)
     output["player"] = const["teams"]["total"] - @signups.size if @signups.size < const["teams"]["total"]
     output.collect_proper! { |k, v| "#{ v } #{ k }" } # Format the output
 
@@ -237,6 +242,6 @@ module PlayersLogic
 
   def minimum_players?
     return false if @signups.size < const["teams"]["total"]
-    return classes_needed(get_classes, const["teams"]["count"]).empty?
+    return classes_needed(get_classes).empty?
   end
 end

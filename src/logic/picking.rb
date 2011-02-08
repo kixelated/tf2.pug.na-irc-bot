@@ -51,7 +51,7 @@ module PickingLogic
     notice current_captain, "#{ bold rjust("all: ") } #{ output * ", " }"
 
     # Displays the classes that are not yet full for this team
-    classes_needed(current_team.get_classes).each do |clss, count| # logic/players.rb
+    classes_needed(current_team.get_classes, 1).each do |clss, count| # logic/players.rb
       output = classes[clss].collect { |player| "(#{ lookup_i[player] }) #{ player }" }
       notice current_captain, "#{ bold rjust("#{ count } #{ clss }: ") } #{ output * ", " }"
     end
@@ -84,7 +84,7 @@ module PickingLogic
   end
 
   def pick_class_avaliable? clss
-    classes_needed(current_team.get_classes).key? clss # logic/players.rb
+    classes_needed(current_team.get_classes, 1).key? clss # logic/players.rb
   end
 
   def pick_medic_conflicting? nick, clss
@@ -155,7 +155,7 @@ module PickingLogic
 
   def update_captains
     @teams.each do |team|
-      team.signups[team.captain] = classes_needed(team.get_classes).keys.first
+      team.signups[team.captain] = classes_needed(team.get_classes, 1).keys.first
     end
   end
 
@@ -188,6 +188,21 @@ module PickingLogic
       classes.each { |clss| player.picks.create(:tfclass => Tfclass.find_by_name(clss)) }
       @signups_all[nick].each { |clss| player.signups << Tfclass.find_by_name(clss) }
     end
+  end
+  
+  def minimum_players_picking?
+    picked_count = @teams.inject(0) { |count, team| count + team.signups.size }
+    return false if picked_count + @signups.size < const["teams"]["total"]
+  
+    required = @teams.inject(Hash.new) do |hash, team| 
+      hash.merge(classes_needed(team.get_classes, 1)) { |key, nval, oval| nval + oval }
+    end
+    
+    classes = @teams.inject(get_classes) do |hash, team|
+      hash.merge_proper(Hash[team.captain => @signups_all[team.captain]].invert_proper_arr)
+    end
+    
+    return classes_needed(classes, 1, required).empty?
   end
 
   def print_teams
