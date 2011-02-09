@@ -1,0 +1,1 @@
+SELECT COUNT(*) AS played, users.name FROM players, users WHERE players.team_id NOTNULL AND players.user_id = users.id GROUP BY user_id ORDER BY played DESC

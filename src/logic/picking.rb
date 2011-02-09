@@ -147,9 +147,9 @@ module PickingLogic
     server.join
 
     announce_server # find_server
-    list_players
-    
     announce_teams # update_captains, find_server
+    
+    list_players
     end_game
   end
 
