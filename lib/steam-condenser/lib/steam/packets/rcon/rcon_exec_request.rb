@@ -1,0 +1,16 @@
+# This code is free software; you can redistribute it and/or modify it under the
+# terms of the new BSD License.
+#
+# Copyright (c) 2008-2010, Sebastian Staudt
+
+require 'steam/packets/rcon/rcon_packet'
+
+class RCONExecRequest
+
+  include RCONPacket
+
+  def initialize(request_id, rcon_command)
+    super request_id, SERVERDATA_EXECCOMMAND, rcon_command
+  end
+
+end

@@ -11,7 +11,7 @@ module ServerLogic
       started = start_server
     rescue Exception => e
       next_server
-    
+  
       message "#{ e.message }. Trying the next server in #{ const["delays"]["server"] } seconds."
       sleep const["delays"]["server"]
     end while not started
@@ -24,7 +24,11 @@ module ServerLogic
     raise Exception.new("Could not connect to #{ @server }") unless info
     raise Exception.new("#{ @server } in use") unless info["number_of_players"] < const["settings"]["used"]
     
+    @server.rcon_connect @server.rcon_pass
     @server.rcon_exec "changelevel #{ @map['file'] }"
+    @server.rcon_disconnect
+    
+    return true
   end
   
   def announce_server
@@ -79,8 +83,9 @@ module ServerLogic
       info = server.server_info
       
       if info and info["number_of_players"] >= const["settings"]["used"]
-        server.authorize
+        server.rcon_connect server.rcon_pass
         message "#{ server }: #{ info['number_of_players'] } players on #{ info['map_name'] } with #{ server.timeleft } left"
+        server.rcon_disconnect
       else
         message "#{ server }: empty"
       end
