@@ -1,3 +1,5 @@
+require 'bundler/setup'
+
 require_relative 'variables'
 require_relative 'logic/server'
 require_relative 'util'

@@ -24,9 +24,9 @@ module ServerLogic
     raise Exception.new("Could not connect to #{ @server }") unless info
     raise Exception.new("#{ @server } in use") unless info["number_of_players"] < const["settings"]["used"]
     
-    @server.rcon_auth @server.rcon_pass
+    @server.rcon_connect @server.rcon_pass
     @server.rcon_exec "changelevel #{ @map['file'] }"
-    #@server.rcon_disconnect
+    @server.rcon_disconnect
     
     return true
   end
