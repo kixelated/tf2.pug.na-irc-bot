@@ -1,6 +1,8 @@
-require_relative "variables"
-require_relative "logic/server"
-require_relative "util"
+require 'bundler/setup'
+
+require_relative 'variables'
+require_relative 'logic/server'
+require_relative 'util'
 
 class Console
   include Utilities
@@ -15,6 +17,8 @@ end
 console = Console.new
 
 console.setup
+console.list_status
+
 20.times do |i|
   console.find_server
   console.announce_server
