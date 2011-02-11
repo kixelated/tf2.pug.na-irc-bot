@@ -103,8 +103,8 @@ class Pug
   end
   
   def event_nick m
-    return unless @signups.key? m.user.nick 
-    replace_player m.user.last_nick, m.user # logic/player.rb
+    return unless @signups.key? m.user.last_nick
+    replace_player! m.user.last_nick, m.user # logic/player.rb
   end
   
   def timer_list
@@ -298,7 +298,7 @@ class Pug
   def admin_replace m, nick, replacement
     return unless require_admin m
     
-    list_players_delay if replace_player nick, User(replacement) # logic/picking.rb
+    list_players_delay if replace_player! nick, User(replacement) # logic/picking.rb
   end
   
   # !endgame

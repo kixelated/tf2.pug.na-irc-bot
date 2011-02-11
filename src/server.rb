@@ -18,6 +18,6 @@ class Server < SourceServer
   end
   
   def connect_info
-    "connect #{ ip }:#{ port }; password #{ password }"
+    "connect #{ host }:#{ port }; password #{ password }"
   end
 end

@@ -103,7 +103,7 @@ module PlayersLogic
     @signups.delete nick
   end
   
-  def replace_player nick, replacement
+  def replace_player! nick, replacement
     classes = remove_player! nick
     return add_player! replacement, classes if classes
     

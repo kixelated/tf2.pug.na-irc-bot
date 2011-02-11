@@ -82,7 +82,7 @@ module ServerLogic
       info = server.server_info
       
       if info and info["number_of_players"] >= const["settings"]["used"]
-        server.rcon_connect server.rcon_pass
+        server.rcon_connect server.rcon
         message "#{ server }: #{ info['number_of_players'] } players on #{ info['map_name'] } with #{ server.timeleft } left"
         server.rcon_disconnect
       else
