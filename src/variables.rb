@@ -6,7 +6,12 @@ module Variables
   include Constants
 
   def setup
-    @servers = const["servers"].collect { |details| Server.new details }
+    @servers = const["servers"].collect do |details| 
+      Server.new(details["ip"], details["port"], const["internet"]["local_host"]).tap do |server|
+        server.stv = STV.new(details["ftp"])
+        server.details = details
+      end
+    end
     @prev_maps = []
     
     next_server

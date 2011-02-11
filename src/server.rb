@@ -2,20 +2,17 @@ require 'steam-condenser'
 require_relative 'constants'
 
 class Server < SourceServer
-  attr_reader :name, :password, :rcon_pass, :stv
-  
-  def initialize(details)
-    @name, ip, port, @password, @rcon_pass, stv = *details.values
-    @stv = STV.new(stv.values)
-    
-    super ip, port
-  end
-  
+  attr_accessor :details, :stv
+
   def timeleft
     rcon_exec("timeleft") =~ /map:  (\S+?),/
     return $1.to_s
   end
   
+  def name; details['name']; end
+  def password; details['password']; end
+  def rcon; details['rcon']; end
+
   def to_s
     name
   end

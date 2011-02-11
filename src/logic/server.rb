@@ -18,13 +18,12 @@ module ServerLogic
   end
   
   def start_server
-    @server.update_server_info
-    info = @server.server_info
+    info = @server.update_server_info
     
     raise Exception.new("Could not connect to #{ @server }") unless info
     raise Exception.new("#{ @server } in use") unless info["number_of_players"] < const["settings"]["used"]
     
-    @server.rcon_connect @server.rcon_pass
+    @server.rcon_connect @server.rcon
     @server.rcon_exec "changelevel #{ @map['file'] }"
     @server.rcon_disconnect
     
@@ -45,9 +44,9 @@ module ServerLogic
       @updating = true
     
       thread_servers do |server|
-        server.update_server_info
+        info = server.update_server_info
         
-        if server.server_info["number_of_players"] >= const["settings"]["used"]
+        if info["number_of_players"] >= const["settings"]["used"]
           message "#{ server } is in use, please wait until the pug has ended."
         else
           server.stv.connect
