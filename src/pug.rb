@@ -59,6 +59,7 @@ class Pug
   
   # misc commands
   match /man/i, method: :command_help
+  match /code/i, method: :command_code
   
   # admin commands
   match /fadd ([\S]+) (.+)/i, method: :admin_forceadd
@@ -243,6 +244,13 @@ class Pug
     message "Player related commands: !add, !remove, !list, !need, !afk, !stats, !nick"
     message "Captain related comands: !pick, !random, !captain, !format"
     message "Server related commands: !ip, !map, !mumble, !last, !rotation, !stv"
+  end
+  
+  # !code
+  def command_code m
+    message "IRC bot    : https://github.com/qpingu/tf2.pug.na-irc-bot"
+    message "TF2 server : https://github.com/qpingu/tf2.pug.na-game-server"
+    message "Web server : https://github.com/qpingu/tf2.pug.na-web-server"
   end
 
   # Admin commands
