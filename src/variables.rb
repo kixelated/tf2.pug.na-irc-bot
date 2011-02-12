@@ -43,10 +43,10 @@ module Variables
     @teams.clear
     @lookup.clear
 
-    @last = Time.now
     state "waiting"
     @pick = 0
     @pick_order = []
+    @last = Time.now
     
     @auth.reject! { |k, v| !@signups.key? k }
     @spoken.reject! { |k, v| !@signups.key? k }

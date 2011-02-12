@@ -32,7 +32,7 @@ module PlayersLogic
     if can_add?
       @signups[user.nick] = classes
       @auth[user.nick] = u
-    elsif not @signups.key?(user.nick)
+    elsif not @signups_all.key?(user.nick)
       @toadd[user.nick] = classes
       notice user, "You cannot add at this time, but you will be added once the picking process is over."
     end
