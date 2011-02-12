@@ -92,9 +92,9 @@ module PlayersLogic
       
       @toremove << nick if @signups.key? nick
       return notice nick, "You cannot remove at this time, but will be removed after picking is over."
-    else
-      return true
     end
+    
+    true
   end
   
   def remove_player! nick

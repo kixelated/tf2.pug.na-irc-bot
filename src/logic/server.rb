@@ -65,8 +65,6 @@ module ServerLogic
       end
     
       message "Finished uploading demos."
-    rescue Exception => e
-      puts e.message
     ensure
       @updating = false
     end
