@@ -30,8 +30,9 @@ module PlayersLogic
     
     # add the player to the pug
     if can_add?
-      @signups[user.nick] = classes
       @auth[user.nick] = u
+      @signups[user.nick] = classes
+      @signups_all[user.nick] = classes
     elsif not @signups_all.key?(user.nick)
       @toadd[user.nick] = classes
       notice user, "You cannot add at this time, but you will be added once the picking process is over."
@@ -45,9 +46,9 @@ module PlayersLogic
     u = create_user user unless u
     update_user user, u if user.authed? and not u.auth 
     
-    @signups[user.nick] = classes
-    @signups_all = classes if state? "picking"
     @auth[user.nick] = u
+    @signups[user.nick] = classes
+    @signups_all[user.nick] = classes
   end
   
   def find_user user
@@ -99,15 +100,15 @@ module PlayersLogic
   
   def remove_player! nick
     @auth.delete nick
-    @signups_all.delete nick
     @signups.delete nick
+    @signups_all.delete nick
   end
   
   def replace_player! nick, replacement
-    classes = remove_player! nick
-    return add_player! replacement, classes if classes
-    
-    if state? "picking" and @signups_all.key? nick
+    if can_add? or @signups.key? nick
+      add_player! replacement, remove_player!(nick)
+    else
+      # non-trivial case, player has already been picked
       @signups_all[replacement.nick] = @signups_all.delete(nick)
       
       @teams.each do |team|

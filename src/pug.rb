@@ -104,7 +104,7 @@ class Pug
   end
   
   def event_nick m
-    return unless @signups.key? m.user.last_nick
+    return unless @signups.key? m.user.last_nick or @signups_all.key? m.user.last_nick
     replace_player! m.user.last_nick, m.user # logic/player.rb
   end
   
