@@ -51,39 +51,6 @@ module PlayersLogic
     @signups_all[user.nick] = classes
   end
   
-  def find_user user
-    u = User.find_by_auth(user.authname) if user.authed?
-    u = User.where("name = ? AND auth != NULL", user.nick).first unless u # give priority to authed accounts
-    u = User.find_by_name(user.nick) unless u
-    
-    return u
-  end
-  
-  def update_user user, u
-    u.update_attributes(:auth => user.authname)
-  end
-  
-  def create_user user
-    notice user, "Welcome to #tf2.pug.na! The channel has certain quality standards, and we ask that you have a good amount of experience and understanding of the 6v6 format before playing here. If you do not yet meet these requirements, please type !remove and try another system like tf2lobby.com"
-    notice user, "If you are still interested in playing here, there are a few rules that you can find on our wiki page. Please ask questions and use the !man command to list all of the avaliable commands. Teams will be drafted by captains when there are enough players added, so hang tight and don't fret if you are not picked."
-
-    User.create(:auth => user.authname, :name => user.nick)
-  end
-
-  def update_nick user, nick
-    user.refresh unless user.authed?
-    return notice user, "You must be registered with GameSurge in order to change your nick. http://www.gamesurge.net/newuser/" unless user.authed?
-    
-    player = User.find_by_auth(user.authname)
-    return notice user, "Could not find an account registered to your authname, please !add up at least once." unless player
-    return notice user, "Your name has not changed." if player.name == nick
- 
-    message "#{ player.name } is now known as #{ nick }"
-    
-    player.update_attributes(:name => nick)
-    @auth[user.nick] = player if @auth[user.nick]
-  end
-  
   def remove_player nick
     return unless @signups.key? nick # player is not signed up or was picked already
     
@@ -126,6 +93,39 @@ module PlayersLogic
     end
     
     return temp
+  end
+  
+  def find_user user
+    u = User.find_by_auth(user.authname) if user.authed?
+    u = User.where("name = ? AND auth != NULL", user.nick).first unless u # give priority to authed accounts
+    u = User.find_by_name(user.nick) unless u
+    
+    return u
+  end
+  
+  def update_user user, u
+    u.update_attributes(:auth => user.authname)
+  end
+  
+  def create_user user
+    notice user, "Welcome to #tf2.pug.na! The channel has certain quality standards, and we ask that you have a good amount of experience and understanding of the 6v6 format before playing here. If you do not yet meet these requirements, please type !remove and try another system like tf2lobby.com"
+    notice user, "If you are still interested in playing here, there are a few rules that you can find on our wiki page. Please ask questions and use the !man command to list all of the avaliable commands. Teams will be drafted by captains when there are enough players added, so hang tight and don't fret if you are not picked."
+
+    User.create(:auth => user.authname, :name => user.nick)
+  end
+
+  def update_nick user, nick
+    user.refresh unless user.authed?
+    return notice user, "You must be registered with GameSurge in order to change your nick. http://www.gamesurge.net/newuser/" unless user.authed?
+    
+    player = User.find_by_auth(user.authname)
+    return notice user, "Could not find an account registered to your authname, please !add up at least once." unless player
+    return notice user, "Your name has not changed." if player.name == nick
+ 
+    message "#{ player.name } is now known as #{ nick }"
+    
+    player.update_attributes(:name => nick)
+    @auth[user.nick] = player if @auth[user.nick]
   end
   
   def reward_player user
