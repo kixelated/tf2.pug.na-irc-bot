@@ -5,14 +5,20 @@ require_relative '../stv'
 
 module ServerLogic
   def find_server
-    started = false
-    
+    first = true
+  
     begin
       started = start_server
     rescue Exception => e
-      next_server
-  
-      message "#{ e.message }. Trying the next server in #{ const["delays"]["server"] } seconds."
+      if first
+        message "#{ e.message }. Trying server again in #{ const["delays"]["server"] } seconds."
+      else
+        next_server
+        
+        message "#{ e.message }. Trying the next server in #{ const["delays"]["server"] } seconds."
+        first = false
+      end
+      
       sleep const["delays"]["server"]
     end while not started
   end
