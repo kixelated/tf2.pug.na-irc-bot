@@ -105,15 +105,16 @@ module PlayersLogic
   end
   
   def replace_player! nick, replacement
-    if can_add? or @signups.key? nick
-      add_player! replacement, remove_player!(nick)
-    else
-      # non-trivial case, player has already been picked
-      @signups_all[replacement.nick] = @signups_all.delete(nick)
+    temp = add_player! replacement, remove_player!(nick)
+  
+    # non-trivial case, player has already been picked
+    if not can_add? and @signups_all.key? nick
+      @signups.delete replacement.nick
       
       @teams.each do |team|
         if team.signups.key? nick
           team.signups[replacement.nick] = team.signups.delete(nick)
+          
           if team.captain == nick
             team.captain = replacement.nick
             
@@ -123,6 +124,8 @@ module PlayersLogic
         end
       end
     end
+    
+    return temp
   end
   
   def reward_player user
