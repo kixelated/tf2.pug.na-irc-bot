@@ -96,7 +96,7 @@ module ServerLogic
   end
 
   def list_server
-    message "#{ @server.connect_info }"
+    message "#{ @server }: #{ @server.connect_info }"
     advertisement
   end  
   
