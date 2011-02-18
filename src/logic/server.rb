@@ -12,11 +12,10 @@ module ServerLogic
     rescue Exception => e
       if first
         message "#{ e.message }. Trying server again in #{ const["delays"]["server"] } seconds."
-      else
-        next_server
-        
-        message "#{ e.message }. Trying the next server in #{ const["delays"]["server"] } seconds."
         first = false
+      else
+        message "#{ e.message }. Trying the next server in #{ const["delays"]["server"] } seconds."
+        next_server
       end
       
       sleep const["delays"]["server"]
