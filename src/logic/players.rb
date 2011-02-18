@@ -50,6 +50,8 @@ module PlayersLogic
     u = create_user user unless u
     update_user user, u if user.authed? and not u.auth 
     
+    @lookup[@signups_all.size + 1] = user.nick if not can_add?
+    
     @auth[user.nick] = u
     @signups[user.nick] = classes
     @signups_all[user.nick] = classes
