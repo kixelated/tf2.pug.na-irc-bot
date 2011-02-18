@@ -28,6 +28,8 @@ module PlayersLogic
     
     return if classes.empty?
     
+    notice user, "This is a beta pug, please ensure you have tf2 beta installed or remove now." if @server.beta
+
     # add the player to the pug
     if can_add?
       @auth[user.nick] = u

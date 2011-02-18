@@ -84,6 +84,7 @@ servers:
     port: 27015
     password: tf2pug
     rcon: secret
+    beta: true
     ftp:
       ip: 206.217.132.198
       user: pugna-beta

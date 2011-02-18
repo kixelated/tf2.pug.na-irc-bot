@@ -12,6 +12,7 @@ class Server < SourceServer
   def name; details['name']; end
   def password; details['password']; end
   def rcon; details['rcon']; end
+  def beta; details['beta']; end
 
   def to_s
     name
