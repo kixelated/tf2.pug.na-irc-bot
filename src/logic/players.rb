@@ -60,15 +60,24 @@ module PlayersLogic
   def remove_player nick
     return unless @signups.key? nick # player is not signed up or was picked already
     
-    classes = remove_player! nick
-    unless can_remove? or minimum_players?(@signups_all)
+    temp = remove_player! nick
+    return temp != nil if can_remove?
+    
+    classes = @teams.inject(@signups) do |signups, team|
+      team.signups.each do |nick, clss| 
+        signups[nick] = (team.captain == nick) ? @signups_all[nick] : [clss]
+        signups
+      end
+    end
+    
+    unless minimum_players?(classes)
       add_player! User(nick), classes # player is required and cannot remove
       
       @toremove << nick if @signups.key? nick
       return notice nick, "You cannot remove at this time, but will be removed after picking is over."
+    else
+      return true
     end
-    
-    true
   end
   
   def remove_player! nick
