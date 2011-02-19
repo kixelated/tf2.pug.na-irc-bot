@@ -116,27 +116,23 @@ rotation:
       
     - name: granary
       file: cp_granary
-      weight: 10
-      
-    - name: snakewater
-      file: cp_snakewater_rc1
       weight: 8
-      
-    - name: viaduct
-      file: koth_viaduct
-      weight: 6
       
     - name: gullywash
       file: cp_gullywash_imp3
+      weight: 6
+      
+    - name: snakewater
+      file: cp_snakewater_rc1
       weight: 6
       
     - name: coldfront
       file: cp_coldfront
       weight: 4
       
-    - name: obscure
-      file: cp_obscure_final
-      weight: 2
+    - name: viaduct
+      file: koth_viaduct
+      weight: 4
       
     - name: yukon
       file: cp_yukon_final
@@ -148,6 +144,10 @@ rotation:
       
     - name: freight
       file: cp_freight_final1
+      weight: 1
+      
+    - name: obscure
+      file: cp_obscure_final
       weight: 1
 
 reward:
