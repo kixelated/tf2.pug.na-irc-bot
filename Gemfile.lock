@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/qpingu/steam-condenser.git
-  revision: bd6f38cde5ee9f9d2948fd4fe7ab1d4ab2e388f6
+  revision: 114b24b90d450b5dc967ff21db8bb3dbcc87cfcb
   specs:
     steam-condenser (0.12.1)
       bzip2-ruby (~> 0.2.7)
