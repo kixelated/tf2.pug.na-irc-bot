@@ -331,8 +331,8 @@ class Pug
   def admin_debug m
     return unless require_admin m
     
-    @debug = !@debug
-    message "Debug state is #{ @debug }."
+    message "Signups: #{ @signups }"
+    message "Teams: #{ @teams }"
   end
   
   # !quit
