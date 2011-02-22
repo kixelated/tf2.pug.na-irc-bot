@@ -12,6 +12,7 @@ module Variables
         server.details = details
       end
     end
+    
     @prev_maps = []
     
     next_server
@@ -36,7 +37,6 @@ module Variables
 
     @show_list = 0
     @updating = false
-    @debug = false
   end
   
   def end_game
@@ -48,6 +48,7 @@ module Variables
     @pick_order = []
     @last = Time.now
     
+    @signups_all.reject! { |k, v| !@signups.key? k }
     @auth.reject! { |k, v| !@signups.key? k }
     @spoken.reject! { |k, v| !@signups.key? k }
     
