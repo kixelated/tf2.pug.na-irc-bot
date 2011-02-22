@@ -80,7 +80,7 @@ servers:
       dir: orangebox/tf
       
   - name: chicago3beta
-    ip: 206.217.132.198
+    ip: chicago3.tf2pug.us
     port: 27015
     password: tf2pug
     rcon: secret
