@@ -27,9 +27,9 @@ public Plugin:myinfo =
 {
 	name = "TF2IB",
 	author = "Jean-Denis Caron",
-	description = "Server side management for the PUG system.",
+	description = "Server side management for #tf2.pug.na.",
 	version = SOURCEMOD_VERSION,
-	url = "http://github.com/550/tf2ib/"
+	url = "http://github.com/qpingu/tf2.pug.na-irc-bot"
 };
 
 public Action:checkForOffClassPlayers(Handle:timer){
