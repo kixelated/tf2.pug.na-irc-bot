@@ -78,18 +78,6 @@ servers:
       user: pugna2
       password: secret
       dir: orangebox/tf
-      
-  - name: chicago3beta
-    ip: chicago3.tf2pug.us
-    port: 27015
-    password: tf2pug
-    rcon: secret
-    beta: true
-    ftp:
-      ip: 206.217.132.198
-      user: pugna-beta
-      password: secret
-      dir: tf2beta/tf_beta
 
 stv:
   url: http://tf2pug.us/demos
