@@ -1,7 +1,7 @@
 #include <sourcemod>
 
 // Constants
-new timerFrequency = 20;  // Timer timerFrequency, determines how accurate the timer is. (seconds)
+new timerFrequency = 20;  // Timer frequency, determines how accurate the timer is. (seconds)
 
 new extendThreshold = 140; // Maximum amount of time remaining before overtime is triggered. (seconds)
 new extendTime = 10;  // Amount of overtime added to the time limit. (minutes)
@@ -17,13 +17,12 @@ new bool:cancelExtension = false;
 
 // Plugin Info
 public Plugin:myinfo = {
-	name = "tf2.pug.na - Extender",
+	name = "tf2.pug.na - Match Extender",
 	author = "Luke Curley",
 	description = "Enables the !extend command and automatically extends a tied game.",
 	version = SOURCEMOD_VERSION,
 	url = "http://github.com/qpingu/tf2.pug.na-irc-bot"
 };
- 
 
 // Code
 public OnPluginStart() {

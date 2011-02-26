@@ -1,21 +1,29 @@
-#include <clients>
-#include <menus>
 #include <socket>
-#include <sdktools_functions>
 #include <sourcemod>
-#include <tf2_stocks>
 
+// Variables
 new String:serverPort[16];
 new String:serverIP[64];
 new String:socketData[192];
 
+// Plugin Info
 public Plugin:myinfo = {
-	name = "tf2.pug.na - Dispatcher",
+	name = "tf2.pug.na - Bot Dispatcher",
 	author = "Jean-Denis Caron, Luke Curley",
-	description = "Communicates with the bot on #tf2.pug.na",
+	description = "Communicates with the bot on #tf2.pug.na, sending sub and endgame messages.",
 	version = SOURCEMOD_VERSION,
 	url = "http://github.com/qpingu/tf2.pug.na-irc-bot"
 };
+
+// Code
+public OnPluginStart() {
+  GetConVarString(FindConVar("ip"), serverIP, sizeof(serverIP));
+  IntToString(GetConVarInt(FindConVar("hostport")), serverPort, 10)
+  
+  HookEvent("player_say", Event_PlayerSay);
+  HookEvent("teamplay_game_over", Event_TeamplayGameOver);
+  HookEvent("tf_game_over", Event_TeamplayGameOver);
+}
 
 public Action:Event_PlayerSay(Handle:event, const String:name[], bool:dontBroadcast) {
 	decl String:userText[192];
@@ -51,15 +59,6 @@ public gameOver() {
   
   sendDataToBot(message);
   PrintToChatAll("%s", message);
-}
-
-public OnPluginStart() {
-  GetConVarString(FindConVar("ip"), serverIP, sizeof(serverIP));
-  IntToString(GetConVarInt(FindConVar("hostport")), serverPort, 10)
-  
-  HookEvent("player_say", Event_PlayerSay);
-  HookEvent("teamplay_game_over", Event_TeamplayGameOver);
-  HookEvent("tf_game_over", Event_TeamplayGameOver);
 }
 
 // Sockets
