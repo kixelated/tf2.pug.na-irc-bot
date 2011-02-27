@@ -107,7 +107,7 @@ rotation:
       weight: 8
       
     - name: gullywash
-      file: cp_gullywash_imp3
+      file: cp_gullywash_pro
       weight: 6
       
     - name: snakewater
