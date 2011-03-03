@@ -7,8 +7,6 @@ module PlayersLogic
   def add_player user, classes
     return notice user, "No classes entered. Usage: !add #{ const["teams"]["classes"].keys * " " }" unless classes
          
-    canadd = can_add?
-         
     user.refresh unless user.authed?
     notice user, "You are not authorized with Gamesurge. You can still play in the channel, but any accumulated stats may be lost and will not transfer if you change your nick. Please follow this guide to register and authorize with Gamesurge: http://www.gamesurge.net/newuser/" unless user.authed?
     
@@ -33,11 +31,10 @@ module PlayersLogic
     notice user, "This is a beta pug, please ensure you have tf2 beta installed or remove now." if @server.beta
 
     # add the player to the pug
-    if canadd
+    if can_add?
       @auth[user.nick] = u
       @signups[user.nick] = classes
-      @signups_all[user.nick] = classes
-    elsif not @signups_all.key?(user.nick)
+    else
       @toadd[user.nick] = classes
       notice user, "You cannot add at this time, but you will be added once the picking process is over."
     end
@@ -50,49 +47,32 @@ module PlayersLogic
     u = create_user user unless u
     update_user user, u if user.authed? and not u.auth 
     
-    @lookup[@signups_all.size + 1] = user.nick if not can_add?
-    
     @auth[user.nick] = u
     @signups[user.nick] = classes
-    @signups_all[user.nick] = classes
   end
   
   def remove_player nick
     return unless @signups.key? nick # player is not signed up or was picked already
     
-    temp = remove_player! nick
-    return temp != nil if can_remove?
-    
-    classes = @teams.inject(@signups) do |signups, team|
-      team.signups.each do |nick, clss| 
-        signups[nick] = (team.captain == nick) ? @signups_all[nick] : [clss]
-        signups
-      end
-    end
-    
-    unless minimum_players?(classes)
-      add_player! User(nick), classes # player is required and cannot remove
-      
+    if can_remove?
+      remove_player! nick 
+    else
       @toremove << nick if @signups.key? nick
       return notice nick, "You cannot remove at this time, but will be removed after picking is over."
-    else
-      return true
     end
   end
   
   def remove_player! nick
     @auth.delete nick
     @signups.delete nick
-    @signups_all.delete nick
   end
   
   def replace_player! nick, replacement
-    temp = add_player! replacement, remove_player!(nick)
-  
-    # non-trivial case, player has already been picked
-    if not can_add? and @signups_all.key? nick
-      @signups.delete replacement.nick
-      
+    if (can_add? and can_remove?) or @signups.key? nick
+      temp = remove_player!(nick)
+      add_player! replacement, temp if temp
+    else
+      # non-trivial case, player has already been picked
       @teams.each do |team|
         if team.signups.key? nick
           team.signups[replacement.nick] = team.signups.delete(nick)
@@ -106,8 +86,6 @@ module PlayersLogic
         end
       end
     end
-    
-    return temp
   end
   
   def find_user user
