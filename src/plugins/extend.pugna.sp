@@ -19,16 +19,16 @@ new lastExtendMessage = 0;
 
 // Plugin Info
 public Plugin:myinfo = {
-	name = "tf2.pug.na - Match Extender",
-	author = "Luke Curley",
-	description = "Enables the !extend command and automatically extends a tied game.",
-	version = SOURCEMOD_VERSION,
-	url = "http://github.com/qpingu/tf2.pug.na-irc-bot"
+  name = "tf2.pug.na - Match Extender",
+  author = "Luke Curley",
+  description = "Enables the !extend command and automatically extends a tied game.",
+  version = SOURCEMOD_VERSION,
+  url = "http://github.com/qpingu/tf2.pug.na-irc-bot"
 };
 
 // Code
 public OnPluginStart() {
-	CreateTimer(timerFrequency, CheckTime, _, TIMER_REPEAT);
+  CreateTimer(timerFrequency, CheckTime, _, TIMER_REPEAT);
   HookEvent("player_say", Event_PlayerSay);
 }
 
@@ -60,13 +60,13 @@ public Action:Event_PlayerSay(Handle:event, const String:name[], bool:dontBroadc
   new client = GetClientOfUserId(GetEventInt(event, "userid"));
   new team = GetClientTeam(client);
   
-	decl String:userText[192];
+  decl String:userText[192];
   userText[0] = '\0';
-	if (!GetEventString(event, "text", userText, 192)) {
-		return Plugin_Continue;
-	}
-	
-	new timeLeft;
+  if (!GetEventString(event, "text", userText, 192)) {
+    return Plugin_Continue;
+  }
+  
+  new timeLeft;
   new timeLimit;
   GetMapTimeLeft(timeLeft);
   GetMapTimeLimit(timeLimit);
@@ -89,7 +89,7 @@ public Action:Event_PlayerSay(Handle:event, const String:name[], bool:dontBroadc
     }
   }
 
-	return Plugin_Continue;	
+  return Plugin_Continue;  
 }
 
 public extendMatch() {

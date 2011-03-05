@@ -12,11 +12,11 @@ new bool:restrictWarning[32];
 
 // Plugin Info
 public Plugin:myinfo = {
-	name = "tf2.pug.na - Off-class Restriction",
-	author = "Luke Curley",
-	description = "Limits off-classing using the !restrict command.",
-	version = SOURCEMOD_VERSION,
-	url = "http://github.com/qpingu/tf2.pug.na-irc-bot"
+  name = "tf2.pug.na - Off-class Restriction",
+  author = "Luke Curley",
+  description = "Limits off-classing using the !restrict command.",
+  version = SOURCEMOD_VERSION,
+  url = "http://github.com/qpingu/tf2.pug.na-irc-bot"
 };
 
 // Code
@@ -66,19 +66,19 @@ public Action:CheckPlayers(Handle:timer) {
 public Action:Event_PlayerSay(Handle:event, const String:name[], bool:dontBroadcast) {
   new client = GetClientOfUserId(GetEventInt(event, "userid"));
   new team = GetClientTeam(client);
-	
-	decl String:userText[192];
+  
+  decl String:userText[192];
   userText[0] = '\0';
-	if (!GetEventString(event, "text", userText, 192)) {
+  if (!GetEventString(event, "text", userText, 192)) {
     return Plugin_Continue;
-	}
+  }
 
   if (StrContains(userText, "!restrict") == 0) { 
     team = GetClientTeam(client) - 2;
     if (team == 0 || team == 1) { restrictTeam[team] = true; }
   }
 
-	return Plugin_Continue;	
+  return Plugin_Continue;  
 }
 
 

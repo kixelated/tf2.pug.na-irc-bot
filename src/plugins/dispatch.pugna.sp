@@ -9,11 +9,11 @@ new String:socketData[192];
 
 // Plugin Info
 public Plugin:myinfo = {
-	name = "tf2.pug.na - Bot Dispatcher",
-	author = "Jean-Denis Caron, Luke Curley",
-	description = "Communicates with the bot on #tf2.pug.na, sending sub and endgame messages.",
-	version = SOURCEMOD_VERSION,
-	url = "http://github.com/qpingu/tf2.pug.na-irc-bot"
+  name = "tf2.pug.na - Bot Dispatcher",
+  author = "Jean-Denis Caron, Luke Curley",
+  description = "Communicates with the bot on #tf2.pug.na, sending sub and endgame messages.",
+  version = SOURCEMOD_VERSION,
+  url = "http://github.com/qpingu/tf2.pug.na-irc-bot"
 };
 
 // Code
@@ -27,16 +27,16 @@ public OnPluginStart() {
 }
 
 public Action:Event_PlayerSay(Handle:event, const String:name[], bool:dontBroadcast) {
-	decl String:userText[192];
+  decl String:userText[192];
   userText[0] = '\0';
-	
-	if (!GetEventString(event, "text", userText, 192)) { return Plugin_Continue; }
-	
+  
+  if (!GetEventString(event, "text", userText, 192)) { return Plugin_Continue; }
+  
   if (StrContains(userText, "!needsub") == 0) { 
     sendDataToBot(userText);
   }
 
-	return Plugin_Continue;	
+  return Plugin_Continue;  
 }
 
 public Event_TeamplayGameOver(Handle:event, const String:name[], bool:dontBroadcast) {
