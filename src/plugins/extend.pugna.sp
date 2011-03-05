@@ -1,4 +1,5 @@
 #include <sourcemod>
+#include <sdktools>
 
 // Constants
 new timerFrequency = 20;  // Timer frequency, determines how accurate the timer is. (seconds)
@@ -11,9 +12,10 @@ new cancelThreshold = 240; // Maximum time since last extend in order to cancel.
 
 // Variables
 new extendCount = 0;
+new bool:extendCancel = false;
 new lastExtend = 0;
 new lastExtendMessage = 0;
-new bool:cancelExtension = false;
+
 
 // Plugin Info
 public Plugin:myinfo = {
@@ -32,7 +34,7 @@ public OnPluginStart() {
 
 public OnMapStart() {
   extendCount = 0;
-  extendCanceled = false;
+  extendCancel = false;
 }
 
 public Action:CheckTime(Handle:timer) {
@@ -41,11 +43,9 @@ public Action:CheckTime(Handle:timer) {
   GetMapTimeLeft(timeLeft);
   GetMapTimeLimit(timeLimit);
 
-  if (timelimit != 0 && timeLeft <= extendThreshold) {
-    new String:blueScore[2];
-    new String:redScore[2];
-    IntToString(GetTeamScore(3), blueScore, 2);
-    IntToString(GetTeamScore(2), redScore, 2);
+  if (timeLimit != 0 && timeLeft <= extendThreshold) {
+    new blueScore = GetTeamScore(3);
+    new redScore = GetTeamScore(2);
   
     if (blueScore == redScore && extendMatch()) {
       PrintToChatAll("Stalemate detected, adding %i minutes overtime.", extendTime);
@@ -82,7 +82,7 @@ public Action:Event_PlayerSay(Handle:event, const String:name[], bool:dontBroadc
   }
 
   if (StrContains(userText, "!extend") == 0) { 
-    if (extendCanceled) {
+    if (extendCancel) {
       PrintToChatAll("The extention was already canceled.");
     } else if (timeLimit != 0 && timeLeft <= extendThreshold && extendMatch()) {
       PrintToChatAll("Match extended %i minutes by %i.", extendTime, client);
@@ -93,7 +93,7 @@ public Action:Event_PlayerSay(Handle:event, const String:name[], bool:dontBroadc
 }
 
 public extendMatch() {
-  if (extendCount >= extendMax || extendCanceled) {
+  if (extendCount >= extendMax || extendCancel) {
     return false;
   } else {
     new timeLimit;
@@ -113,7 +113,7 @@ public extendMatch() {
 }
 
 public cancelMatch() {
-  extendCanceled = true;
+  extendCancel = true;
 
   if (extendCount > 0) {
     new timeLimit;
@@ -121,5 +121,9 @@ public cancelMatch() {
   
     ServerCommand("mp_timelimit %i", timeLimit - extendTime);
     --extendCount;
+    
+    return true;
+  } else {
+    return false;
   }
 }

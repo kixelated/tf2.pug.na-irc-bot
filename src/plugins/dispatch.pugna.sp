@@ -1,5 +1,6 @@
 #include <socket>
 #include <sourcemod>
+#include <sdktools>
 
 // Variables
 new String:serverPort[16];
@@ -62,7 +63,7 @@ public gameOver() {
 }
 
 // Sockets
-public sendDataToBot(String:message) {
+public sendDataToBot(String:message[]) {
   decl String:query[192];
 
   StripQuotes(message);  

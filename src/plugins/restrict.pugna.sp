@@ -38,7 +38,7 @@ public Action:CheckPlayers(Handle:timer) {
     new classID = -1;
 
     if (IsValidEntity(i) && IsClientInGame(i)) {
-      team = GetClientTeam(i) - 2;
+      new team = GetClientTeam(i) - 2;
       
       if ((team == 0 || team == 1) && restrictTeam[team]) {
         classID = TF2_GetPlayerClass(i);
@@ -51,7 +51,7 @@ public Action:CheckPlayers(Handle:timer) {
               PrintToChat(i, "Please switch back to a standard competitive class (scout, soldier, demo, medic).");
               ForcePlayerSuicide(i);
             } else {
-              PrintToChat(i, "You have %i seconds to switch back to a standard competitive class (scout, soldier, demo, medic).", availableTime);
+              PrintToChat(i, "You have %i seconds to switch back to a standard competitive class (scout, soldier, demo, medic).", timerFrequency);
               restrictWarning[i] = true;
             }
           }
