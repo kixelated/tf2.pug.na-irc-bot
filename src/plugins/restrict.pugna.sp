@@ -3,7 +3,7 @@
 #include <tf2_stocks>
 
 // Constants
-new timerFrequency = 20;  // How frequently players are checked for off-classing. (seconds)
+new Float:timerFrequency = 20.0;  // How frequently players are checked for off-classing. (seconds)
 new offclassMax = 1; // Number of off-classers per team allowed.
 
 // Variables
@@ -80,5 +80,3 @@ public Action:Event_PlayerSay(Handle:event, const String:name[], bool:dontBroadc
 
   return Plugin_Continue;  
 }
-
-
