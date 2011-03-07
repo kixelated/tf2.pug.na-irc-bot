@@ -44,7 +44,7 @@ class STV
       storage = "#{ const["stv"]["storage"] }"
       
       # TODO: Does storage exist?
-      FileUtils.mkdir storage if storage and not FileUtils.exists? storage
+      FileUtils.mkdir_p storage if storage and not Dir.exists? storage
 
       # Download file and zip it
       @down.getbinaryfile filename, storage + filename
