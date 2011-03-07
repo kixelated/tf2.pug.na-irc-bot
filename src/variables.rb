@@ -19,7 +19,6 @@ module Variables
     next_map
   
     @signups = {}
-    @signups_all = {}
     @auth = {}
     @spoken = {}
     @afk = []
@@ -48,7 +47,6 @@ module Variables
     @pick_order = []
     @last = Time.now
     
-    @signups_all.reject! { |k, v| !@signups.key? k }
     @auth.reject! { |k, v| !@signups.key? k }
     @spoken.reject! { |k, v| !@signups.key? k }
     
