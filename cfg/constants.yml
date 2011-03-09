@@ -111,7 +111,7 @@ rotation:
       weight: 6
       
     - name: snakewater
-      file: cp_snakewater_prerc2
+      file: cp_snakewater_rc2
       weight: 6
       
     - name: coldfront
