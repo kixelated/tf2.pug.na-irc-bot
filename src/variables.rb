@@ -6,14 +6,15 @@ module Variables
   include Constants
 
   def setup
-    @servers = const["servers"].collect do |details|
-      Server.new(details["ip"], details["port"], const["internet"]["local_host"], 27000 + rand(1000)).tap do |server|
+    @servers = []
+    @prev_maps = []
+    
+    const["servers"].each_with_index do |details, i|
+      @servers << Server.new(details["ip"], details["port"], const["internet"]["local_host"], const["internet"]["server_port"] + i).tap do |server|
         server.stv = STV.new(details["ftp"].values)
         server.details = details
       end
     end
-    
-    @prev_maps = []
     
     next_server
     next_map

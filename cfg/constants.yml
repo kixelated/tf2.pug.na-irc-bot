@@ -4,6 +4,7 @@ database:
 
 internet:
   local_host:
+  server_port: 27060
 
 irc:
   server: irc.gamesurge.net
