@@ -4,9 +4,12 @@ require_relative 'constants'
 class Server < SourceServer
   attr_accessor :details, :stv
 
-  def timeleft
-    rcon_exec("timeleft") =~ /map:  (\S+?),/
-    return $1.to_s
+  def tournament_info connect = true
+    rcon_connect rcon if connect
+    temp = rcon_exec("tournament_info").scan(/(\w+): "([^"]*)"/)
+    rcon_disconnect if connect
+    
+    Hash[*temp]
   end
   
   def name; details['name']; end
@@ -22,5 +25,3 @@ class Server < SourceServer
     "connect #{ host }:#{ port }; password #{ password }"
   end
 end
-
-SteamSocket.timeout = 2000

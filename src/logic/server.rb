@@ -85,11 +85,15 @@ module ServerLogic
       info = server.server_info
       
       if info and info["number_of_players"] >= const["settings"]["used"]
-        server.rcon_connect server.rcon
-        message "#{ server }: #{ info['number_of_players'] } players on #{ info['map_name'] } with #{ server.timeleft } left"
-        server.rcon_disconnect
+        tinfo = server.tournament_info
+        if tinfo
+          score = tinfo['Score'].split(':').collect.with_index { |x, i| colourize x, const['teams']['details'][i]['colour'] }
+          message "#{ server }: #{ score } on #{ info['map_name'] } with #{ tinfo['Timeleft'] } remaining."
+        else
+          message "#{ server }: Warmup on #{ info['map_name'] } with #{ info['number_of_players'] } connected."
+        end
       else
-        message "#{ server }: empty"
+        message "#{ server }: Empty."
       end
     end
   end
