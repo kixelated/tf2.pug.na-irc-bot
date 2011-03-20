@@ -9,7 +9,7 @@ class Server < SourceServer
     temp = rcon_exec("tournament_info").scan(/(\w+): "([^"]*)"/)
     rcon_disconnect if connect
     
-    Hash[*temp]
+    Hash[temp]
   end
   
   def name; details['name']; end
