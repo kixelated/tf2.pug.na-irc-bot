@@ -89,12 +89,12 @@ module ServerLogic
         unless tinfo.empty?
           puts tinfo
           score = tinfo['Score'].split(':').collect.with_index { |x, i| colourize x, const['teams']['details'][i]['colour'] }
-          message "#{ server }: #{ score } on #{ info['map_name'] } with #{ tinfo['Timeleft'] } remaining."
+          message "#{ server }: #{ score } on #{ info['map_name'] } with #{ tinfo['Timeleft'] } remaining"
         else
-          message "#{ server }: Warmup on #{ info['map_name'] } with #{ info['number_of_players'] } players."
+          message "#{ server }: warmup on #{ info['map_name'] } with #{ info['number_of_players'] } players"
         end
       else
-        message "#{ server }: Empty."
+        message "#{ server }: empty"
       end
     end
   end
