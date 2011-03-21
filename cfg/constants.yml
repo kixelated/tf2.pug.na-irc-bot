@@ -30,7 +30,7 @@ delays:
   
 settings:
   afk: 600
-  used: 6
+  used: 3
 
 teams:
   details:
