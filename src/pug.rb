@@ -249,7 +249,6 @@ class Pug
   def command_code m
     message "IRC bot    : https://github.com/qpingu/tf2.pug.na-irc-bot"
     message "TF2 server : https://github.com/qpingu/tf2.pug.na-game-server"
-    message "Web server : https://github.com/qpingu/tf2.pug.na-web-server"
   end
 
   # Admin commands
