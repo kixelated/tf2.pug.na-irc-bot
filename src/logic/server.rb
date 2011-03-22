@@ -84,7 +84,7 @@ module ServerLogic
       server.update_server_info
       info = server.server_info
       
-      if info and info["number_of_players"] >= const["settings"]["used"]
+      if info and info["number_of_players"] > 0
         tinfo = server.tournament_info
         unless tinfo.empty?
           puts tinfo
