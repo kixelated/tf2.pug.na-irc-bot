@@ -1,14 +1,23 @@
 require_relative '../database'
 
+require_relative 'map'
 require_relative 'team'
 require_relative 'player'
-require_relative 'user'
-require_relative 'pick'
+require_relative 'server'
 
-class Match < ActiveRecord::Base
-  has_and_belongs_to_many :teams
-    
-  has_many :players
-  has_many :users, :through => :players
-  has_many :picks, :through => :players
+class Match
+  include DataMapper::Resource
+  
+  property :id, Serial
+
+  belongs_to :map
+  belongs_to :server
+  
+  has n, :players
+  has n, :teams, :through => Resource
+  
+  has n, :users, :through => :players
+  
+  property :created_at, DateTime
+  property :updated_at, DateTime
 end

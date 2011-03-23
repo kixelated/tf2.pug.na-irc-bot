@@ -1,16 +1,23 @@
 require_relative '../database'
 
-require_relative 'restriction'
+require_relative 'match'
 require_relative 'player'
-require_relative 'pick'
+require_relative 'team'
 
-class User < ActiveRecord::Base
-  has_and_belongs_to_many :teams
+class User
+  include DataMapper::Resource
+ 
+  property :id, Serial
+  property :auth, String, :index => :auth_nick
+  property :nick, String, :index => :auth_nick
   
-  has_one :restriction
-  has_many :players
-  has_many :picks, :through => :players
+  property :restricted_at, DateTime, :index => true
+ 
+  has n, :players
+  has n, :teams, :through => Resource
   
-  validates :auth, :uniqueness => { :allow_nil => true }
-  validates :name, :presence => true, :uniqueness => { :scope => :auth }
+  has n, :matches, :through => :players
+  
+  property :created_at, DateTime
+  property :updated_at, DateTime
 end

@@ -1,10 +1,14 @@
 source :rubygems
 
-gem "cinch"
+gem 'cinch'
+gem 'steam-condenser', :git => 'git://github.com/qpingu/steam-condenser.git'
 
-gem "activerecord"
-gem "sqlite3"
+gem 'sqlite3'
+gem 'dm-core'
+gem 'dm-aggregates'
+gem 'dm-migrations'
+gem 'dm-sqlite-adapter'
+gem 'dm-timestamps'
 
-gem "steam-condenser", :git => "git://github.com/qpingu/steam-condenser.git"
-gem "chronic_duration"
-gem "rubyzip"
+gem 'chronic_duration'
+gem 'rubyzip'

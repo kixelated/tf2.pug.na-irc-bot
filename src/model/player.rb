@@ -1,16 +1,19 @@
 require_relative '../database'
 
-require_relative 'team'
 require_relative 'match'
+require_relative 'team'
 require_relative 'user'
-require_relative 'pick'
-require_relative 'tfclass'
 
-class Player < ActiveRecord::Base
-  belongs_to :match
-  belongs_to :team
-  belongs_to :user
+class Player
+  include DataMapper::Resource
   
-  has_many :picks
-  has_and_belongs_to_many :signups, :class_name => "Tfclass", :join_table => "signups"
+  belongs_to :match, :key => true
+  belongs_to :user, :key => true, :index => :user_class
+  
+  belongs_to :team
+  
+  property :tfclass, Integer, :index => :user_class
+  
+  property :created_at, DateTime
+  property :updated_at, DateTime
 end

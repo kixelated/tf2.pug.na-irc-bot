@@ -6,6 +6,9 @@ module Variables
   include Constants
 
   def setup
+    DataMapper.finalize
+    DataMapper.auto_migrate!
+  
     @servers = []
     @prev_maps = []
     
