@@ -1,5 +1,5 @@
 require_relative 'constants'
-require_relative 'server'
+require_relative 'logic/server'
 require_relative 'model/match'
 
 module Variables
@@ -8,19 +8,8 @@ module Variables
   def setup
     DataMapper.finalize
     DataMapper.auto_migrate!
-  
-    @servers = []
-    @prev_maps = []
     
-    const["servers"].each_with_index do |details, i|
-      @servers << Server.new(details["ip"], details["port"], const["internet"]["local_host"], const["internet"]["server_port"] + i).tap do |server|
-        server.stv = STV.new(details["ftp"].values)
-        server.details = details
-      end
-    end
-    
-    next_server
-    next_map
+    @map = next_map
   
     @signups = {}
     @auth = {}
@@ -34,12 +23,10 @@ module Variables
     @pick_order = []
     @lookup = {}
     
-    @last = Match.last.time if Match.last
     @state = const["states"]["waiting"]
     @pick = 0
 
     @show_list = 0
-    @updating = false
   end
   
   def end_game
@@ -49,7 +36,6 @@ module Variables
     state "waiting"
     @pick = 0
     @pick_order = []
-    @last = Time.now
     
     @auth.reject! { |k, v| !@signups.key? k }
     @spoken.reject! { |k, v| !@signups.key? k }
@@ -60,7 +46,6 @@ module Variables
     @toadd.clear
     @toremove.clear
 
-    next_server
-    next_map
+    @map = next_map
   end
 end
