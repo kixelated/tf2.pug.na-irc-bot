@@ -60,7 +60,7 @@ module PickingLogic
   def list_captain user
     return notice(user, "Picking has not started.") unless state? "picking" # logic/state.rb
 
-    message "It is #{ current_captain }'s turn to pick"
+    message "It is #{ current_team.my_colourize current_captain }'s turn to pick"
   end
 
   def pick_random user, clss
