@@ -9,12 +9,12 @@ class Server
   include DataMapper::Resource
   
   property :id, Serial
-  property :name, String
+  property :name, String, :required => true
   
-  property :host, String
-  property :port, Integer
+  property :host, String, :format => :url
+  property :port, Integer, :gt => 0
   property :pass, String
-  property :rcon, String
+  property :rcon, String, :required => true
   
   property :ftp_user, String
   property :ftp_pass, String
@@ -22,7 +22,7 @@ class Server
   
   has n, :matches
   
-  property :played_at, DateTime
+  property :played_at, DateTime, :index => true
   property :created_at, DateTime
   property :updated_at, DateTime
   

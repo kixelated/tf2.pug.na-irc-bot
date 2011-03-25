@@ -1,8 +1,8 @@
 require_relative '../database'
 
 require_relative 'map'
+require_relative 'matchup'
 require_relative 'team'
-require_relative 'player'
 require_relative 'server'
 
 class Match
@@ -13,12 +13,10 @@ class Match
   belongs_to :map
   belongs_to :server
   
-  has n, :picks
-  has n, :players
-  has n, :users, :through => :players
-  has n, :teams, :through => Resource
+  has 2, :matchups
+  has 2, :teams, :through => :matchups
   
-  property :played_at, DateTime
+  property :played_at, DateTime, :index => true
   property :created_at, DateTime
   property :updated_at, DateTime
 end

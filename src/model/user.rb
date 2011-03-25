@@ -1,22 +1,23 @@
 require_relative '../database'
 
-require_relative 'match'
-require_relative 'player'
+require_relative 'roster'
 require_relative 'team'
+require_relative 'stat'
+require_relative 'signup'
 
 class User
   include DataMapper::Resource
  
   property :id, Serial
   property :auth, String, :index => :auth_nick
-  property :nick, String, :index => :auth_nick
+  property :nick, String, :index => :auth_nick, :required => true
   
   property :restricted_at, DateTime, :index => true
  
-  has n, :players
-  has n, :matches, :through => :players
+  has n, :rosters
+  has n, :teams, :through => :rosters
   has n, :stats
-  has n, :teams, :through => Resource
+  has n, :signups
   
   property :created_at, DateTime
   property :updated_at, DateTime

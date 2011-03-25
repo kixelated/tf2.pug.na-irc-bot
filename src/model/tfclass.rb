@@ -6,7 +6,7 @@ class Tfclass
   include DataMapper::Resource
   
   property :id, Serial
-  property :name, String
+  property :name, String, :required => true
   
   has n, :stats
 end
