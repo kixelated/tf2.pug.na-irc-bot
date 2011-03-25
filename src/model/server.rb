@@ -22,6 +22,7 @@ class Server
   
   has n, :matches
   
+  property :played_at, DateTime
   property :created_at, DateTime
   property :updated_at, DateTime
   

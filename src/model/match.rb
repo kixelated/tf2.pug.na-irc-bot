@@ -13,11 +13,12 @@ class Match
   belongs_to :map
   belongs_to :server
   
+  has n, :picks
   has n, :players
+  has n, :users, :through => :players
   has n, :teams, :through => Resource
   
-  has n, :users, :through => :players
-  
+  property :played_at, DateTime
   property :created_at, DateTime
   property :updated_at, DateTime
 end

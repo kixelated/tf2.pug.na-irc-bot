@@ -14,9 +14,9 @@ class User
   property :restricted_at, DateTime, :index => true
  
   has n, :players
-  has n, :teams, :through => Resource
-  
   has n, :matches, :through => :players
+  has n, :stats
+  has n, :teams, :through => Resource
   
   property :created_at, DateTime
   property :updated_at, DateTime

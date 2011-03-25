@@ -17,8 +17,14 @@ module PlayersLogic
     notice user, "Invalid classes. Possible options are #{ const["teams"]["classes"].keys * ", " }" if rej
 
     u = find_user user
-    u = create_user user unless u
-    update_user user, u if user.authed? and not u.auth 
+    u.update(:auth => user.authname) if u and not u.auth and user.authed? # Updates user if they recently registered
+    
+    unless u
+      notice user, "Welcome to #tf2.pug.na! The channel has certain quality standards, and we ask that you have a good amount of experience and understanding of the 6v6 format before playing here. If you do not yet meet these requirements, please type !remove and try another system like tf2lobby.com"
+      notice user, "If you are still interested in playing here, there are a few rules that you can find on our wiki page. Please ask questions and use the !man command to list all of the avaliable commands. Teams will be drafted by captains when there are enough players added, so hang tight and don't fret if you are not picked."
+
+      u = User.create(:auth => user.authname, :nick => user.nick)
+    end
    
     total = calculate_total u
     cap = classes.delete("captain") if total < const["captain"]["min"]
@@ -28,8 +34,6 @@ module PlayersLogic
     
     return if classes.empty?
     
-    notice user, "This is a beta pug, please ensure you have tf2 beta installed or remove now." if @server.beta
-
     # add the player to the pug
     if can_add?
       @auth[user.nick] = u
@@ -52,7 +56,7 @@ module PlayersLogic
   end
   
   def remove_player nick
-    return unless @signups.key? nick # player is not signed up or was picked already
+    return unless @signups.key? nick
     
     if can_remove?
       remove_player! nick 
@@ -89,51 +93,34 @@ module PlayersLogic
   end
   
   def find_user user
-    u = User.find_by_auth(user.authname) if user.authed?
-    u = User.where("name = ? AND auth != NULL", user.nick).first unless u # give priority to authed accounts
-    u = User.find_by_name(user.nick) unless u
-    
-    return u
+    User.first(:auth, :auth => user.authname) + User.first(:nick => user.nick, :auth.not)
   end
   
-  def update_user user, u
-    u.update_attributes(:auth => user.authname)
-  end
-  
-  def create_user user
-    notice user, "Welcome to #tf2.pug.na! The channel has certain quality standards, and we ask that you have a good amount of experience and understanding of the 6v6 format before playing here. If you do not yet meet these requirements, please type !remove and try another system like tf2lobby.com"
-    notice user, "If you are still interested in playing here, there are a few rules that you can find on our wiki page. Please ask questions and use the !man command to list all of the avaliable commands. Teams will be drafted by captains when there are enough players added, so hang tight and don't fret if you are not picked."
-
-    User.create(:auth => user.authname, :name => user.nick)
-  end
-
   def update_nick user, nick
     user.refresh unless user.authed?
     return notice user, "You must be registered with GameSurge in order to change your nick. http://www.gamesurge.net/newuser/" unless user.authed?
     
-    player = User.find_by_auth(user.authname)
+    u = User.first(:auth => user.authname)
     return notice user, "Could not find an account registered to your authname, please !add up at least once." unless player
-    return notice user, "Your name has not changed." if player.name == nick
+    return notice user, "Your name has not changed." if u.nick == nick
  
-    message "#{ player.name } is now known as #{ nick }"
+    message "#{ u.nick } is now known as #{ nick }"
     
-    player.update_attributes(:name => nick)
-    @auth[user.nick] = player if @auth[user.nick]
+    u.update(:nick => nick)
+    @auth[user.nick] = u if @auth[user.nick]
   end
   
   def reward_player user
-    u = find_user user
-    return unless u
+    return unless u = find_user(user)
      
     total = calculate_total u
     return if total < const["reward"]["min"]
     
-    ratio = calculate_ratios u
+    ratio = calculate_ratios(u, total)
     sum = const["reward"]["classes"].inject(0.0) { |sum, clss| sum + ratio[clss] }
     return if sum < const["reward"]["ratio"]
     
     Channel(const["irc"]["channel"]).voice user
-    return true
   end
   
   def explain_reward user
@@ -148,26 +135,24 @@ module PlayersLogic
     return notice user, "Unknown duration." unless duration
     remove_player nick
     
-    u.restriction.delete if u.restriction
-    u.restriction = Restriction.create(:time => (Time.now.to_i + duration))
-    
-    message "#{ u.name } has been restricted for #{ ChronicDuration.output(duration) }."
+    u.update(:restricted_at => Time.now.to_i + duration)
+    message "#{ u.nick } has been restricted for #{ ChronicDuration.output(duration) }."
   end
   
   def authorize_player user, nick
     u = find_user User(nick)
     
     return notice user, "Could not find user." unless u
-    return notice user, "User is not restricted." unless u.restriction
+    return notice user, "User is not restricted." unless u.restricted_at
     
-    u.restriction.delete
-    message "#{ u.name } is no longer restricted."
+    u.update(:restricted_at => 0)
+    message "#{ u.nick } is no longer restricted."
   end
   
   def update_restrictions 
-    Restriction.includes(:user).where("time < ?", Time.now.to_i).each do |r|
-      message "#{ r.user.name } is no longer restricted."
-      r.delete
+    User.all(:restricted_at.gte => Time.now).each do |u|
+      u.update(:restricted_at => 0)
+      message "#{ u.nick } is no longer restricted."
     end
   end
   
@@ -215,16 +200,12 @@ module PlayersLogic
   end
   
   def calculate_total user
-    user.players.count(:team_id)
+    user.players.sum(:team)
   end
   
-  def calculate_ratios user
-    total = calculate_total user
-    classes = user.picks.group(:tfclass).count
-
-    Hash.new.tap do |ratios|
-      classes.each { |tfclass, count| ratios[tfclass.name] = count.to_f / total.to_f }
-      ratios.default = 0
+  def calculate_ratios user, total
+    user.stats.all.collect do |stat|
+      stat.count.to_f / total.to_f
     end
   end
 
@@ -233,7 +214,7 @@ module PlayersLogic
     return message "There are no records of the user #{ user.nick }" unless u
     
     total = calculate_total u
-    output = calculate_ratios(u).collect { |clss, percent| "#{ (percent * 100).round }% #{ clss }" }
+    output = calculate_ratios(u, total).collect { |stat, percent| "#{ (percent * 100).round }% #{ stat.tfclass }" }
 
     message "#{ u.name }#{ "*" unless u.auth } has #{ total } games played: #{ output * ", " }"
   end
