@@ -11,73 +11,14 @@ irc:
   nick: TF2CompanionTest
   channel: '#tf2.pug.na.beta'
   
-  auth_password: secret
   auth:
+  auth_password: secret
   auth_serv: AuthServ@Services.GameSurge.net
   
 messengers:
   count: 1
   nick: TF2MessengerTes
-  mps: 0.5
-
-delays: 
-  afk: 45
-  picking: 60
-  server: 5
-  manager: 0.05
   
-settings:
-  afk: 600
-  used: 3
-
-teams:
-  details:
-    - name: Blu Team
-      colour: 11
-    - name: Red Team
-      colour: 4
-  players: 6
-  classes: 
-    scout: 2
-    soldier: 2
-    demo: 1
-    medic: 1
-    captain: 1
-    
-servers:
-  - name: chicago1
-    ip: chicago1.tf2pug.us
-    port: 27015
-    password: tf2pug
-    rcon: secret
-    ftp:
-      ip: chicago1.tf2pug.eoreality.net
-      user: pugna
-      password: secret
-      dir: orangebox/tf
-    
-  - name: dallas1
-    ip: dallas1.tf2pug.us
-    port: 27015
-    password: tf2pug
-    rcon: secret
-    ftp:
-      ip: dallas1.tf2pug.eoreality.net
-      user: pugna
-      password: secret
-      dir: orangebox/tf
-     
-  - name: chicago2
-    ip: chicago2.tf2pug.us
-    port: 27015
-    password: tf2pug
-    rcon: secret
-    ftp:
-      ip: chicago2.tf2pug.eoreality.net
-      user: pugna2
-      password: secret
-      dir: orangebox/tf
-
 stv:
   url: http://tf2pug.us/demos
   storage: ../stv/
@@ -94,48 +35,24 @@ mumble:
   port: 64746
   password: tf2pug
 
-rotation:
-  exclude: 3
-  maps:
-    - name: badlands
-      file: cp_badlands
-      weight: 16
-      
-    - name: granary
-      file: cp_granary
-      weight: 8
-      
-    - name: gullywash
-      file: cp_gullywash_pro
-      weight: 6
-      
-    - name: snakewater
-      file: cp_snakewater_rc2
-      weight: 6
-      
-    - name: coldfront
-      file: cp_coldfront
-      weight: 4
-      
-    - name: viaduct
-      file: koth_viaduct
-      weight: 4
-      
-    - name: yukon
-      file: cp_yukon_final
-      weight: 2
-
-    - name: ashville
-      file: koth_ashville_rc1
-      weight: 1
-      
-    - name: freight
-      file: cp_freight_final1
-      weight: 1
-      
-    - name: obscure
-      file: cp_obscure_final
-      weight: 1
+tf:
+  players: 6
+  classes:
+    scout: 2
+    soldier: 2
+    pyro: 0
+    demo: 1
+    heavy: 0
+    engineer: 0
+    medic: 1
+    sniper: 0
+    spy: 0
+    captain: 1
+    
+settings:
+  afk: 600
+  captain_min: 10
+  server_full: 3
 
 reward:
   min: 10
@@ -143,9 +60,34 @@ reward:
   classes:
     - medic
     - captain
-    
-captain:
-  min: 10
+
+teams:
+  - High Flying Maggots
+  - Ingeniously Igneous Eagles
+  - Inappropriate Vikings
+  - Introverted Urgency
+  - Chocolate Snow
+  - Berserk Sealions
+  - Dallas Exploding Bazookas
+  - Sexy Sedimentary Keeper of the Keys and Grounds
+  - Melancholy Tornadoes
+  - Very Sad Clouds
+  - Rudely Responsible Rappers
+  - UnBendable Steel
+  - Melancholy Ravens
+  - Tokyo Earthquakes
+  - Mighty Metamorphic Killers
+  - Flexible Aluminum Racoons
+  - Melancholy Grenades
+  - Cockeyed Fightin' Lords
+  - Nuts Tuff Tigers
+  - Data Center Dogs
+
+delays: 
+  afk: 45
+  picking: 60
+  server: 5
+  manager: 0.05
 
 states:
   waiting: 0
@@ -171,6 +113,9 @@ colours:
   pink: 13
   grey: 14
   lgrey: 15
+  
+  home: 11
+  away: 4
   
 formatting:
   justify: 15
