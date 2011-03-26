@@ -5,7 +5,7 @@ require_relative '../util'
 
 module PlayersLogic
   def add_player user, classes
-    return notice user, "No classes entered. Usage: !add #{ const["teams"]["classes"].keys * " " }" unless classes
+    return notice user, "No classes entered. Usage: !add #{ Constants.teams['classes'].keys * " " }" unless classes
          
     user.refresh unless user.authed?
     notice user, "You are not authorized with Gamesurge. You can still play in the channel, but any accumulated stats may be lost and will not transfer if you change your nick. Please follow this guide to register and authorize with Gamesurge: http://www.gamesurge.net/newuser/" unless user.authed?
@@ -13,8 +13,8 @@ module PlayersLogic
     classes.collect! { |clss| clss.downcase } # convert classes to lowercase
     classes.uniq! # remove duplicate classes
     
-    rej = classes.reject! { |clss| not const["teams"]["classes"].key? clss } # remove invalid classes
-    notice user, "Invalid classes. Possible options are #{ const["teams"]["classes"].keys * ", " }" if rej
+    rej = classes.reject! { |clss| not Constants.teams['classes'].key? clss } # remove invalid classes
+    notice user, "Invalid classes. Possible options are #{ Constants.teams['classes'].keys * ", " }" if rej
 
     u = find_user user
     u.update(:auth => user.authname) if u and not u.auth and user.authed? # Updates user if they recently registered
@@ -27,10 +27,10 @@ module PlayersLogic
     end
    
     total = calculate_total u
-    cap = classes.delete("captain") if total < const["captain"]["min"]
+    cap = classes.delete("captain") if total < Constants.captain['min']
     
     return notice user, "You are restricted from playing in this channel." if u.restriction
-    notice user, "You must have #{ const["captain"]["min"] } games played to add as captain." if cap
+    notice user, "You must have #{ Constants.captain['min'] } games played to add as captain." if cap
     
     return if classes.empty?
     
@@ -114,17 +114,17 @@ module PlayersLogic
     return unless u = find_user(user)
      
     total = calculate_total u
-    return if total < const["reward"]["min"]
+    return if total < Constants.reward['min']
     
     ratio = calculate_ratios(u, total)
-    sum = const["reward"]["classes"].inject(0.0) { |sum, clss| sum + ratio[clss] }
-    return if sum < const["reward"]["ratio"]
+    sum = Constants.reward['classes'].inject(0.0) { |sum, clss| sum + ratio[clss] }
+    return if sum < Constants.reward['ratio']
     
-    Channel(const["irc"]["channel"]).voice user
+    Channel(Constants.irc['channel']).voice user
   end
   
   def explain_reward user
-    notice user, "You need #{ const["reward"]["min"] } games and #{ (const["reward"]["ratio"] * 100).round }% on #{ const["reward"]["classes"] * " + " } to get voice."
+    notice user, "You need #{ Constants.reward['min'] } games and #{ (Constants.reward['ratio'] * 100).round }% on #{ Constants.reward['classes'] * " + " } to get voice."
   end
   
   def restrict_player user, nick, duration
@@ -160,7 +160,7 @@ module PlayersLogic
     @signups.invert_proper_arr
   end
   
-  def classes_needed(players, multiplier = const["teams"]["count"], requirements = const["teams"]["classes"])
+  def classes_needed(players, multiplier = Constants.teams['count'], requirements = Constants.teams['classes'])
     requirements.inject({}) do |required, (clss, count)|
       temp = count * multiplier - players[clss].size
       required[clss] = temp if temp > 0
@@ -171,7 +171,7 @@ module PlayersLogic
   def list_players
     output = @signups.collect_proper do |nick, classes|
       medic, captain = classes.include?("medic"), classes.include?("captain")
-      special = ":#{ colourize "m", const["colours"]["red"] if medic }#{ colourize "c", const["colours"]["yellow"] if captain }" if medic or captain
+      special = ":#{ colourize "m", :red if medic }#{ colourize "c", :yellow if captain }" if medic or captain
       "#{ nick }#{ special }"
     end
     
@@ -186,14 +186,14 @@ module PlayersLogic
   def list_players_detailed
     classes = get_classes
 
-    const["teams"]["classes"].each_key do |k|
-      message "#{ colourize rjust("#{ k }:"), const["colours"]["lgrey"] } #{ classes[k] * ", " }" unless classes[k].empty?
+    Constants.teams['classes'].each_key do |k|
+      message "#{ colourize rjust("#{ k }:"), :lgrey } #{ classes[k] * ", " }" unless classes[k].empty?
     end
   end
  
   def list_classes_needed
     output = classes_needed(get_classes)
-    output["player"] = const["teams"]["total"] - @signups.size if @signups.size < const["teams"]["total"]
+    output['player'] = Constants.teams['total'] - @signups.size if @signups.size < Constants.teams['total']
     output.collect_proper! { |k, v| "#{ v } #{ k }" } # Format the output
 
     message "#{ rjust "Required classes:" } #{ output.values * ", " }"
@@ -201,6 +201,11 @@ module PlayersLogic
   
   def calculate_total user
     user.players.sum(:team)
+  end
+  
+  def calculate_fatkid user
+    temp = user.players.aggregate(:all.count, :team.count)
+    temp[1].to_f / temp[0].to_f
   end
   
   def calculate_ratios user, total
@@ -220,7 +225,7 @@ module PlayersLogic
   end
 
   def minimum_players? players = @signups
-    return false if players.size < const["teams"]["total"]
+    return false if players.size < Constants.teams['total']
     return classes_needed(players.invert_proper_arr).empty?
   end
 end

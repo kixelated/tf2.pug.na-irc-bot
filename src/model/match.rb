@@ -13,10 +13,10 @@ class Match
   belongs_to :map
   belongs_to :server
   
-  has 2, :matchups
-  has 2, :teams, :through => :matchups
-  
-  property :played_at, DateTime, :index => true
+  property :played_at,  DateTime, :index => true
   property :created_at, DateTime
   property :updated_at, DateTime
+  
+  has 2, :matchups
+  has 2, :teams,    :through => :matchups
 end

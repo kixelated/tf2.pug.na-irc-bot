@@ -1,6 +1,7 @@
 require 'fileutils'
 require 'net/ftp'
 require 'zip/zipfilesystem'
+require 'steam-condenser'
 
 require_relative '../database'
 require_relative 'match'
@@ -8,23 +9,25 @@ require_relative 'match'
 class Server
   include DataMapper::Resource
   
-  property :id, Serial
-  property :name, String, :required => true
+  property :id,   Serial
+  property :name, String
   
-  property :host, String, :format => :url
-  property :port, Integer, :gt => 0
+  property :host, String
+  property :port, Integer, :default => 27015
   property :pass, String
-  property :rcon, String, :required => true
+  property :rcon, String
   
   property :ftp_user, String
   property :ftp_pass, String
-  property :ftp_dir, String
+  property :ftp_dir,  String
+  
+  property :played_at,  DateTime, :index => true
+  property :created_at, DateTime
+  property :updated_at, DateTime
   
   has n, :matches
   
-  property :played_at, DateTime, :index => true
-  property :created_at, DateTime
-  property :updated_at, DateTime
+  validates_presence_of :name, :host, :rcon
   
   def server_obj
     SourceServer.new @host, @port
@@ -46,20 +49,29 @@ class Server
   
   # TODO: Colourize scores
   def status 
-    server = server_obj
-    info = server.server_info
-    
-    return "empty" unless info and info['number_of_players'] > 0
-    
-    server.rcon_connect @rcon
-    rinfo = Hash[server.rcon_exec("tournament_info").scan(/(\w+): "([^"]*)"/)]
-    
-    status = case rinfo
-      when r.empty?; "warmup on #{ info['map_name'] } with #{ info['number_of_players'] } players"
-      else; "#{ rinfo['Score'] } on #{ info['map_name'] } with #{ rinfo['Timeleft'] } remaining"
+    begin
+      server = server_obj
+      info = server.server_info
+      
+      return "empty" unless info and info['number_of_players'] > 0
+    rescue Exception => e
+      return e.message
     end
     
-    server.rcon_disconnect
+    begin
+      server.rcon_connect @rcon
+      rinfo = Hash[server.rcon_exec("tournament_info").scan(/(\w+): "([^"]*)"/)]
+      
+      status = case rinfo
+        when r.empty?; "Warmup on #{ info['map_name'] } with #{ info['number_of_players'] } players"
+        else; "#{ rinfo['Score'] } on #{ info['map_name'] } with #{ rinfo['Timeleft'] } remaining"
+      end
+    rescue Exception => e
+      return e.message
+    ensure
+      server.rcon_disconnect
+    end
+    
     return status
   end
   
@@ -67,7 +79,7 @@ class Server
     server = server_obj
     info = server.server_info
     
-    raise Exception.new("In use, please wait until the pug has ended") if info["number_of_players"] >= const["settings"]["used"]
+    raise Exception.new("In use, please wait until the pug has ended") if info['number_of_players'] >= const['settings']['used']
     
     storage = "demos/" # TODO: Make a constant
     FileUtils.mkdir storage if not Dir.exists?(storage)

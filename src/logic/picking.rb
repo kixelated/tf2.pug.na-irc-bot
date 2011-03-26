@@ -1,11 +1,13 @@
 require_relative '../model/team'
 require_relative '../model/match'
 require_relative '../model/player'
-require_relative '../model/pick'
+require_relative '../model/stat'
 require_relative '../model/user'
 
 module PickingLogic
   def start_picking
+    @pick = 0
+    
     update_lookup
     choose_captains
     tell_captain
@@ -13,21 +15,15 @@ module PickingLogic
 
   def choose_captains
     @signups_all = @signups.dup
-  
-    captains = get_classes["captain"].shuffle
-    captains.sort_by! { |nick| @signups[nick].include?("medic") ? 0 : 1 } # give medics priority
-    captains = captains.first const["teams"]["count"] # select first 2* captains
-
-    captains.each_with_index do |captain, i|
-      team = Team.new
-      team.set_captain captain
-      team.set_details const["teams"]["details"][i]
-
-      @teams << team
+    
+    captains = get_classes['captain'].sort_by { |player| calculate_fatkid @auth[player] }
+    
+    captains.first(Constants.teams['count']).each_with_index do |captain, i|
+      @teams << { "captain" => captain }
       @signups.delete captain
     end
 
-    output = @teams.collect { |team| team.my_colourize team.captain }
+    output = @teams.collect.with_index { |team, i| team_colourize team.captain, i }
     message "Captains are #{ output * ", " }"
 
     captains.each do |captain|
@@ -80,7 +76,7 @@ module PickingLogic
   end
 
   def pick_class_valid? clss
-    const["teams"]["classes"].key? clss
+    Constants.teams['classes'].key? clss
   end
 
   def pick_class_avaliable? clss
@@ -91,7 +87,7 @@ module PickingLogic
     return false unless @signups[nick].include? "medic"
 
     needed = 0
-    medics = get_classes["medic"].size - 1 # the current pick is a medic
+    medics = get_classes['medic'].size - 1 # the current pick is a medic
 
     @teams.each { |team| needed += 1 unless team.signups.values.include?("medic") or @signups_all[team.captain].include?("medic") }
     needed -= 1 if clss == "medic" and !@signups_all[current_team.captain].include? "medic" # special case where team has a captain who can med
@@ -128,7 +124,7 @@ module PickingLogic
   def next_pick
     @pick += 1
 
-    if @pick >= const["teams"]["total"] - const["teams"]["count"]
+    if @pick >= Constants.teams['total'] - Constants.teams['count']
       final_pick
     else
       tell_captain
@@ -206,8 +202,8 @@ module PickingLogic
 
   def list_format
     output = []
-    (const["teams"]["total"] - const["teams"]["count"]).times do |i|
-      output << (colourize "#{ i }", const["teams"]["details"][pick_format(i)]["colour"])
+    (Constants.teams['total'] - Constants.teams['count']).times do |i|
+      output << (colourize "#{ i }", Constants.teams['details'][pick_format(i)]['colour'])
     end
     message "The picking format is: #{ output * " " }"
   end
@@ -226,13 +222,13 @@ module PickingLogic
 
   def sequential num
     # 0 1 0 1 0 1 0 1 ...
-    num % const["teams"]["count"]
+    num % Constants.teams['count']
   end
 
   def staggered num
     # 0 1 1 0 0 1 1 0 ...
-    # won't work as expected when const["teams"]["count"] > 2
-    ((num + 1) / const["teams"]["count"]) % const["teams"]["count"]
+    # won't work as expected when Constants.teams['count'] > 2
+    ((num + 1) / Constants.teams['count']) % Constants.teams['count']
   end
 
   def hybrid num

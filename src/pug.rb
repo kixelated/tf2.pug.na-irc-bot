@@ -247,8 +247,8 @@ class Pug
   
   # !code
   def command_code m
-    message "IRC bot    : https://github.com/qpingu/tf2.pug.na-irc-bot"
-    message "TF2 server : https://github.com/qpingu/tf2.pug.na-game-server"
+    message "IRC bot   : https://github.com/qpingu/tf2.pug.na-irc-bot"
+    message "TF2 server: https://github.com/qpingu/tf2.pug.na-game-server"
   end
 
   # Admin commands
@@ -359,9 +359,9 @@ class Pug
     return unless require_admin m
     
     unless pass
-      bot.msg Constants.const["irc"]["auth_serv"], "AUTHCOOKIE #{ Constants.const["irc"]["auth"] }"
+      bot.msg Constants.irc['auth_serv'], "AUTHCOOKIE #{ Constants.irc['auth'] }"
     else
-      bot.msg Constants.const["irc"]["auth_serv"], "COOKIE #{ Constants.const["irc"]["auth"] } #{ pass }"
+      bot.msg Constants.irc['auth_serv'], "COOKIE #{ Constants.irc['auth'] } #{ pass }"
     end
   end
   
@@ -379,7 +379,7 @@ class Pug
   end
   
   def message msg
-    BotManager.instance.msg const["irc"]["channel"], colourize(msg.to_s)
+    BotManager.instance.msg Constants.irc['channel'], colourize(msg.to_s)
     false
   end
   
@@ -388,7 +388,7 @@ class Pug
     false
   end
 
-  def notice channel = const["irc"]["channel"], msg
+  def notice channel = Constants.irc['channel'], msg
     BotManager.instance.notice channel, msg
     false
   end

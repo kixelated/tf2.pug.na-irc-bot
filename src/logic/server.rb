@@ -6,28 +6,31 @@ require_relative '../model/map'
 require_relative '../model/server'
 
 module ServerLogic
-  def find_server
+  def start_server map
     servers = Server.all(:order => :played_at.asc)
   
     servers.each do |server|
       2.times do |i|
         begin
-          return server if server.start(@map)
+          return server if server.start(map)
         rescue Exception => e
-          message "#{ e.message } while connecting to #{ server.name }."
-          sleep const["delays"]["server"]
+          message "Trying #{ server.name }: #{ e.message }."
         end
       end
     end
   end
   
-  def announce_server
-    message "The pug will take place on #{ @server.name } with the map #{ @map.name }."
+  def announce_server server, map
+    message "The pug will take place on #{ server.name } with the map #{ map.name }."
     advertisement
   end
   
-  def next_map
-    maps = Map.all(:order => :played_at.desc, :limit => (Map.count - const['rotation']['exclude']))
+  def choose_server
+    Server.first(:order => :played_at.asc)
+  end
+  
+  def choose_map
+    maps = Map.all(:order => :played_at.desc, :limit => [Map.count - Constants.settings']['map_exclude, 0].max)
     num = rand(maps.sum(:weight))
     
     maps.each do |map|
@@ -53,8 +56,8 @@ module ServerLogic
   def upload_demos
     storage = "demos/" # TODO: Make constant
   
-    up = Net::FTP.open(const["stv"]["ftp"]["ip"], const["stv"]["ftp"]["user"], const["stv"]["ftp"]["password"]) # TODO: Clean up constants
-    up.chdir const["stv"]["ftp"]["dir"] if const["stv"]["ftp"]["dir"]
+    up = Net::FTP.open(Constants.stv['ftp']['ip'], Constants.stv['ftp']['user'], Constants.stv['ftp']['password']) # TODO: Clean up constants
+    up.chdir Constants.stv['ftp']['dir'] if Constants.stv['ftp']['dir']
     up.passive = true
   
     Dir.new(storage).glob("*.zip").each do |filename|
@@ -66,8 +69,8 @@ module ServerLogic
   end
   
   def purge_demos
-    up = Net::FTP.open(const["stv"]["ftp"]["ip"], const["stv"]["ftp"]["user"], const["stv"]["ftp"]["password"]) # TODO: Clean up constants
-    up.chdir const["stv"]["ftp"]["dir"] if const["stv"]["ftp"]["dir"]
+    up = Net::FTP.open(Constants.stv['ftp']['ip'], Constants.stv['ftp']['user'], Constants.stv['ftp']['password']) # TODO: Clean up constants
+    up.chdir Constants.stv['ftp']['dir'] if Constants.stv['ftp']['dir']
   
     up.nlst.each do |filename|
       if filename =~ /(.+?)-(.{4})(.{2})(.{2})-(.{2})(.{2})-(.+)\.dem/
@@ -78,7 +81,7 @@ module ServerLogic
   end
   
   def list_stv
-    message "STV demos can be found here: #{ const['stv']['url'] }"
+    message "STV demos can be found here: #{ Constants.stv']['url }"
   end
   
   def list_status
@@ -98,7 +101,7 @@ module ServerLogic
   end
   
   def list_mumble
-    message "Mumble server info: #{ const['mumble']['ip'] }:#{ const['mumble']['port'] } password: #{ const['mumble']['password'] } . Download Mumble here: http://mumble.sourceforge.net/"
+    message "Mumble server info: #{ Constants.mumble']['ip'] }:#{ const['mumble']['port'] } password: #{ const['mumble']['password } . Download Mumble here: http://mumble.sourceforge.net/"
     advertisement
   end
   
@@ -112,6 +115,6 @@ module ServerLogic
   end
   
   def advertisement
-    message "Servers are provided by #{ colourize "End", const['colours']['orange'] } of #{ colourize "Reality", const['colours']['orange'] }: #{ colourize "http://eoreality.net", const['colours']['orange'] } #eoreality"
+    message "Servers are provided by #{ colourize "End", Constants.colours']['orange } of #{ colourize "Reality", Constants.colours']['orange }: #{ colourize "http://eoreality.net", Constants.colours']['orange } #eoreality"
   end
 end

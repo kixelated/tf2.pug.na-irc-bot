@@ -53,6 +53,7 @@ settings:
   afk: 600
   captain_min: 10
   server_full: 3
+  map_exclude: 3
 
 reward:
   min: 10
@@ -88,34 +89,3 @@ delays:
   picking: 60
   server: 5
   manager: 0.05
-
-states:
-  waiting: 0
-  afk: 1
-  delay: 2
-  picking: 3
-  server: 4
-
-colours:
-  white: 0
-  black: 1
-  navy: 2
-  green: 3
-  red: 4
-  brown: 5
-  purple: 6
-  orange: 7
-  yellow: 8
-  lime: 9
-  teal: 10
-  aqua: 11
-  blue: 12
-  pink: 13
-  grey: 14
-  lgrey: 15
-  
-  home: 11
-  away: 4
-  
-formatting:
-  justify: 15
