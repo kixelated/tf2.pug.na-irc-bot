@@ -79,6 +79,17 @@ servers:
       user: pugna2
       password: secret
       dir: orangebox/tf
+      
+  - name: dallas2
+    ip: dallas2.tf2pug.us
+    port: 27015
+    password: tf2pug
+    rcon: secret
+    ftp:
+      ip: chicago2.tf2pug.eoreality.net
+      user: pugna2
+      password: secret
+      dir: orangebox/tf
 
 stv:
   url: http://tf2pug.us/demos
