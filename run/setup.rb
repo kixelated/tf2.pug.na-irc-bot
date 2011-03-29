@@ -105,6 +105,18 @@ Map.create(
   weight: 1
 )
 
-["scout", "soldier", "pyro", "demo", "heavy", "engineer", "medic", "sniper", "spy", "civilian", "captain"].each do |clss|
-  Tfclass.create(:name => clss)
+
+{
+  scout: 2, 
+  soldier: 2,
+  pyro: 0,
+  demo: 1, 
+  heavy: 0,
+  engineer: 0,
+  medic: 1,
+  sniper: 0,
+  spy: 0,
+  captain: 1 # this must be 1
+}.each do |name, count|
+  Tfclass.create(:name => name, :pug => count)
 end

@@ -21,7 +21,7 @@ messengers:
   
 stv:
   url: http://tf2pug.us/demos
-  storage: ../demos/
+  storage: ../tmp/
   purge: 1209600
   ftp:
     ip: tf2pug.us
@@ -35,20 +35,6 @@ mumble:
   ip: chi6.eoreality.net
   port: 64746
   password: tf2pug
-
-tf:
-  players: 6
-  classes:
-    scout: 2
-    soldier: 2
-    pyro: 0
-    demo: 1
-    heavy: 0
-    engineer: 0
-    medic: 1
-    sniper: 0
-    spy: 0
-    captain: 1
     
 settings:
   afk: 600

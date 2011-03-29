@@ -22,6 +22,8 @@ module ServerLogic
   end
   
   def self.download_demos
+    FileUtils.mkdir Constants.stv['storage'] if not Dir.exists?(Constants.stv['storage'])
+  
     Server.all.each do |server|
       begin
         result = server.download_demos
@@ -41,11 +43,13 @@ module ServerLogic
     files.each do |file|
       filename = File.basename(file)
       
-      up.putbinaryfile file, File.basename(filename + ".tmp")
+      up.putbinaryfile fiFileUtils.mkdir storage if not Dir.exists?(storage)le, File.basename(filename + ".tmp")
       up.rename filename + ".tmp", filename
       
       FileUtils.rm file
     end
+    
+    FileUtils.rm_dir Constants.stv['storage']
     
     result = files.size
     message "#{ result } demos uploaded." if result > 0

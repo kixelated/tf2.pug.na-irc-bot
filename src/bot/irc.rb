@@ -1,7 +1,8 @@
 require 'cinch'
 
 require_relative '../constants'
-require_relative 'botManager'
+
+require_relative 'manager'
 
 module Irc
   def require_admin m
@@ -41,8 +42,13 @@ module Irc
     pink: 13,
     grey: 14,
     lgrey: 15,
-    home: 11,
-    away: 4
+    home: 11, # Team colours
+    away: 4,
+    scout: 0, # Class colours
+    soldier: 0,
+    demo: 0,
+    medic: 0,
+    captain: 0
   }
 
   def colour_start fore, back = 0
@@ -54,14 +60,12 @@ module Irc
   end
   
   def colourize msg, fore = :white, back = :black
-    output = msg.to_s.gsub(/\x03\d.*?\x03/) { |str| "#{ colour_end }#{ str }#{ colour_start(Colours[fore], Colours[back]) }" }
-    "#{ colour_start(Colours[fore], Colours[back]) }#{ output }#{ colour_end }"
+    fore = if Colours[fore]; Colours[fore]; else; :white; end
+    back = if Colours[back]; Colours[back]; else; :black; end
+     
+    output = msg.to_s.gsub(/\x03\d.*?\x03/) { |str| "#{ colour_end }#{ str }#{ colour_start(fore, back) }" }
+    "#{ colour_start(fore, back) }#{ output }#{ colour_end }"
   end 
- 
-  def team_colourize msg, home, back = :black
-    team = if home; :home; else; :away; end
-    colourize msg, team, back
-  end
   
   def bold msg
     "\x02#{ msg.to_s }\x02"

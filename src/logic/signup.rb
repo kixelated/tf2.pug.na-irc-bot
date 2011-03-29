@@ -1,231 +1,92 @@
 require 'chronic_duration'
 
+require_relative '../bot/irc'
+require_relative '../logic/match'
+require_relative '../logic/state'
+require_relative '../model/tfclass'
 require_relative '../model/user'
-require_relative '../util'
 
-module SignupLogic
-  def add_player user, classes
-    return notice user, "No classes entered. Usage: !add #{ Constants.teams['classes'].keys * " " }" unless classes
-         
-    user.refresh unless user.authed?
-    notice user, "You are not authorized with Gamesurge. You can still play in the channel, but any accumulated stats may be lost and will not transfer if you change your nick. Please follow this guide to register and authorize with Gamesurge: http://www.gamesurge.net/newuser/" unless user.authed?
+module SignupLogic 
+  def add_player player, classes
+    tfclasses = Tfclass.all(:pug.gte => 1) # select all of the pug-friendly classes
+    tfnames = tfclasses.collect { |tf| tf.name }
     
-    classes.collect! { |clss| clss.downcase } # convert classes to lowercase
-    classes.uniq! # remove duplicate classes
+    return Irc::notice user, "No classes entered. Usage: !add #{ tfnames * " " }" unless classes
     
-    rej = classes.reject! { |clss| not Constants.teams['classes'].key? clss } # remove invalid classes
-    notice user, "Invalid classes. Possible options are #{ Constants.teams['classes'].keys * ", " }" if rej
-
-    u = find_user user
-    u.update(:auth => user.authname) if u and not u.auth and user.authed? # Updates user if they recently registered
+    classes.collect! { |name| name.downcase } # convert classes to lowercase
+    classes.uniq! # remove duplicate entries
     
-    unless u
-      notice user, "Welcome to #tf2.pug.na! The channel has certain quality standards, and we ask that you have a good amount of experience and understanding of the 6v6 format before playing here. If you do not yet meet these requirements, please type !remove and try another system like tf2lobby.com"
-      notice user, "If you are still interested in playing here, there are a few rules that you can find on our wiki page. Please ask questions and use the !man command to list all of the avaliable commands. Teams will be drafted by captains when there are enough players added, so hang tight and don't fret if you are not picked."
-
-      u = User.create(:auth => user.authname, :nick => user.nick)
+    player.refresh unless player.authed? # refresh and see if recently authed
+    Irc::notice player, "You are not authorized with Gamesurge. You can still play in the channel, but any accumulated stats will only be connected to this nick. Please follow this guide to register and authorize with Gamesurge: http://www.gamesurge.net/newuser/" unless user.authed?
+    
+    user = UserLogic::find_user(player) or UserLogic::create_user(player) # find or create user
+    total = StatsLogic::calculate_total(user) # determine total games played
+    
+    if classes.include?("captain") and total < Constants.captain['min'] # check captain requirements
+      Irc::notice player, "You must have #{ Constants.captain['min'] } games played to add as captain."
+      classes.delete("captain")
     end
-   
-    total = calculate_total u
-    cap = classes.delete("captain") if total < Constants.captain['min']
-    
-    return notice user, "You are restricted from playing in this channel." if u.restriction
-    notice user, "You must have #{ Constants.captain['min'] } games played to add as captain." if cap
-    
-    return if classes.empty?
-    
-    # add the player to the pug
-    if can_add?
-      @auth[user.nick] = u
-      @signups[user.nick] = classes
-    else
-      @toadd[user.nick] = classes
-      notice user, "You cannot add at this time, but you will be added once the picking process is over."
-    end
-  end
-  
-  def add_player! user, classes
-    return if classes.empty?
-  
-    u = find_user user
-    u = create_user user unless u
-    update_user user, u if user.authed? and not u.auth 
-    
-    @auth[user.nick] = u
-    @signups[user.nick] = classes
-  end
-  
-  def remove_player nick
-    return unless @signups.key? nick
-    
-    if can_remove?
-      remove_player! nick 
-    else
-      @toremove << nick if @signups.key? nick
-      return notice nick, "You cannot remove at this time, but will be removed after picking is over."
-    end
-  end
-  
-  def remove_player! nick
-    @auth.delete nick
-    @signups.delete nick
-  end
-  
-  def replace_player! nick, replacement
-    if (can_add? and can_remove?) or @signups.key? nick
-      temp = remove_player!(nick)
-      add_player! replacement, temp if temp
-    else
-      # non-trivial case, player has already been picked
-      @teams.each do |team|
-        if team.signups.key? nick
-          team.signups[replacement.nick] = team.signups.delete(nick)
-          
-          if team.captain == nick
-            team.captain = replacement.nick
-            
-            list_captain nil
-            tell_captain if replacement.nick == current_captain
-          end
-        end
-      end
-    end
-  end
-  
-  def find_user user
-    User.first(:auth, :auth => user.authname) + User.first(:nick => user.nick, :auth => nil)
-  end
-  
-  def update_nick user, nick
-    user.refresh unless user.authed?
-    return notice user, "You must be registered with GameSurge in order to change your nick. http://www.gamesurge.net/newuser/" unless user.authed?
-    
-    u = User.first(:auth => user.authname)
-    return notice user, "Could not find an account registered to your authname, please !add up at least once." unless player
-    return notice user, "Your name has not changed." if u.nick == nick
  
-    message "#{ u.nick } is now known as #{ nick }"
+    classes = tfclasses.select { |tf| classes.include?(tf.name) } # keep the classes signed up for 
+    return Irc::notice player, "Invalid classes. Possible options are #{ tfnames * ", " }" if classes.empty?
     
-    u.update(:nick => nick)
-    @auth[user.nick] = u if @auth[user.nick]
-  end
-  
-  def reward_player user
-    return unless u = find_user(user)
-     
-    total = calculate_total u
-    return if total < Constants.reward['min']
+    return Irc::notice player, "You are restricted from playing in this channel." if user.restricted_at
+    Irc::notice player, "You cannot add at this time, but you have been added to the next pug." unless StateLogic::can_add?
     
-    ratio = calculate_ratios(u, total)
-    sum = Constants.reward['classes'].inject(0.0) { |sum, clss| sum + ratio[clss] }
-    return if sum < Constants.reward['ratio']
+    match = MatchLogic::last_pug # find most recent pug
+    add_user match, user, classes # add the user to the pug
+  end
+  
+  def add_user match, user, classes
+    remove_user match, user # remove in case already signed up
+    classes.each { |clss| match.signups.create(:user => user, :class => clss) } # create the signup
+  end
+  
+  def remove_player player
+    return notice nick, "You cannot remove at this time." unless StateLogic::can_remove?
     
-    Channel(Constants.irc['channel']).voice user
-  end
-  
-  def explain_reward user
-    notice user, "You need #{ Constants.reward['min'] } games and #{ (Constants.reward['ratio'] * 100).round }% on #{ Constants.reward['classes'] * " + " } to get voice."
-  end
-  
-  def restrict_player user, nick, duration
-    u = find_user User(nick)
-    duration = ChronicDuration.parse(duration)
+    user = UserLogic::find_user(player)
+    match = MatchLogic::last_pug
     
-    return notice user, "Could not find user." unless u
-    return notice user, "Unknown duration." unless duration
-    remove_player nick
+    remove_user match, user # remove the user
+  end
+  
+  def remove_user match, user
+    match.signups.delete(:user => user) # delete any signups
+  end
+  
+  def replace_player player, player_replacement
+    # TODO
+  end
+ 
+  def replace_user match, user, user_replacement
+    # TODO
+  end
+  
+  def list_signups
+    match = MatchLogic::last_pug
     
-    u.update(:restricted_at => Time.now.to_i + duration)
-    message "#{ u.nick } has been restricted for #{ ChronicDuration.output(duration) }."
-  end
-  
-  def authorize_player user, nick
-    u = find_user User(nick)
-    
-    return notice user, "Could not find user." unless u
-    return notice user, "User is not restricted." unless u.restricted_at
-    
-    u.update(:restricted_at => 0)
-    message "#{ u.nick } is no longer restricted."
-  end
-  
-  def update_restrictions 
-    User.all(:restricted_at.gte => Time.now).each do |u|
-      u.update(:restricted_at => 0)
-      message "#{ u.nick } is no longer restricted."
-    end
-  end
-  
-  def get_classes
-    @signups.invert_proper_arr
-  end
-  
-  def classes_needed(players, multiplier = Constants.teams['count'], requirements = Constants.teams['classes'])
-    requirements.inject({}) do |required, (clss, count)|
-      temp = count * multiplier - players[clss].size
-      required[clss] = temp if temp > 0
-      required
-    end
-  end
-  
-  def list_players
-    output = @signups.collect_proper do |nick, classes|
-      medic, captain = classes.include?("medic"), classes.include?("captain")
-      special = ":#{ colourize "m", :red if medic }#{ colourize "c", :yellow if captain }" if medic or captain
-      "#{ nick }#{ special }"
+    # TODO: I'm just making this query up, needs to be verified
+    user_signups = match.signups.group(:user).include(:tfclass).collect do |user_signup|
+      user_classes = user_signup.tfclass.each do |user_class|
+        colourize user_class.name[0], user_class.name.to_sym # color the first letter of each class
+      end
+      "#{ user_signup.user.name }:#{ user_classes * "" }"
     end
     
-    message "#{ rjust("#{ @signups.size } users added:") } #{ output.values * ", " }"
+    Irc::message "#{ rjust("#{ user_signups.size } users added:") } #{ user_signups * ", " }"
   end
   
-  def list_players_delay
-    list_players unless @show_list > 0
+  def list_signups_delay
+    list_signups unless @show_list > 0
     @show_list += 1
-  end
-
-  def list_players_detailed
-    classes = get_classes
-
-    Constants.teams['classes'].each_key do |k|
-      message "#{ colourize rjust("#{ k }:"), :lgrey } #{ classes[k] * ", " }" unless classes[k].empty?
-    end
   end
  
   def list_classes_needed
-    output = classes_needed(get_classes)
-    output['player'] = Constants.teams['total'] - @signups.size if @signups.size < Constants.teams['total']
-    output.collect_proper! { |k, v| "#{ v } #{ k }" } # Format the output
-
-    message "#{ rjust "Required classes:" } #{ output.values * ", " }"
-  end
-  
-  def calculate_total user
-    user.players.sum(:team)
-  end
-  
-  def calculate_fatkid user
-    temp = user.players.aggregate(:all.count, :team.count)
-    temp[1].to_f / temp[0].to_f
-  end
-  
-  def calculate_ratios user, total
-    user.stats.all.collect do |stat|
-      stat.count.to_f / total.to_f
-    end
-  end
-
-  def list_stats user
-    u = find_user user
-    return message "There are no records of the user #{ user.nick }" unless u
-    
-    total = calculate_total u
-    output = calculate_ratios(u, total).collect { |stat, percent| "#{ (percent * 100).round }% #{ stat.tfclass }" }
-
-    message "#{ u.name }#{ "*" unless u.auth } has #{ total } games played: #{ output * ", " }"
+    # TODO
   end
 
   def minimum_players? players = @signups
-    return false if players.size < Constants.teams['total']
-    return classes_needed(players.invert_proper_arr).empty?
+    # TODO
   end
 end

@@ -13,7 +13,7 @@ class Match
   belongs_to :map
   belongs_to :server
   
-  property :pug, Boolean, :index => true, :default => false
+  property :pug, Boolean, :default => true
   
   property :played_at,  DateTime, :index => true
   property :created_at, DateTime
@@ -35,6 +35,7 @@ class Match
     end
   end
   
+  has n, :signups,  :constraint => :destroy
   has 2, :matchups, :constraint => :destroy
   has 2, :teams,    :through => :matchups
   

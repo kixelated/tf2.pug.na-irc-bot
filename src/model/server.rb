@@ -80,7 +80,6 @@ class Server
     raise Exception.new("In use, please wait until the pug has ended") if info['number_of_players'] > Constants.settings['server_full']
     
     storage = Constants.stv['storage']
-    FileUtils.mkdir storage if not Dir.exists?(storage)
     
     down = Net::FTP.open(@host, @ftp_user, @ftp_pass)
     down.chdir @ftp_dir if @ftp_dir

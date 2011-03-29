@@ -10,7 +10,7 @@ class User
  
   property :id, Serial
   property :auth, String, :index => :auth_nick
-  property :nick, String, :index => :auth_nick, :required => true
+  property :nick, String, :index => :auth_nick, :unique => :auth, :required => true
   
   property :restricted_at, DateTime, :index => true
  

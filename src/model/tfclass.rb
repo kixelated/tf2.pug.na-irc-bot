@@ -7,7 +7,8 @@ class Tfclass
   
   property :id,   Serial
   property :name, String
-  
+  property :pug,  Integer, :default => 0
+     
   has n, :stats
   
   validates_presence_of :name

@@ -1,7 +1,7 @@
 require 'cinch'
 
-require_relative 'irc/irc'
-require_relative 'irc/botManager'
+require_relative 'bot/irc'
+require_relative 'bot/manager'
 
 require_relative 'logic/afk'
 require_relative 'logic/map'
@@ -10,6 +10,7 @@ require_relative 'logic/server'
 require_relative 'logic/signup'
 require_relative 'logic/state'
 require_relative 'logic/stats'
+require_relative 'logic/user'
 
 class Pug
   include Cinch::Plugin
@@ -29,7 +30,6 @@ class Pug
   match /add(?: (.+))?/i, method: :command_add
   match /remove/i, method: :command_remove
   match /list/i, method: :command_list
-  match /players/i, method: :command_players
   match /need/i, method: :command_need
   match /afk/i, method: :command_afk
   match /stats(?: ([\S]+))?/i, method: :command_stats
@@ -77,7 +77,7 @@ class Pug
   end
   
   def event_join m
-    StatsLogic::reward_player m.user
+    UserLogic::reward_player m.user
   end
   
   def event_part m
@@ -89,15 +89,15 @@ class Pug
   end
   
   def event_kick m
-    SignupLogic::remove_player! m.params[1]
+    SignupLogic::remove_player User(m.params[1])
   end
   
   def event_nick m
-    SignupLogic::replace_player! m.user.last_nick, m.user
+    SignupLogic::replace_player User(m.user.last_nick), m.user
   end
   
   def timer_list
-    SignupLogic::list_players if @show_list > 1
+    SignupLogic::list_signups if @show_list > 1
     @show_list = 0
   end
   
@@ -111,38 +111,30 @@ class Pug
     return Irc::notice(m.user, "Add to the pug: !add <class1> <class2> <etc>") unless classes
   
     if SignupLogic::add_player m.user, classes.split(/ /)
-      SignupLogic::list_players_delay
-      stateLogic::attempt_afk 
+      SignupLogic::list_signups_delay
+      StateLogic::attempt_afk 
     end
   end
 
   # !remove
   def command_remove m
-    SignupLogic::list_players_delay if SignupLogic::remove_player m.user.nick
+    SignupLogic::list_signups_delay if SignupLogic::remove_player m.user
   end
   
   # !list
   def command_list m
-    SignupLogic::list_players
-    SignupLogic::list_players_detailed
-  end
-  
-  # !players
-  def command_players m
-    SignupLogic::list_players
+    SignupLogic::list_signups
   end
   
   # !need
   def command_need m
-    SignupLogic::list_classes_needed if stateLogic::can_add?
+    SignupLogic::list_classes_needed if StateLogic::can_add?
   end
   
   # !stats
-  def command_stats m, user
-    if user
-      StatsLogic::list_stats User(user)
-    else
-      StatsLogic::list_stats m.user
+  def command_stats m, player
+    if player; StatsLogic::list_stats User(player)
+    else; StatsLogic::list_stats m.user
     end
   end
   
@@ -160,7 +152,7 @@ class Pug
   
   # !reward
   def command_reward m
-    StatsLogic::explain_reward m.user unless StatsLogic::reward_player m.user
+    StatsLogic::reward_player m.user
   end
   
   # Picking-related commands
@@ -206,7 +198,7 @@ class Pug
   
   # !last
   def command_last m
-    stateLogic::list_last
+    StateLogic::list_last
   end
   
   # !rotation
@@ -268,9 +260,9 @@ class Pug
   def admin_forceadd m, player, classes
     return unless Irc::require_admin m
 
-    if SignupLogic::add_player! User(player), classes.split(/ /) 
-      SignupLogic::list_players_delay
-      stateLogic::attempt_afk 
+    if SignupLogic::add_player User(player), classes.split(/ /) 
+      SignupLogic::list_signups_delay
+      StateLogic::attempt_afk 
     end
   end
   
@@ -278,21 +270,21 @@ class Pug
   def admin_forceremove m, player
     return unless Irc::require_admin m
     
-    SignupLogic::list_players_delay if SignupLogic::remove_player! player
+    SignupLogic::list_signups_delay if SignupLogic::remove_player User(player)
   end
   
   # !fpick 
   def admin_forcepick m, player, player_class
     return unless Irc::require_admin m
   
-    PickingLogic::pick_player User(current_captain), player, player_class 
+    PickingLogic::pick_player User(PickingLogic::current_captain), User(player), player_class 
   end
   
   # !replace
-  def admin_replace m, nick, replacement
+  def admin_replace m, player, replacement
     return unless Irc::require_admin m
     
-    SignupLogic::list_players_delay if SignupLogic::replace_player! nick, User(replacement) 
+    SignupLogic::list_signups_delay if SignupLogic::replace_player User(player), User(replacement) 
   end
   
   # !endgame
@@ -301,8 +293,8 @@ class Pug
     
     Irc::message "Game has been ended."
     
-    stateLogic::end_game
-    SignupLogic::list_players
+    StateLogic::end_game
+    SignupLogic::list_signups
   end
   
   # !reset
@@ -311,7 +303,7 @@ class Pug
     
     Irc::message "Game has been reset, please add up again."
     
-    stateLogic::reset_game
+    StateLogic::reset_game
   end
   
   # !quit
