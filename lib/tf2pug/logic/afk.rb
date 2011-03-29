@@ -1,45 +1,42 @@
 require 'tf2pug/constants'
+require 'tf2pug/bot/irc'
 
 module AfkLogic
-  def self.update_spoken user
-    @spoken[user.nick] = Time.now
-    
-    if @afk.delete user.nick and @afk.empty?
-      attempt_delay # logic/state.rb
-    end
-  end
-
-  def self.check_afk list
-    list.select do |nick|
-      !@spoken[nick] or (Time.now - @spoken[nick]).to_i > Constants.settings['afk']
-    end
+  def self.spoken_player player
+    user = User.find_user
+    spoken_user user
   end
   
-  def self.start_afk
-    state "afk"
-  
-    @afk = check_afk @signups.keys
-    return if @afk.empty?
-  
-    message "#{ colourize rjust("AFK players:"), :yellow } #{ @afk * ", " }"
-    
-    @afk.each do |p|
-      private p, "Warning, you are considered afk by the bot. Say anything in the channel within the next #{ Constants.delays['afk'] } seconds to avoid being removed."
+  def self.spoken_user
+    user.update(:spoken_at => Time.now)
+  end
+
+  def self.check_afk timeout
+    MatchLogic::last_pug.signups.group(:user).include(:user).all.select do |signup|
+      signup.user.spoken_at + timeout < Time.now
     end
+  end
+  
+  def self.warn_afk
+    afk = check_afk(Constants.settings['afk'])
+    afk_nicks = afk.collect { |signup| signup.user.nick }
     
-    sleep Constants.delays['afk']
+    message "#{ colourize rjust("AFK players:"), :yellow } #{ afk_nicks * ", " }"
+    afk_nicks.each do |nick|
+      Irc::privmsg nick, "Warning, you are considered afk by the bot. Say anything in the channel within the next #{ Constants.delays['afk'] } seconds to avoid being removed."
+    end
+  end
+  
+  def self.remove_afk
+    timeout = Constants.settings['afk'] + Constants.delays['afk']
     
-    # return if not needed
-    return unless @state == Constants.states['afk']
-
-    # check again if users are afk, this time removing the ones who are
-    check_afk(@afk).each { |nick| @signups.delete nick }
-    @afk.clear
-
-    list_players # logic/players.rb
+    check_afk(timeout).each do |signup|
+      SignupLogic::remove_user signup.user
+    end
   end
   
   def self.list_afk
-    message "#{ rjust "AFK players:" } #{ check_afk(@signups.keys) * ", " }"
+    afk_nicks = check_afk(Constants.settings['afk']).collect { |signup| signup.user.nick }
+    message "#{ rjust "AFK players:" } #{ afk_nicks * ", " }"
   end
 end

@@ -2,14 +2,21 @@ require 'tf2pug/bot/irc'
 require 'tf2pug/model/user'
 
 module UserLogic
+  self.cache = {}
+
   def self.find_user player
+    return cache[player] if cache.key? player
+    
     user = User.first(:auth => player.authname) if player.authed? # select by auth
     
-    unless user
+    if user
+      user.update(:nick => player.nick) if user.nick != player.nick # update user's nick
+    else
       user = User.first(:nick => player.nick, :auth => nil) # select by nick
-      user.update(:auth => player.authname) if user and player.authed? # update user if recently authed
+      user.update(:auth => player.authname) if user and player.authed? # update user's auth
     end
     
+    cache[player] = user
     return user
   end
   
@@ -17,7 +24,11 @@ module UserLogic
     Irc::notice player, "Welcome to #tf2.pug.na! The channel has certain quality standards, and we ask that you have a good amount of experience and understanding of the 6v6 format before playing here. If you do not yet meet these requirements, please type !remove and try another system like tf2lobby.com"
     Irc::notice player, "If you are still interested in playing here, there are a few rules that you can find on our wiki page. Please ask questions and use the !man command to list all of the avaliable commands. Teams will be drafted by captains when there are enough players added, so hang tight and don't fret if you are not picked."
 
-    User.create(:auth => player.authname, :nick => player.nick)
+    cache[player] = User.create(:auth => player.authname, :nick => player.nick)
+  end
+  
+  def self.rename_player player_old, player_new
+    cache[player_new] = cache.delete(player_old) 
   end
   
   def self.restrict_player admin, player, duration
@@ -54,22 +65,6 @@ module UserLogic
   
   def self.update_restrictions 
     User.all(:restricted_at.gte => Time.now).each { |user| authorize_user user }
-  end
-
-  def self.nick_player player, nick
-    player.refresh unless player.authed? # refresh in case recently authed
-    return Irc::notice player, "You must be registered with GameSurge in order to change your nick. http://www.gamesurge.net/newuser/" unless player.authed?
-    
-    user = find_user player
-    return Irc::notice player, "Could not find an account registered to your authname." unless user.auth
-    return Irc::notice player, "Your nick has not changed." if user.nick == nick
-    
-    Irc::message "#{ user.nick } is now known as #{ nick }"
-    nick_user user, nick
-  end
-  
-  def self.nick_user user, nick
-    user.update(:nick => nick)
   end
   
   def self.reward_player player

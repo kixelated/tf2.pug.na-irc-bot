@@ -2,7 +2,6 @@ require 'cinch'
 
 require 'tf2pug/bot/irc'
 require 'tf2pug/bot/manager'
-
 require 'tf2pug/logic/afk'
 require 'tf2pug/logic/map'
 require 'tf2pug/logic/picking'
@@ -33,7 +32,6 @@ class Tf2Pug
   match /need/i, method: :command_need
   match /afk/i, method: :command_afk
   match /stats(?: ([\S]+))?/i, method: :command_stats
-  match /nick(?: ([\S]+))?/i, method: :command_nick
   match /reward/i, method: :command_reward
 
   # picking-related commands
@@ -93,7 +91,10 @@ class Tf2Pug
   end
   
   def event_nick m
-    SignupLogic::replace_player User(m.user.last_nick), m.user
+    old = User(m.user.last_nick)
+    
+    SignupLogic::replace_player old, m.user
+    UserLogic::rename_player old, m.user
   end
   
   def timer_list
@@ -331,11 +332,10 @@ class Tf2Pug
   def admin_cookie m, pass
     return unless Irc::require_admin m
     
-    unless pass
-      bot.msg Constants.irc['auth_serv'], "AUTHCOOKIE #{ Constants.irc['auth'] }"
-    else
-      bot.msg Constants.irc['auth_serv'], "COOKIE #{ Constants.irc['auth'] } #{ pass }"
-    end
+    command = if pass; "COOKIE #{ Constants.irc['auth'] } #{ pass }";
+              else; "AUTHCOOKIE #{ Constants.irc['auth'] }"; end
+    
+    bot.msg Constants.irc['auth_serv'], command
   end
   
   # !reload

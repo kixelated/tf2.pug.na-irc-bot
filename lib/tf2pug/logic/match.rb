@@ -14,8 +14,6 @@ module MatchLogic
   end
 
   def self.last_pug
-    pug = Match.last(:pug => true, :state => :waiting)
-    pug = create_pug unless pug
-    return pug
+    Match.last(:pug => true)
   end
 end

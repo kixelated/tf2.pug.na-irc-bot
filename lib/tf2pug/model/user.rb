@@ -19,6 +19,7 @@ class User
   has n, :signups, :constraint => :destroy
   has n, :picks
   
+  property :spoken_at, DateTime
   property :created_at, DateTime
   property :updated_at, DateTime
 end

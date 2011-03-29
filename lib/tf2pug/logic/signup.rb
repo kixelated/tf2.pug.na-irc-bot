@@ -32,7 +32,7 @@ module SignupLogic
     return Irc::notice player, "Invalid classes. Possible options are #{ tfnames * ", " }" if classes.empty?
     
     return Irc::notice player, "You are restricted from playing in this channel." if user.restricted_at
-    Irc::notice player, "You cannot add at this time, but you have been added to the next pug." unless MatchLogic::can_add?
+    return Irc::notice player, "You cannot add at this time." unless MatchLogic::can_add?
     
     match = MatchLogic::last_pug # find most recent pug
     add_user match, user, classes # add the user to the pug
