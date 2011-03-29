@@ -1,6 +1,6 @@
 require 'bundler/setup'
 
-require_relative '../src/logic/server'
+require_relative '../../src/logic/server'
 
 def message msg
   puts msg
