@@ -1,30 +1,30 @@
 require_relative '../database'
-require_relative '../models/user'
 require_relative '../bot/irc'
+require_relative '../models/user'
 
 module StatsLogic
   def self.calculate_total user
-    user.players.sum(:team)
+    user.picks.count
   end
   
   def self.calculate_fatkid user
-    temp = user.players.aggregate(:all.count, :team.count)
+    temp = user.picks.aggregate(:all.count, :tfclass.count)
     temp[1].to_f / temp[0].to_f
   end
   
-  def self.calculate_ratios user, total
-    user.stats.all.collect do |stat|
-      stat.count.to_f / total.to_f
-    end
+  def self.calculate_ratios user
+    total = user.stats.count
+    temp = user.stats.group(:tfclass).all.collect { |stat| [stat.tfclass, stat.count.to_f / total.to_f] }
+    Hash[temp]
   end
 
-  def self.list_stats user
-    u = find_user user
-    return message "There are no records of the user #{ user.nick }" unless u
+  def self.list_stats player
+    user = UserLogic::find_user player
+    return message "There are no records of the user #{ player.nick }" unless user
     
-    total = calculate_total u
-    output = calculate_ratios(u, total).collect { |stat, percent| "#{ (percent * 100).round }% #{ stat.tfclass }" }
+    total = calculate_total(user)
+    output = calculate_ratios(user).collect { |tfclass, percent| "#{ (percent * 100).round }% #{ tfclass.name }" }
 
-    message "#{ u.name }#{ "*" unless u.auth } has #{ total } games played: #{ output * ", " }"
+    message "#{ user.nick }#{ "*" unless user.auth } has #{ total } games played: #{ output * ", " }"
   end
 end

@@ -18,6 +18,7 @@ class User
   has n, :teams,   :through => :rosters
   has n, :stats,   :constraint => :destroy
   has n, :signups, :constraint => :destroy
+  has n, :picks
   
   property :created_at, DateTime
   property :updated_at, DateTime
