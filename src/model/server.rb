@@ -10,12 +10,12 @@ class Server
   include DataMapper::Resource
   
   property :id,   Serial
-  property :name, String
+  property :name, String, :required => true
   
-  property :host, String
+  property :host, String, :required => true
   property :port, Integer, :default => 27015
   property :pass, String
-  property :rcon, String
+  property :rcon, String, :required => true
   
   property :ftp_user, String
   property :ftp_pass, String
@@ -27,8 +27,6 @@ class Server
   
   has n, :matches
   
-  validates_presence_of :name, :host, :rcon
-  
   def server_obj
     SourceServer.new @host, @port
   end
@@ -38,7 +36,7 @@ class Server
     info = server.server_info
     
     raise Exception.new("Could not connect") unless info
-    raise Exception.new("Server is full") unless info['number_of_players'] < 6 # TODO: const['settings']['used']
+    raise Exception.new("Server is full") unless info['number_of_players'] < Constants.settings['server_full']
     
     server.rcon_connect @rcon
     server.rcon_exec "changelevel #{ map.file }"
@@ -63,7 +61,7 @@ class Server
       rinfo = Hash[server.rcon_exec("tournament_info").scan(/(\w+): "([^"]*)"/)]
       
       status = case rinfo
-        when r.empty?; "Warmup on #{ info['map_name'] } with #{ info['number_of_players'] } players"
+        when rinfo.empty?; "Warmup on #{ info['map_name'] } with #{ info['number_of_players'] } players"
         else; "#{ rinfo['Score'] } on #{ info['map_name'] } with #{ rinfo['Timeleft'] } remaining"
       end
     rescue Exception => e
@@ -79,16 +77,16 @@ class Server
     server = server_obj
     info = server.server_info
     
-    raise Exception.new("In use, please wait until the pug has ended") if info['number_of_players'] >= const['settings']['used']
+    raise Exception.new("In use, please wait until the pug has ended") if info['number_of_players'] > Constants.settings['server_full']
     
-    storage = "demos/" # TODO: Make a constant
+    storage = Constants.stv['storage']
     FileUtils.mkdir storage if not Dir.exists?(storage)
     
     down = Net::FTP.open(@host, @ftp_user, @ftp_pass)
     down.chdir @ftp_dir if @ftp_dir
     down.passive = true
     
-    demos = conn.nlst.reject { |filename| !(filename =~ /.+\.dem/) }
+    demos = down.nlst.reject { |filename| !(filename =~ /.+\.dem/) }
     demos.each do |filename|
       file = "#{ @name }-#{ filename }"
       filezip = "#{ file }.zip"

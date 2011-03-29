@@ -16,7 +16,7 @@ class Team
 
   has n, :matchups
   has n, :matches,  :through => :matchups
-  has n, :rosters
+  has n, :rosters,  :constraint => :destroy
   has n, :users,    :through => :rosters
   
   validates_presence_of :name

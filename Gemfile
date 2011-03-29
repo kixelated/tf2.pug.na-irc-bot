@@ -9,6 +9,7 @@ gem 'dm-migrations'
 gem 'dm-timestamps'
 gem 'dm-validations'
 gem 'dm-is-state_machine'
+gem 'dm-constraints'
 
 gem 'sqlite3'
 gem 'dm-sqlite-adapter'

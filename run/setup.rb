@@ -1,15 +1,9 @@
 require 'bundler/setup'
 
-require_relative '../src/database'
-require_relative '../src/logic'
-require_relative '../src/model/server'
-require_relative '../src/model/map'
-require_relative '../src/model/tfclass'
+Dir["../src/model/*.rb"].each { |file| require_relative file }
 
 DataMapper.finalize
 DataMapper.auto_migrate!
-
-Logic.create
 
 Server.create(
   name: "chicago1",
@@ -37,6 +31,16 @@ Server.create(
   pass: "tf2pug",
   rcon: "secret",
   ftp_user: "pugna2", 
+  ftp_pass: "secret",
+  ftp_dir: "/orangebox/tf"
+)
+
+Server.create(
+  name: "dallas2",
+  host: "dallas2.tf2pug.us",
+  pass: "tf2pug",
+  rcon: "secret",
+  ftp_user: "pugna3", 
   ftp_pass: "secret",
   ftp_dir: "/orangebox/tf"
 )
@@ -101,6 +105,6 @@ Map.create(
   weight: 1
 )
 
-["civilian", "scout", "soldier", "pyro", "demo", "heavy", "engineer", "medic", "sniper", "spy"].each_with_index do |clss, i|
-  Tfclass.create(:id => i, :name => clss)
+["scout", "soldier", "pyro", "demo", "heavy", "engineer", "medic", "sniper", "spy", "civilian", "captain"].each do |clss|
+  Tfclass.create(:name => clss)
 end

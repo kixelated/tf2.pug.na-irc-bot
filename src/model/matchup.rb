@@ -10,9 +10,7 @@ class Matchup
   belongs_to :match, :key => true
   belongs_to :team,  :key => true
   
-  property :home, Boolean
+  property :home, Boolean, :unique => :match
   
-  has n, :picks
-  
-  validates_uniqueness_of :home, :scope => :match
+  has n, :picks, :constraint => :destroy
 end

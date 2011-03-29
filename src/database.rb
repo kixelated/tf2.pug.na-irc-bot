@@ -4,6 +4,7 @@ require 'dm-migrations'
 require 'dm-timestamps'
 require 'dm-validations'
 require 'dm-is-state_machine'
+require 'dm-constraints'
 
 require_relative 'constants'
 

@@ -17,6 +17,8 @@ GEM
       addressable (~> 2.1)
     dm-aggregates (1.1.0)
       dm-core (~> 1.1.0)
+    dm-constraints (1.1.0)
+      dm-core (~> 1.1.0)
     dm-core (1.1.0)
       addressable (~> 2.2.4)
     dm-do-adapter (1.1.0)
@@ -46,6 +48,7 @@ DEPENDENCIES
   chronic_duration
   cinch
   dm-aggregates
+  dm-constraints
   dm-core
   dm-is-state_machine
   dm-migrations

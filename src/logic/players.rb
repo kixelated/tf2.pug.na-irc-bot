@@ -93,7 +93,7 @@ module PlayersLogic
   end
   
   def find_user user
-    User.first(:auth, :auth => user.authname) + User.first(:nick => user.nick, :auth.not)
+    User.first(:auth, :auth => user.authname) + User.first(:nick => user.nick, :auth => nil)
   end
   
   def update_nick user, nick

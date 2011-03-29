@@ -10,6 +10,4 @@ class Stat
   belongs_to :tfclass, :key => true
   
   property :count, Integer, :default => 0
-  
-  validates_numericality_of :count, :gte => 0
 end

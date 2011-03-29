@@ -6,115 +6,97 @@ require_relative '../model/map'
 require_relative '../model/server'
 
 module ServerLogic
-  def start_server map
-    servers = Server.all(:order => :played_at.asc)
-  
-    servers.each do |server|
-      2.times do |i|
-        begin
-          return server if server.start(map)
-        rescue Exception => e
-          message "Trying #{ server.name }: #{ e.message }."
-        end
+  def self.start_server server, map
+    Server.all(:order => :played_at.asc).cycle(2) do |server|
+      begin
+        return server if server.start(map)
+      rescue Exception => e
+        message "Error starting #{ server.name }: #{ e.message }."
       end
     end
   end
   
-  def announce_server server, map
+  def self.announce_server server, map
     message "The pug will take place on #{ server.name } with the map #{ map.name }."
     advertisement
   end
   
-  def choose_server
-    Server.first(:order => :played_at.asc)
-  end
-  
-  def choose_map
-    maps = Map.all(:order => :played_at.desc, :limit => [Map.count - Constants.settings']['map_exclude, 0].max)
-    num = rand(maps.sum(:weight))
-    
-    maps.each do |map|
-      num -= map.weight
-      return map if num <= 0
-    end
-  end
-
-  def update_stv
+  def self.download_demos
     Server.all.each do |server|
       begin
         result = server.download_demos
-        upload_demos
-        purge_demos
-        
-        message "#{ server.name }: #{ result } demos uploaded"
+        message "#{ result } demos downloaded from #{ server.name }." if result > 0
       rescue Exception => e
-        message "#{ server.name }: #{ e.message }"
+        message "Error downloading from #{ server.name }: #{ e.message }."
       end
     end
   end
   
-  def upload_demos
-    storage = "demos/" # TODO: Make constant
-  
-    up = Net::FTP.open(Constants.stv['ftp']['ip'], Constants.stv['ftp']['user'], Constants.stv['ftp']['password']) # TODO: Clean up constants
+  def self.upload_demos
+    up = Net::FTP.open(Constants.stv['ftp']['ip'], Constants.stv['ftp']['user'], Constants.stv['ftp']['password'])
     up.chdir Constants.stv['ftp']['dir'] if Constants.stv['ftp']['dir']
     up.passive = true
-  
-    Dir.new(storage).glob("*.zip").each do |filename|
-      up.putbinaryfile storage + filename, filename + ".tmp"
+    
+    files = Dir[Constants.stv['storage'] + "*.zip"]
+    files.each do |file|
+      filename = File.basename(file)
+      
+      up.putbinaryfile file, File.basename(filename + ".tmp")
       up.rename filename + ".tmp", filename
       
-      FileUtils.rm storage + filename
+      FileUtils.rm file
     end
+    
+    result = files.size
+    message "#{ result } demos uploaded." if result > 0
   end
   
-  def purge_demos
+  def self.purge_demos
     up = Net::FTP.open(Constants.stv['ftp']['ip'], Constants.stv['ftp']['user'], Constants.stv['ftp']['password']) # TODO: Clean up constants
     up.chdir Constants.stv['ftp']['dir'] if Constants.stv['ftp']['dir']
   
     up.nlst.each do |filename|
       if filename =~ /(.+?)-(.{4})(.{2})(.{2})-(.{2})(.{2})-(.+)\.dem/
         server, year, month, day, hour, min, map = $1, $2, $3, $4, $5, $6, $7
-        up.delete filename if Time.mktime(year, month, day, hour, min) + 1209600 < Time.now # TODO: Make constant
+        up.delete filename if Time.mktime(year, month, day, hour, min) + Constants.stv['purge'] < Time.now
       end
     end
   end
   
-  def list_stv
-    message "STV demos can be found here: #{ Constants.stv']['url }"
+  def self.list_stv
+    message "STV demos can be found here: #{ Constants.stv['url'] }"
   end
   
-  def list_status
+  def self.list_status
     Server.all.each do |server|
       message "#{ server.name }: #{ server.status }"
     end
   end
 
-  def list_server
-    server = Server.first(:order => :played_at.asc)
+  def self.list_server server
     message "#{ server.name }: #{ server.connect_info }"
     advertisement
   end
   
-  def list_map
-    message "The current map is #{ @map.name }"
+  def self.list_map map
+    message "The current map is #{ map.name }"
   end
   
-  def list_mumble
-    message "Mumble server info: #{ Constants.mumble']['ip'] }:#{ const['mumble']['port'] } password: #{ const['mumble']['password } . Download Mumble here: http://mumble.sourceforge.net/"
+  def self.list_mumble
+    message "Mumble server info: #{ Constants.mumble['ip'] }:#{ Constants.mumble['port'] } password: #{ Constants.mumble['password'] } . Download Mumble here: http://mumble.sourceforge.net/"
     advertisement
   end
   
-  def list_last
+  def self.list_last
     message "The last match was started #{ ChronicDuration.output(Time.now - Server.max(:played_at)) } ago"
   end
   
-  def list_rotation
+  def self.list_rotation
     output = Map.all.collect { |map| "#{ map.name }(#{ map.weight })" }
     message "Map(weight) rotation: #{ output * ", " }"
   end
   
-  def advertisement
-    message "Servers are provided by #{ colourize "End", Constants.colours']['orange } of #{ colourize "Reality", Constants.colours']['orange }: #{ colourize "http://eoreality.net", Constants.colours']['orange } #eoreality"
+  def self.advertisement
+    message "Servers are provided by #{ colourize "End", :orange } of #{ colourize "Reality", :orange }: #{ colourize "http://eoreality.net", :orange } #eoreality"
   end
 end

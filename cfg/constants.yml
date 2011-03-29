@@ -21,7 +21,8 @@ messengers:
   
 stv:
   url: http://tf2pug.us/demos
-  storage: ../stv/
+  storage: ../demos/
+  purge: 1209600
   ftp:
     ip: tf2pug.us
     user: demos@tf2pug.us

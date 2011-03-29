@@ -13,10 +13,46 @@ class Match
   belongs_to :map
   belongs_to :server
   
+  property :pug, Boolean, :index => true, :default => false
+  
   property :played_at,  DateTime, :index => true
   property :created_at, DateTime
   property :updated_at, DateTime
   
-  has 2, :matchups
+  is :state_machine, :initial => :setup, :column => :state do
+    state :setup,      :enter => :setup_match
+    state :scheduling
+    state :warmup,     :enter => :start_match
+    state :live
+    state :final,      :enter => :end_match
+    state :canceled,   :enter => :end_match
+
+    event :forward do
+      transition :from => :setup,      :to => :scheduling
+      transition :from => :scheduling, :to => :warmup
+      transition :from => :warmup,     :to => :live
+      transition :from => :live,       :to => :final
+    end
+  end
+  
+  has 2, :matchups, :constraint => :destroy
   has 2, :teams,    :through => :matchups
+  
+  def home; matchups.first(:home => true); end
+  def away; matchups.first(:home => false); end
+  
+  def setup_match
+    server = Server.first(:order => :played_at.asc)
+    map = Map.random
+    
+    update(:map => map, :server => server)
+  end
+  
+  def start_match
+    @server.start(@map) # if an exception is thrown, the state never gets updated
+  end
+  
+  def end_match
+  
+  end
 end

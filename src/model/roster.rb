@@ -9,8 +9,7 @@ class Roster
   belongs_to :team, :key => true
   belongs_to :user, :key => true
   
-  property :captain, Boolean
+  property :leader, Boolean, :unique => :team
+   
   property :created_at, DateTime
-  
-  validates_uniqueness_of :captain, :scope => :team
 end

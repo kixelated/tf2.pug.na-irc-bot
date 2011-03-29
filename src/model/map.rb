@@ -7,8 +7,8 @@ class Map
   
   property :id,     Serial
   property :name,   String
-  property :file,   String
-  property :weight, Integer, :index => true
+  property :file,   String, :unique => true
+  property :weight, Float,  :index => true
   
   property :played_at,  DateTime, :index => true
   property :created_at, DateTime
@@ -16,6 +16,15 @@ class Map
 
   has n, :matches
   
-  validates_uniqueness_of :file
-  validates_numericality_of :weight, :gte => 0
+  # random based on weights
+  def self.random
+    maps = Map.all
+    weight = maps.sum(:weight)
+    
+    maps.shuffle.each do |map|
+      return map if rand(weight) < map.weight
+    end
+    
+    return maps.last # could not find a map, play the newest map
+  end
 end
