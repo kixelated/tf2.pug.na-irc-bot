@@ -30,7 +30,6 @@ module SignupLogic
  
     classes = tfclasses.select { |tf| classes.include?(tf.name) } # keep the classes signed up for 
     return Irc::notice player, "Invalid classes. Possible options are #{ tfnames * ", " }" if classes.empty?
-    
     return Irc::notice player, "You are restricted from playing in this channel." if user.restricted_at
     return Irc::notice player, "You cannot add at this time." unless MatchLogic::can_add?
     
@@ -44,7 +43,7 @@ module SignupLogic
   end
   
   def self.remove_player player
-    return notice nick, "You cannot remove at this time." unless MatchLogic::can_remove?
+    return Irc::notice nick, "You cannot remove at this time." unless MatchLogic::can_remove?
     
     user = UserLogic::find_user(player)
     match = MatchLogic::last_pug
@@ -56,12 +55,20 @@ module SignupLogic
     match.signups.delete(:user => user) # delete any signups
   end
   
-  def self.replace_player player, player_replacement
-    # TODO
+  def self.replace_player player_old, player_new
+    match = MatchLogic::last_pug
+    user_old = UserLogic::find_user player_old
+    user_new = UserLogic::find_user player_new
+    
+    # TODO Messages for admins
+    return unless user_old and user_new
+    
+    replace_user match, user_old, user_new
   end
  
-  def self.replace_user match, user, user_replacement
-    # TODO
+  def self.replace_user match, user_old, user_replacement
+    match.signups.all(:user => user_old).update(:user => user_replacement)
+    match.matchups.picks.all(:user => user_old).update(:user => user_replacement) # TODO: Probably won't work
   end
   
   def self.list_signups

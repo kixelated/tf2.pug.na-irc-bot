@@ -24,8 +24,7 @@ class Match
     state :warmup,     :enter => :start_match
     state :live
     state :final,      :enter => :end_match
-    state :canceled,   :enter => :end_match
-
+    
     event :forward do
       transition :from => :setup,      :to => :scheduling
       transition :from => :scheduling, :to => :warmup
