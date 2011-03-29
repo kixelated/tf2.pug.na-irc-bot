@@ -1,5 +1,5 @@
-require_relative '../bot/irc'
-require_relative '../model/user'
+require 'tf2pug/bot/irc'
+require 'tf2pug/model/user'
 
 module UserLogic
   def self.find_user player

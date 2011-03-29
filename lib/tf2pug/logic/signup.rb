@@ -1,10 +1,12 @@
 require 'chronic_duration'
 
-require_relative '../bot/irc'
-require_relative '../logic/match'
-require_relative '../logic/state'
-require_relative '../model/tfclass'
-require_relative '../model/user'
+require 'tf2pug/bot/irc'
+require 'tf2pug/logic/match'
+require 'tf2pug/logic/state'
+require 'tf2pug/logic/stats'
+require 'tf2pug/logic/user'
+require 'tf2pug/model/tfclass'
+require 'tf2pug/model/user'
 
 module SignupLogic 
   def self.add_player player, classes

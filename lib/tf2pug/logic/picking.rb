@@ -1,8 +1,8 @@
-require_relative '../model/team'
-require_relative '../model/match'
-require_relative '../model/player'
-require_relative '../model/stat'
-require_relative '../model/user'
+require 'tf2pug/model/match'
+require 'tf2pug/model/player'
+require 'tf2pug/model/stat'
+require 'tf2pug/model/team'
+require 'tf2pug/model/user'
 
 module PickingLogic
   def self.start_picking

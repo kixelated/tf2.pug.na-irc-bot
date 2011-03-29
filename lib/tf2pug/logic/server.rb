@@ -2,8 +2,8 @@ require 'chronic_duration'
 require 'fileutils'
 require 'net/ftp'
 
-require_relative '../model/map'
-require_relative '../model/server'
+require 'tf2pug/model/map'
+require 'tf2pug/model/server'
 
 module ServerLogic
   def self.start_server server, map

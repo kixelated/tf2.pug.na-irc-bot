@@ -1,6 +1,6 @@
 require 'singleton'
 
-require_relative '../constants'
+require 'tf2pug/constants'
 
 class BotManager
   include Singleton

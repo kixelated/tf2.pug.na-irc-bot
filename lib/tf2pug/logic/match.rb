@@ -1,7 +1,6 @@
-require_relative '../constants'
-require_relative '../database'
-
-require_relative '../models/match'
+require 'tf2pug/constants'
+require 'tf2pug/database'
+require 'tf2pug/models/match'
 
 module MatchLogic
   def self.create_pug

@@ -1,27 +1,20 @@
 require 'bundler/setup'
+require_relative 'load_path'
 
-require_relative '../src/database'
-require_relative '../src/constants'
-require_relative '../src/bot/master'
-require_relative '../src/bot/messenger'
-require_relative '../src/bot/manager'
+require 'tf2pug/database'
+require 'tf2pug/constants'
+require 'tf2pug/bot/master'
+require 'tf2pug/bot/messenger'
+require 'tf2pug/bot/manager'
 
 DataMapper.finalize
 
-main = Thread.new do
-  BotMaster.new.start
+bots = [ BotMaster.new ]
+Constants.messengers['count'].times { |i| bots << BotMessenger.new(i) }
+
+bots.each do |bot|
+  Thread.new { bot.start }
+  sleep(Constants.delay['bot'])
 end
-
-#main.join
-
-Constants.messengers['count'].times do |i|
-  sleep(5)
-
-  Thread.new do
-    BotMessenger.new(i).start
-  end
-end
-
-sleep(5)
 
 BotManager.instance.start

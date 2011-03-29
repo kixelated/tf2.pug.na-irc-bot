@@ -1,8 +1,7 @@
-require_relative '../database'
-
-require_relative 'match'
-require_relative 'team'
-require_relative 'pick'
+require 'tf2pug/database'
+require 'tf2pug/model/match'
+require 'tf2pug/model/team'
+require 'tf2pug/model/pick'
 
 class Matchup
   include DataMapper::Resource

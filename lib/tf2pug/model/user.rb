@@ -1,9 +1,8 @@
-require_relative '../database'
-
-require_relative 'roster'
-require_relative 'team'
-require_relative 'stat'
-require_relative 'signup'
+require 'tf2pug/database'
+require 'tf2pug/model/roster'
+require 'tf2pug/model/team'
+require 'tf2pug/model/stat'
+require 'tf2pug/model/signup'
 
 class User
   include DataMapper::Resource

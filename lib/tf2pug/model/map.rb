@@ -1,6 +1,5 @@
-require_relative '../database'
-
-require_relative 'match'
+require 'tf2pug/database'
+require 'tf2pug/model/match'
 
 class Map
   include DataMapper::Resource

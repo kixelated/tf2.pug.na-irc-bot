@@ -1,8 +1,7 @@
 require 'cinch'
 
-require_relative '../constants'
-
-require_relative 'manager'
+require 'tf2pug/constants'
+require 'tf2pug/bot/manager'
 
 module Irc
   def require_admin m

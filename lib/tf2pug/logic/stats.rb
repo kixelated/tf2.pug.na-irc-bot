@@ -1,6 +1,7 @@
-require_relative '../database'
-require_relative '../bot/irc'
-require_relative '../models/user'
+require 'tf2pug/database'
+require 'tf2pug/bot/irc'
+require 'tf2pug/logic/user'
+require 'tf2pug/models/user'
 
 module StatsLogic
   def self.calculate_total user

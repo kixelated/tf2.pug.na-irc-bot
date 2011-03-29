@@ -1,6 +1,6 @@
 require 'bundler/setup'
 
-Dir["../../src/model/*.rb"].each { |file| require_relative file }
+Dir['tf2pug/model/*'].each { |file| require file }
 
 DataMapper.finalize
 DataMapper.auto_migrate!

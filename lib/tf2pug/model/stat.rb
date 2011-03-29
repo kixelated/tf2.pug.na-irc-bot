@@ -1,7 +1,6 @@
-require_relative '../database'
-
-require_relative 'user'
-require_relative 'tfclass'
+require 'tf2pug/database'
+require 'tf2pug/model/user'
+require 'tf2pug/model/tfclass'
 
 class Stat
   include DataMapper::Resource

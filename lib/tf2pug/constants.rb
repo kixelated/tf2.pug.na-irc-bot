@@ -8,7 +8,7 @@ module Constants
   end
 
   def self.load_config
-    @@const = YAML.load_file '../cfg/constants.yml'
+    @@const = YAML.load_file 'cfg/constants.yml' # TODO: Path is wrong
   end
 end
 

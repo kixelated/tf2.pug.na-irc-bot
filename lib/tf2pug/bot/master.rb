@@ -1,29 +1,29 @@
 require 'cinch'
 
-require_relative '../constants'
+require 'tf2pug'
+require 'tf2pug/constants'
+require 'tf2pug/manager'
 
-require_relative 'manager'
-
-class BotMessenger < Cinch::Bot
-  include Constants
-
-  def initialize i
-    super()
+class BotMaster < Cinch::Bot
+  def initialize
+    super
     
     configure do |c|
       c.server = Constants.irc['server']
       c.port = Constants.irc['port']
-      c.nick = Constants.messengers['nick'] + i.to_s
+      c.nick = Constants.irc['nick']
       c.local_host = Constants.internet['local_host']
       
-      c.channels = [ Constants.irc['channel'] ] 
+      c.channels = [ Constants.irc['channel'] ]
+      c.plugins.plugins = [ Pug ]
+
       c.verbose = false
     end
     
     on :connect do 
       bot.msg Constants.irc['auth_serv'], "AUTH #{ Constants.irc['auth'] } #{ Constants.irc['auth_password'] }" if Constants.irc['auth']
     end
-    
+
     BotManager.instance.add self
   end
 end

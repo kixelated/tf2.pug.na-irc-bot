@@ -1,7 +1,6 @@
-require_relative '../database'
-
-require_relative 'team'
-require_relative 'user'
+require 'tf2pug/database'
+require 'tf2pug/model/team'
+require 'tf2pug/model/user'
 
 class Roster
   include DataMapper::Resource

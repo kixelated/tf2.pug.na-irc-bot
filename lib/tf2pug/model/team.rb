@@ -1,15 +1,15 @@
-require_relative '../database'
+require 'tf2pug/database'
 
-require_relative 'match'
-require_relative 'matchup'
-require_relative 'roster'
-require_relative 'user'
+require 'tf2pug/model/match'
+require 'tf2pug/model/matchup'
+require 'tf2pug/model/roster'
+require 'tf2pug/model/user'
 
 class Team
   include DataMapper::Resource
   
   property :id,   Serial
-  property :name, String, :index => true
+  property :name, String, :index => true, :required => true
   
   property :created_at, DateTime
   property :updated_at, DateTime
@@ -18,6 +18,4 @@ class Team
   has n, :matches,  :through => :matchups
   has n, :rosters,  :constraint => :destroy
   has n, :users,    :through => :rosters
-  
-  validates_presence_of :name
 end

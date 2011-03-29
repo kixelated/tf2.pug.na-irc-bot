@@ -1,15 +1,12 @@
-require_relative '../database'
-
-require_relative 'stat'
+require 'tf2pug/database'
+require 'tf2pug/model/stat'
 
 class Tfclass
   include DataMapper::Resource
   
   property :id,   Serial
-  property :name, String
+  property :name, String,  :required => true
   property :pug,  Integer, :default => 0
      
   has n, :stats
-  
-  validates_presence_of :name
 end

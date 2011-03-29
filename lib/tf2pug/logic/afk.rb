@@ -1,4 +1,4 @@
-require_relative '../constants'
+require 'tf2pugna/constants'
 
 module AfkLogic
   def self.update_spoken user

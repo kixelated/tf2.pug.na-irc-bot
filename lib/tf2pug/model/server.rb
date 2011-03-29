@@ -1,10 +1,10 @@
 require 'fileutils'
 require 'net/ftp'
-require 'zip/zipfilesystem'
 require 'steam-condenser'
+require 'zip/zipfilesystem'
 
-require_relative '../database'
-require_relative 'match'
+require 'tf2pug/database'
+require 'tf2pug/model/match'
 
 class Server
   include DataMapper::Resource

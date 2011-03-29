@@ -1,18 +1,18 @@
 require 'cinch'
 
-require_relative 'bot/irc'
-require_relative 'bot/manager'
+require 'tf2pug/bot/irc'
+require 'tf2pug/bot/manager'
 
-require_relative 'logic/afk'
-require_relative 'logic/map'
-require_relative 'logic/picking'
-require_relative 'logic/server'
-require_relative 'logic/signup'
-require_relative 'logic/state'
-require_relative 'logic/stats'
-require_relative 'logic/user'
+require 'tf2pug/logic/afk'
+require 'tf2pug/logic/map'
+require 'tf2pug/logic/picking'
+require 'tf2pug/logic/server'
+require 'tf2pug/logic/signup'
+require 'tf2pug/logic/state'
+require 'tf2pug/logic/stats'
+require 'tf2pug/logic/user'
 
-class Pug
+class Tf2Pug
   include Cinch::Plugin
   
   # events
