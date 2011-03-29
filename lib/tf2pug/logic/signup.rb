@@ -89,12 +89,21 @@ module SignupLogic
     list_signups unless @show_list > 0
     @show_list += 1
   end
+  
+  def self.classes_needed
+    match = MatchLogic::last_pug
+    
+    req = Tfclass.all(:pug.gte => 1).collect { |tf| [ tf, tf.pug * 2 - match.signups.count(:tfclass => tf) ] }
+    req.select! { |tf, count| count > 0 }
+    Hash[req]
+  end
  
   def self.list_classes_needed
-    # TODO
-  end
-
-  def self.minimum_players? players = @signups
-    # TODO
+    output = classes_needed.collect { |tf, count| "#{ count } #{ tf.name }" }
+    
+    player_req = (Tfclass.sum(:pug) - 1) * 2 - match.signups.count(:user)
+    output << "#{ player_req } players" if player_req > 0
+  
+    Irc::message "Classes needed: #{ output * ", " }"
   end
 end
