@@ -1,0 +1,17 @@
+name:        tf2.pug.na.bot
+summary:     tf2.pug.na irc bot
+description: The IRC bot for the #tf2.pug.na irc channel on Gamesurge.
+             Organizes TF2 pugs and matches with a captain system.
+
+license:  BSD
+authors:  Luke Curley
+email:    qpingu@gmail.com
+homepage: http://tf2pug.us
+
+files:           lib/**/*.rb
+require_paths:   lib
+extra_doc_files:
+ - README.md
+
+dependencies:
+ - bundler

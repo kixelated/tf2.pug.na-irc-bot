@@ -112,7 +112,7 @@ class Tf2Pug
   
     if SignupLogic::add_player m.user, classes.split(/ /)
       SignupLogic::list_signups_delay
-      StateLogic::attempt_afk 
+      MatchLogic::attempt_afk 
     end
   end
 
@@ -128,7 +128,7 @@ class Tf2Pug
   
   # !need
   def command_need m
-    SignupLogic::list_classes_needed if StateLogic::can_add?
+    SignupLogic::list_classes_needed if MatchLogic::can_add?
   end
   
   # !stats
@@ -198,7 +198,7 @@ class Tf2Pug
   
   # !last
   def command_last m
-    StateLogic::list_last
+    MatchLogic::list_last
   end
   
   # !rotation
@@ -262,7 +262,7 @@ class Tf2Pug
 
     if SignupLogic::add_player User(player), classes.split(/ /) 
       SignupLogic::list_signups_delay
-      StateLogic::attempt_afk 
+      MatchLogic::attempt_afk 
     end
   end
   
@@ -293,7 +293,7 @@ class Tf2Pug
     
     Irc::message "Game has been ended."
     
-    StateLogic::end_game
+    MatchLogic::end_game
     SignupLogic::list_signups
   end
   
@@ -303,7 +303,7 @@ class Tf2Pug
     
     Irc::message "Game has been reset, please add up again."
     
-    StateLogic::reset_game
+    MatchLogic::reset_game
   end
   
   # !quit
