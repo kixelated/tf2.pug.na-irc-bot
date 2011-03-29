@@ -1,7 +1,7 @@
 require_relative '../constants'
 
 module AfkLogic
-  def update_spoken user
+  def self.update_spoken user
     @spoken[user.nick] = Time.now
     
     if @afk.delete user.nick and @afk.empty?
@@ -9,13 +9,13 @@ module AfkLogic
     end
   end
 
-  def check_afk list
+  def self.check_afk list
     list.select do |nick|
       !@spoken[nick] or (Time.now - @spoken[nick]).to_i > Constants.settings['afk']
     end
   end
   
-  def start_afk
+  def self.start_afk
     state "afk"
   
     @afk = check_afk @signups.keys
@@ -39,7 +39,7 @@ module AfkLogic
     list_players # logic/players.rb
   end
   
-  def list_afk
+  def self.list_afk
     message "#{ rjust "AFK players:" } #{ check_afk(@signups.keys) * ", " }"
   end
 end

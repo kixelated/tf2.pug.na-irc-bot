@@ -5,7 +5,7 @@ require_relative '../model/stat'
 require_relative '../model/user'
 
 module PickingLogic
-  def start_picking
+  def self.start_picking
     @pick = 0
     
     update_lookup
@@ -13,7 +13,7 @@ module PickingLogic
     tell_captain
   end
 
-  def choose_captains
+  def self.choose_captains
     @signups_all = @signups.dup
     
     captains = get_classes['captain'].sort_by { |player| calculate_fatkid @auth[player] }
@@ -31,12 +31,12 @@ module PickingLogic
     end
   end
 
-  def update_lookup
+  def self.update_lookup
     @lookup.clear
     @signups.keys.each_with_index { |nick, i| @lookup[i + 1] = nick }
   end
 
-  def tell_captain
+  def self.tell_captain
     notice current_captain, "It is your turn to pick."
 
     classes = get_classes
@@ -53,37 +53,37 @@ module PickingLogic
     end
   end
 
-  def list_captain user
+  def self.list_captain user
     return notice(user, "Picking has not started.") unless state? "picking" # logic/state.rb
 
     message "It is #{ current_captain }'s turn to pick"
   end
 
-  def pick_random user, clss
+  def self.pick_random user, clss
     classes = get_classes[clss]
     nick = classes[rand(classes.length)]
 
     pick_player user, nick, clss
   end
 
-  def can_pick? nick
+  def self.can_pick? nick
     current_captain == nick
   end
 
-  def find_player player
+  def self.find_player player
     temp = @signups.keys.reject { |k| k.downcase != player.downcase }
     temp.first unless temp.empty?
   end
 
-  def pick_class_valid? clss
+  def self.pick_class_valid? clss
     Constants.teams['classes'].key? clss
   end
 
-  def pick_class_avaliable? clss
+  def self.pick_class_avaliable? clss
     classes_needed(current_team.get_classes, 1).key? clss # logic/players.rb
   end
 
-  def pick_medic_conflicting? nick, clss
+  def self.pick_medic_conflicting? nick, clss
     return false unless @signups[nick].include? "medic"
 
     needed = 0
@@ -95,7 +95,7 @@ module PickingLogic
     return medics < needed
   end
 
-  def pick_player user, nick, clss
+  def self.pick_player user, nick, clss
     return notice(user, "Picking has not started.") unless state? "picking" # logic/state.rb
     return notice(user, "It is not your turn to pick.") unless can_pick? user.nick
 
@@ -121,7 +121,7 @@ module PickingLogic
     next_pick
   end
 
-  def next_pick
+  def self.next_pick
     @pick += 1
 
     if @pick >= Constants.teams['total'] - Constants.teams['count']
@@ -131,7 +131,7 @@ module PickingLogic
     end
   end
 
-  def final_pick
+  def self.final_pick
     end_picking
 
     server = Thread.new { find_server }
@@ -149,14 +149,14 @@ module PickingLogic
     end_game
   end
 
-  def update_captains
+  def self.update_captains
     @teams.each do |team|
       team.signups[team.captain] = classes_needed(team.get_classes, 1).keys.first
     end
   end
 
   # I hate this function
-  def create_match
+  def self.create_match
     match = Match.create(:time => Time.now)
     captains = @teams.collect { |team| team.captain }
     
@@ -186,13 +186,13 @@ module PickingLogic
     end
   end
 
-  def print_teams
+  def self.print_teams
     @teams.each do |team|
       message team.format_team
     end
   end
 
-  def announce_teams
+  def self.announce_teams
     @teams.each do |team|
       team.signups.each do |nick, clss|
         private nick, "You have been picked for #{ team.format_name 0 } as #{ clss }. The server info is: #{ @server.connect_info }"
@@ -200,7 +200,7 @@ module PickingLogic
     end
   end
 
-  def list_format
+  def self.list_format
     output = []
     (Constants.teams['total'] - Constants.teams['count']).times do |i|
       output << (colourize "#{ i }", Constants.teams['details'][pick_format(i)]['colour'])
@@ -208,30 +208,30 @@ module PickingLogic
     message "The picking format is: #{ output * " " }"
   end
 
-  def current_captain
+  def self.current_captain
     current_team.captain
   end
 
-  def current_team
+  def self.current_team
     @teams[pick_format @pick]
   end
 
-  def pick_format num
+  def self.pick_format num
     staggered num
   end
 
-  def sequential num
+  def self.sequential num
     # 0 1 0 1 0 1 0 1 ...
     num % Constants.teams['count']
   end
 
-  def staggered num
+  def self.staggered num
     # 0 1 1 0 0 1 1 0 ...
     # won't work as expected when Constants.teams['count'] > 2
     ((num + 1) / Constants.teams['count']) % Constants.teams['count']
   end
 
-  def hybrid num
+  def self.hybrid num
     # 0 1 0 1
     #         1 0 0 1 1 0 ...
     return sequential(num) if num < 4

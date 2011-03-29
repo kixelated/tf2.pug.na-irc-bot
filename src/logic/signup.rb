@@ -7,7 +7,7 @@ require_relative '../model/tfclass'
 require_relative '../model/user'
 
 module SignupLogic 
-  def add_player player, classes
+  def self.add_player player, classes
     tfclasses = Tfclass.all(:pug.gte => 1) # select all of the pug-friendly classes
     tfnames = tfclasses.collect { |tf| tf.name }
     
@@ -37,12 +37,12 @@ module SignupLogic
     add_user match, user, classes # add the user to the pug
   end
   
-  def add_user match, user, classes
+  def self.add_user match, user, classes
     remove_user match, user # remove in case already signed up
     classes.each { |clss| match.signups.create(:user => user, :class => clss) } # create the signup
   end
   
-  def remove_player player
+  def self.remove_player player
     return notice nick, "You cannot remove at this time." unless StateLogic::can_remove?
     
     user = UserLogic::find_user(player)
@@ -51,19 +51,19 @@ module SignupLogic
     remove_user match, user # remove the user
   end
   
-  def remove_user match, user
+  def self.remove_user match, user
     match.signups.delete(:user => user) # delete any signups
   end
   
-  def replace_player player, player_replacement
+  def self.replace_player player, player_replacement
     # TODO
   end
  
-  def replace_user match, user, user_replacement
+  def self.replace_user match, user, user_replacement
     # TODO
   end
   
-  def list_signups
+  def self.list_signups
     match = MatchLogic::last_pug
     
     # TODO: I'm just making this query up, needs to be verified
@@ -77,16 +77,16 @@ module SignupLogic
     Irc::message "#{ rjust("#{ user_signups.size } users added:") } #{ user_signups * ", " }"
   end
   
-  def list_signups_delay
+  def self.list_signups_delay
     list_signups unless @show_list > 0
     @show_list += 1
   end
  
-  def list_classes_needed
+  def self.list_classes_needed
     # TODO
   end
 
-  def minimum_players? players = @signups
+  def self.minimum_players? players = @signups
     # TODO
   end
 end

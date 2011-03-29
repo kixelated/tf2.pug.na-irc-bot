@@ -4,7 +4,7 @@ require_relative '../database'
 require_relative '../models/match'
 
 module MatchLogic
-  def create_pug
+  def self.create_pug
     match = Match.create(:pug => true)
 
     # Select 2 random pug team names
@@ -14,7 +14,7 @@ module MatchLogic
     end
   end
 
-  def last_pug
+  def self.last_pug
     pug = Match.last(:pug => true, :state => :waiting)
     pug = create_pug unless pug
     return pug
