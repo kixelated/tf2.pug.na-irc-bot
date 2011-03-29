@@ -1,13 +1,13 @@
 require_relative '../constants'
 require_relative 'botMaster'
 require_relative 'botMessenger'
+require_relative 'botManager'
 
 def start_bots!
   main = Thread.new do
     BotMaster.new.start
   end
 
-  # for debugging
   #main.join
 
   Constants.messengers['count'].times do |i|

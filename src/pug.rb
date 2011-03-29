@@ -1,23 +1,18 @@
 require 'cinch'
 
-require_relative 'variables'
-require_relative 'util'
+require_relative 'irc/irc'
+require_relative 'irc/botManager'
 
-require_relative 'logic/players'
+require_relative 'logic/afk'
+require_relative 'logic/map'
 require_relative 'logic/picking'
-require_relative 'logic/state'
 require_relative 'logic/server'
+require_relative 'logic/signup'
+require_relative 'logic/state'
+require_relative 'logic/stats'
 
 class Pug
   include Cinch::Plugin
-  
-  include Variables
-  include Utilities
-  
-  include PlayersLogic
-  include PickingLogic
-  include StateLogic
-  include ServerLogic
   
   # events
   listen_to :channel, method: :event_channel
@@ -74,21 +69,15 @@ class Pug
   match /nextserver/i, method: :admin_nextserver
   match /reset/i, method: :admin_reset
   match /endgame/i, method: :admin_endgame
-  match /reload/i, method: :admin_reload
   match /quit/i, method: :admin_quit
-  
-  def initialize *args
-    super
-    setup # variables.rb 
-  end
   
   # Events
   def event_channel m
-    update_spoken m.user # logic/state.rb
+    AfkLogic::update_spoken m.user
   end
   
   def event_join m
-    reward_player m.user # logic/players.rb
+    StatsLogic::reward_player m.user
   end
   
   def event_part m
@@ -100,263 +89,255 @@ class Pug
   end
   
   def event_kick m
-    remove_player m.params[1]
+    SignupLogic::remove_player! m.params[1]
   end
   
   def event_nick m
-    replace_player! m.user.last_nick, m.user # logic/player.rb
+    SignupLogic::replace_player! m.user.last_nick, m.user
   end
   
   def timer_list
-    list_players if @show_list > 1
+    SignupLogic::list_players if @show_list > 1
     @show_list = 0
   end
   
   def timer_restriction
-    update_restrictions
+    UserLogic::update_restrictions
   end
 
   # Player-related commands
   # !add
   def command_add m, classes
-    return notice(m.user, "Add to the pug: !add <class1> <class2> <etc>") unless classes
+    return Irc::notice(m.user, "Add to the pug: !add <class1> <class2> <etc>") unless classes
   
-    if add_player m.user, classes.split(/ /)
-      list_players_delay
-      attempt_afk 
+    if SignupLogic::add_player m.user, classes.split(/ /)
+      SignupLogic::list_players_delay
+      stateLogic::attempt_afk 
     end
   end
 
   # !remove
   def command_remove m
-    list_players_delay if remove_player m.user.nick # logic/players.rb
+    SignupLogic::list_players_delay if SignupLogic::remove_player m.user.nick
   end
   
   # !list
   def command_list m
-    list_players # logic/players.rb
-    list_players_detailed # logic/players.rb
+    SignupLogic::list_players
+    SignupLogic::list_players_detailed
   end
   
   # !players
   def command_players m
-    list_players # logic/players.rb
+    SignupLogic::list_players
   end
   
   # !need
   def command_need m
-    list_classes_needed if can_add? # logic/players.rb
+    SignupLogic::list_classes_needed if stateLogic::can_add?
   end
   
   # !stats
   def command_stats m, user
     if user
-      list_stats User(user) # logic/players.rb
+      StatsLogic::list_stats User(user)
     else
-      list_stats m.user # logic/players.rb
+      StatsLogic::list_stats m.user
     end
   end
   
   # !afk
   def command_afk m
-    list_afk # logic/state.rb
+    AfkLogic::list_afk
   end
   
   # !nick
   def command_nick m, nick
-    return notice(m.user, "Change you name in the database: !nick <newname>") unless nick
+    return Irc::notice(m.user, "Change you name in the database: !nick <newname>") unless nick
   
-    update_nick m.user, nick # logic/players.rb
+    UserLogic::update_nick m.user, nick
   end
   
   # !reward
   def command_reward m
-    m.user.refresh unless m.user.authed?
-    explain_reward m.user unless reward_player m.user
+    StatsLogic::explain_reward m.user unless StatsLogic::reward_player m.user
   end
   
   # Picking-related commands
   # !pick
   def command_pick m, player, player_class
-    return notice(m.user, "Pick a player for your team: !pick <name> <class> OR !pick <num> <class>") unless player and player_class
+    return Irc::notice(m.user, "Pick a player for your team: !pick <name> <class> OR !pick <num> <class>") unless player and player_class
   
-    pick_player m.user, player, player_class # logic/picking.rb
+    PickingLogic::pick_player m.user, player, player_class
   end
   
   # !random
   def command_random m, clss
     return notice(m.user, "Pick a random player for a class: !random <class>") unless clss
   
-    pick_random m.user, clss # logic/picking.rb
+    PickingLogic::pick_random m.user, clss 
   end
   
   # !captain
   def command_captain m
-    list_captain m.user # logic/picking.rb
+    PickingLogic::list_captain m.user 
   end
   
   # !format
   def command_format m
-    list_format # logic/picking.rb
+    PickingLogic::list_format 
   end
 
   # Server-related commands
   # !mumble
   def command_mumble m
-    list_mumble # logic/server.rb
+    ServerLogic::list_mumble
   end
 
   # !map
   def command_map m
-    list_map # logic/server.rb
+    MapLogic::list_map
   end
   
   # !server
   def command_server m
-    list_server # logic/server.rb
+    ServerLogic::list_server
   end
   
   # !last
   def command_last m
-    list_last # logic/server.rb
+    stateLogic::list_last
   end
   
   # !rotation
   def command_rotation m
-    list_rotation # logic/server.rb
+    MapLogic::list_rotation
   end
   
   # !stv
   def command_stv m
-    list_stv # logic/server.rb
-    update_stv unless @updating # logic/server.rb
+    ServerLogic::list_stv
+    ServerLogic::update_stv unless @updating
   end
   
   # !status 
   def command_status m
-    list_status # logic/server.rb
+    ServerLogic::list_status
   end
 
   # Misc commands
   # !man
   def command_help m
-    message "Player related commands: !add, !remove, !list, !need, !afk, !stats, !nick"
-    message "Captain related comands: !pick, !random, !captain, !format"
-    message "Server related commands: !ip, !map, !mumble, !last, !rotation, !stv"
+    Irc::message "Player related commands: !add, !remove, !list, !need, !afk, !stats, !nick"
+    Irc::message "Captain related comands: !pick, !random, !captain, !format"
+    Irc::message "Server related commands: !ip, !map, !mumble, !last, !rotation, !stv"
   end
   
   # !code
   def command_code m
-    message "IRC bot   : https://github.com/qpingu/tf2.pug.na-irc-bot"
-    message "TF2 server: https://github.com/qpingu/tf2.pug.na-game-server"
+    Irc::message "IRC bot   : https://github.com/qpingu/tf2.pug.na-irc-bot"
+    Irc::message "TF2 server: https://github.com/qpingu/tf2.pug.na-game-server"
   end
 
   # Admin commands
   # !fmap
   def admin_forcemap m, map, file
-    return unless require_admin m
+    return unless Irc::require_admin m
     
-    change_map map, file
-    list_map
+    MapLogic::change_map map, file
+    MapLogic::list_map
   end
   
   # !nextmap
   def admin_nextmap m
-    return unless require_admin m
+    return unless Irc::require_admin m
     
-    next_map
-    list_map
+    MapLogic::next_map
+    MapLogic::list_map
   end
   
   # !nextserver
   def admin_nextserver m
-    return unless require_admin m
+    return unless Irc::require_admin m
     
-    next_server
-    list_server
+    ServerLogic::next_server
+    ServerLogic::list_server
   end
 
   # !fadd
   def admin_forceadd m, player, classes
-    return unless require_admin m
+    return unless Irc::require_admin m
 
-    if add_player! User(player), classes.split(/ /) # logic/players.rb
-      list_players_delay
-      attempt_afk 
+    if SignupLogic::add_player! User(player), classes.split(/ /) 
+      SignupLogic::list_players_delay
+      stateLogic::attempt_afk 
     end
   end
   
   # !fremove
   def admin_forceremove m, player
-    return unless require_admin m
+    return unless Irc::require_admin m
     
-    list_players_delay if remove_player! player
+    SignupLogic::list_players_delay if SignupLogic::remove_player! player
   end
   
   # !fpick 
   def admin_forcepick m, player, player_class
-    return unless require_admin m
+    return unless Irc::require_admin m
   
-    pick_player User(current_captain), player, player_class # logic/picking.rb
+    PickingLogic::pick_player User(current_captain), player, player_class 
   end
   
   # !replace
   def admin_replace m, nick, replacement
-    return unless require_admin m
+    return unless Irc::require_admin m
     
-    list_players_delay if replace_player! nick, User(replacement) # logic/picking.rb
+    SignupLogic::list_players_delay if SignupLogic::replace_player! nick, User(replacement) 
   end
   
   # !endgame
   def admin_endgame m
-    return unless require_admin m
+    return unless Irc::require_admin m
     
-    message "Game has been ended."
+    Irc::message "Game has been ended."
     
-    end_game
-    list_players
+    stateLogic::end_game
+    SignupLogic::list_players
   end
   
   # !reset
   def admin_reset m
-    return unless require_admin m
+    return unless Irc::require_admin m
     
-    reset_game
-    message "Game has been reset, please add up again."
-  end
-
-  # !debug
-  def admin_debug m
-    return unless require_admin m
+    Irc::message "Game has been reset, please add up again."
     
-    message "Signups: #{ @signups }"
-    message "Teams: #{ @teams }"
+    stateLogic::reset_game
   end
   
   # !quit
   def admin_quit m
-    return unless require_admin m
+    return unless Irc::require_admin m
   
     BotManager.instance.quit
   end
   
   # !restrict
   def admin_restrict m, nick, duration
-    return unless require_admin m
+    return unless Irc::require_admin m
     
-    restrict_player m.user, nick, duration
+    UserLogic::restrict_player m.user, nick, duration
   end
   
   # !authorize
   def admin_authorize m, nick
-    return unless require_admin m
+    return unless Irc::require_admin m
     
-    authorize_player m.user, nick
+    UserLogic::authorize_player m.user, nick
   end
   
   # !cookie
   def admin_cookie m, pass
-    return unless require_admin m
+    return unless Irc::require_admin m
     
     unless pass
       bot.msg Constants.irc['auth_serv'], "AUTHCOOKIE #{ Constants.irc['auth'] }"
@@ -367,29 +348,8 @@ class Pug
   
   # !reload
   def admin_reload m
-    return unless require_admin m
+    return unless Irc::require_admin m
     
     Constants.load_config
-    Constants.calculate
-  end
-
-  def require_admin m
-    return notice m.user, "That is an admin-only command." unless m.channel.opped? m.user
-    true
-  end
-  
-  def message msg
-    BotManager.instance.msg Constants.irc['channel'], colourize(msg.to_s)
-    false
-  end
-  
-  def private user, msg
-    BotManager.instance.msg user, msg
-    false
-  end
-
-  def notice channel = Constants.irc['channel'], msg
-    BotManager.instance.notice channel, msg
-    false
   end
 end

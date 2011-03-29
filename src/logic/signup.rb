@@ -3,7 +3,7 @@ require 'chronic_duration'
 require_relative '../model/user'
 require_relative '../util'
 
-module PlayersLogic
+module SignupLogic
   def add_player user, classes
     return notice user, "No classes entered. Usage: !add #{ Constants.teams['classes'].keys * " " }" unless classes
          

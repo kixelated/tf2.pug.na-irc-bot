@@ -11,17 +11,17 @@ class BotMaster < Cinch::Bot
     configure do |c|
       c.server = Constants.irc['server']
       c.port = Constants.irc['port']
-      c.nick = Constants.Constants.irc['nick']
-      c.local_host = Constants.Constants.internet['local_host']
+      c.nick = Constants.irc['nick']
+      c.local_host = Constants.internet['local_host']
       
-      c.channels = [ Constants.Constants.irc['channel'] ]
+      c.channels = [ Constants.irc['channel'] ]
       c.plugins.plugins = [ Pug ]
 
       c.verbose = false
     end
     
     on :connect do 
-      bot.msg Constants.Constants.irc['auth_serv'], "AUTH #{ Constants.Constants.irc['auth'] } #{ Constants.Constants.irc['auth_password'] }" if Constants.Constants.irc['auth']
+      bot.msg Constants.irc['auth_serv'], "AUTH #{ Constants.irc['auth'] } #{ Constants.irc['auth_password'] }" if Constants.irc['auth']
     end
 
     BotManager.instance.add self

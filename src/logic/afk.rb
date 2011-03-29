@@ -1,3 +1,5 @@
+require_relative '../constants'
+
 module AfkLogic
   def update_spoken user
     @spoken[user.nick] = Time.now

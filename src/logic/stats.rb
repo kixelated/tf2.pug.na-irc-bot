@@ -1,0 +1,2 @@
+module StatsLogic
+end
