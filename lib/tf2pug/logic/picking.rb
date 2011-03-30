@@ -1,13 +1,17 @@
 require 'tf2pug/model/match'
-require 'tf2pug/model/player'
+require 'tf2pug/model/matchup'
+require 'tf2pug/model/pick'
+require 'tf2pug/model/roster'
 require 'tf2pug/model/stat'
 require 'tf2pug/model/team'
 require 'tf2pug/model/user'
 
 module PickingLogic
-  def self.start_picking
-    @pick = 0
+  def self.pick_num
     
+  end
+
+  def self.start_picking
     update_lookup
     choose_captains
     tell_captain

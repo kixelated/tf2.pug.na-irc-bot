@@ -1,18 +1,22 @@
 require 'bundler/setup'
 
-Dir['tf2pug/model/*'].each { |file| require file }
+Dir['tf2pug/model/*'].each { |file| require file } # TODO: I doubt it will work
 
 DataMapper.finalize
 DataMapper.auto_migrate!
 
+# TODO: Slim down these lines
 Server.create(
   name: "chicago1",
   host: "chicago1.tf2pug.us",
   pass: "tf2pug",
   rcon: "secret",
-  ftp_user: "pugna", 
-  ftp_pass: "secret",
-  ftp_dir: "/orangebox/tf"
+  ftp: FTP.create(
+    host: "chicago1.tf2pug.us",
+    user: "pugna",
+    pass: "secret",
+    dir: "/orangebox/tf"
+  )
 )
 
 Server.create(
@@ -20,9 +24,12 @@ Server.create(
   host: "dallas1.tf2pug.us",
   pass: "tf2pug",
   rcon: "secret",
-  ftp_user: "pugna", 
-  ftp_pass: "secret",
-  ftp_dir: "/orangebox/tf"
+  ftp: FTP.create(
+    host: "dallas1.tf2pug.us",
+    user: "pugna",
+    pass: "secret",
+    dir: "/orangebox/tf"
+  )
 )
 
 Server.create(
@@ -30,9 +37,12 @@ Server.create(
   host: "chicago2.tf2pug.us",
   pass: "tf2pug",
   rcon: "secret",
-  ftp_user: "pugna2", 
-  ftp_pass: "secret",
-  ftp_dir: "/orangebox/tf"
+  ftp: FTP.create(
+    host: "chicago2.tf2pug.us",
+    user: "pugna2",
+    pass: "secret",
+    dir: "/orangebox/tf"
+  )
 )
 
 Server.create(
@@ -40,71 +50,28 @@ Server.create(
   host: "dallas2.tf2pug.us",
   pass: "tf2pug",
   rcon: "secret",
-  ftp_user: "pugna3", 
-  ftp_pass: "secret",
-  ftp_dir: "/orangebox/tf"
+  ftp: FTP.create(
+    host: "dallas2.tf2pug.us",
+    user: "pugna3",
+    pass: "secret",
+    dir: "/orangebox/tf"
+  )
 )
 
-Map.create(
-  name: "badlands",
-  file: "cp_badlands",
-  weight: 16
-)
-
-Map.create(
-  name: "granary",
-  file: "cp_granary",
-  weight: 8
-)
-
-Map.create(
-  name: "gullywash",
-  file: "cp_gullywash_pro",
-  weight: 6
-)
-
-Map.create(
-  name: "snakewater",
-  file: "cp_snakewater_rc2",
-  weight: 6
-)
-
-Map.create(
-  name: "coldfront",
-  file: "cp_coldfront",
-  weight: 4
-)
-
-Map.create(
-  name: "viaduct",
-  file: "koth_viaduct",
-  weight: 4
-)
-
-Map.create(
-  name: "yukon",
-  file: "cp_yukon_final",
-  weight: 2
-)
-
-Map.create(
-  name: "ashville",
-  file: "koth_ashville_rc1",
-  weight: 1
-)
-
-Map.create(
-  name: "freight",
-  file: "cp_freight_final1",
-  weight: 1
-)
-
-Map.create(
-  name: "obscure",
-  file: "cp_obscure_final",
-  weight: 1
-)
-
+[
+  [ "badlands", "cp_badlands", 12 ]
+  [ "granary", "cp_granary", 8 ]
+  [ "snakewater", "cp_snakewater_rc2", 6 ]
+  [ "gullywash", "cp_gullywash_pro", 6 ]
+  [ "coldfront", "cp_coldfront", 4 ]
+  [ "viaduct", "koth_viaduct", 4 ]
+  [ "yukon", "cp_yukon_final", 2 ] 
+  [ "ashville", "koth_ashville_rc1", 1 ]
+  [ "freight", "cp_freight_final1", 1 ]
+  [ "obscure", "cp_obscure_final", 1 ]
+].each do |name, file, weight| # I think this works
+  Map.create(:name => name, :file => file, :weight => weight)
+end
 
 {
   scout: 2, 

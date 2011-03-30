@@ -9,18 +9,13 @@ module Irc
     true
   end
 
-  def message msg
-    BotManager.instance.msg Constants.irc['channel'], colourize(msg.to_s)
+  def message user = Constants.irc['channel'], msg
+    BotManager.instance.msg user, colourize(msg.to_s) if user
     false
   end
-
-  def privmsg user, msg
-    BotManager.instance.msg user, msg
-    false
-  end
-
-  def notice channel, msg
-    BotManager.instance.notice channel, msg
+  
+  def notice user = Constants.irc['channel'], msg
+    BotManager.instance.notice channel, msg if user
     false
   end
   

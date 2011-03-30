@@ -1,10 +1,9 @@
-require 'fileutils'
-require 'net/ftp'
 require 'steam-condenser'
-require 'zip/zipfilesystem'
 
+require 'tf2pug/constants'
 require 'tf2pug/database'
 require 'tf2pug/model/match'
+require 'tf2pug/model/ftp'
 
 class Server
   include DataMapper::Resource
@@ -17,13 +16,11 @@ class Server
   property :pass, String
   property :rcon, String, :required => true
   
-  property :ftp_user, String
-  property :ftp_pass, String
-  property :ftp_dir,  String
-  
   property :played_at,  DateTime, :index => true
   property :created_at, DateTime
   property :updated_at, DateTime
+  
+  belongs_to :ftp
   
   has n, :matches
   
@@ -79,25 +76,7 @@ class Server
     
     raise Exception.new("In use, please wait until the pug has ended") if info['number_of_players'] > Constants.settings['server_full']
     
-    storage = Constants.stv['storage']
-    
-    down = Net::FTP.open(@host, @ftp_user, @ftp_pass)
-    down.chdir @ftp_dir if @ftp_dir
-    down.passive = true
-    
-    demos = down.nlst.reject { |filename| !(filename =~ /.+\.dem/) }
-    demos.each do |filename|
-      file = "#{ @name }-#{ filename }"
-      filezip = "#{ file }.zip"
-    
-      down.getbinaryfile filename, storage + filename
-      Zip::ZipFile.open(storage + filezip, Zip::ZipFile::CREATE) { |zipfile| zipfile.add(filename, storage + filename) }
-      
-      FileUtils.rm storage + filename
-      down.delete filename
-    end
-    
-    return demos.size
+    ftp.download_demos @name
   end
   
   def connect_info

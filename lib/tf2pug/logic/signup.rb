@@ -20,7 +20,7 @@ module SignupLogic
     player.refresh unless player.authed? # refresh and see if recently authed
     Irc::notice player, "You are not authorized with Gamesurge. You can still play in the channel, but any accumulated stats will only be connected to this nick. Please follow this guide to register and authorize with Gamesurge: http://www.gamesurge.net/newuser/" unless user.authed?
     
-    user = UserLogic::find_user(player) or UserLogic::create_user(player) # find or create user
+    user = User.find_user(player) or User.create_user(player) # find or create user
     total = StatsLogic::calculate_total(user) # determine total games played
     
     if classes.include?("captain") and total < Constants.captain['min'] # check captain requirements

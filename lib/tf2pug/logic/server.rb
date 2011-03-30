@@ -1,6 +1,4 @@
 require 'chronic_duration'
-require 'fileutils'
-require 'net/ftp'
 
 require 'tf2pug/model/map'
 require 'tf2pug/model/server'
@@ -22,8 +20,6 @@ module ServerLogic
   end
   
   def self.download_demos
-    FileUtils.mkdir Constants.stv['storage'] if not Dir.exists?(Constants.stv['storage'])
-  
     Server.all.each do |server|
       begin
         result = server.download_demos
@@ -35,36 +31,11 @@ module ServerLogic
   end
   
   def self.upload_demos
-    up = Net::FTP.open(Constants.stv['ftp']['ip'], Constants.stv['ftp']['user'], Constants.stv['ftp']['password'])
-    up.chdir Constants.stv['ftp']['dir'] if Constants.stv['ftp']['dir']
-    up.passive = true
-    
-    files = Dir[Constants.stv['storage'] + "*.zip"]
-    files.each do |file|
-      filename = File.basename(file)
-      
-      up.putbinaryfile fiFileUtils.mkdir storage if not Dir.exists?(storage)le, File.basename(filename + ".tmp")
-      up.rename filename + ".tmp", filename
-      
-      FileUtils.rm file
-    end
-    
-    FileUtils.rm_dir Constants.stv['storage']
-    
-    result = files.size
-    message "#{ result } demos uploaded." if result > 0
+    # TODO: Get FTP object somehow
   end
   
   def self.purge_demos
-    up = Net::FTP.open(Constants.stv['ftp']['ip'], Constants.stv['ftp']['user'], Constants.stv['ftp']['password']) # TODO: Clean up constants
-    up.chdir Constants.stv['ftp']['dir'] if Constants.stv['ftp']['dir']
-  
-    up.nlst.each do |filename|
-      if filename =~ /(.+?)-(.{4})(.{2})(.{2})-(.{2})(.{2})-(.+)\.dem/
-        server, year, month, day, hour, min, map = $1, $2, $3, $4, $5, $6, $7
-        up.delete filename if Time.mktime(year, month, day, hour, min) + Constants.stv['purge'] < Time.now
-      end
-    end
+    # TODO: Get FTP object somehow
   end
   
   def self.list_stv
@@ -80,10 +51,6 @@ module ServerLogic
   def self.list_server server
     message "#{ server.name }: #{ server.connect_info }"
     advertisement
-  end
-  
-  def self.list_map map
-    message "The current map is #{ map.name }"
   end
   
   def self.list_mumble
