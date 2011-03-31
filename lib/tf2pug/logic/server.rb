@@ -62,11 +62,6 @@ module ServerLogic
     message "The last match was started #{ ChronicDuration.output(Time.now - Server.max(:played_at)) } ago"
   end
   
-  def self.list_rotation
-    output = Map.all.collect { |map| "#{ map.name }(#{ map.weight })" }
-    message "Map(weight) rotation: #{ output * ", " }"
-  end
-  
   def self.advertisement
     message "Servers are provided by #{ colourize "End", :orange } of #{ colourize "Reality", :orange }: #{ colourize "http://eoreality.net", :orange } #eoreality"
   end

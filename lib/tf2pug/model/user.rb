@@ -24,11 +24,11 @@ class User
   class << self
     cache = {} # TODO: Might be @cache
     
-    def create_user player
+    def create_player player
       cache[player] = User.create(:auth => player.authname, :nick => player.nick)
     end
   
-    def find_user player
+    def find_player player
       return cache[player] if cache.key?(player)
       
       if user = User.first(:auth => player.authname) if player.authed? # select by auth
