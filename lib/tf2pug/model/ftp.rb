@@ -47,9 +47,9 @@ class Ftp
         
         FileUtils.rm storage + filename
         conn.delete filename
-        
-        return demos.size
       end
+      
+      return demos.size
     end
   end
   
