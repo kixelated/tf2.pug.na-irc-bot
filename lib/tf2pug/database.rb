@@ -9,4 +9,4 @@ require 'dm-validations'
 require 'tf2pug/constants'
 
 DataMapper::Logger.new($stdout, :debug)
-DataMapper.setup(:default, Constants.database) # TODO: Path is probably wrong
+DataMapper.setup(:default, Constants.database)

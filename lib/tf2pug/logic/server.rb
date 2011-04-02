@@ -9,7 +9,7 @@ module ServerLogic
       begin
         return server if server.start(map)
       rescue Exception => e
-        message "Error starting #{ server.name }: #{ e.message }."
+        message "Error starting #{ server.name }: #{ e.message }"
       end
     end
   end
@@ -25,7 +25,7 @@ module ServerLogic
         result = server.download_demos
         message "#{ result } demos downloaded from #{ server.name }." if result > 0
       rescue Exception => e
-        message "Error downloading from #{ server.name }: #{ e.message }."
+        message "Error downloading from #{ server.name }: #{ e.message }"
       end
     end
   end

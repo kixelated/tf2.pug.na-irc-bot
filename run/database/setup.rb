@@ -1,6 +1,9 @@
 require 'bundler/setup'
 
-Dir['tf2pug/model/*'].each { |file| require file } # TODO: I doubt it will work
+$:.push('../../lib')
+
+require 'tf2pug/database'
+Dir['../../lib/tf2pug/model/*'].each { |file| require file }
 
 DataMapper.finalize
 DataMapper.auto_migrate!
@@ -11,7 +14,7 @@ Server.create(
   host: "chicago1.tf2pug.us",
   pass: "tf2pug",
   rcon: "secret",
-  ftp: FTP.create(
+  ftp: Ftp.create(
     host: "chicago1.tf2pug.us",
     user: "pugna",
     pass: "secret",
@@ -24,7 +27,7 @@ Server.create(
   host: "dallas1.tf2pug.us",
   pass: "tf2pug",
   rcon: "secret",
-  ftp: FTP.create(
+  ftp: Ftp.create(
     host: "dallas1.tf2pug.us",
     user: "pugna",
     pass: "secret",
@@ -37,7 +40,7 @@ Server.create(
   host: "chicago2.tf2pug.us",
   pass: "tf2pug",
   rcon: "secret",
-  ftp: FTP.create(
+  ftp: Ftp.create(
     host: "chicago2.tf2pug.us",
     user: "pugna2",
     pass: "secret",
@@ -50,7 +53,7 @@ Server.create(
   host: "dallas2.tf2pug.us",
   pass: "tf2pug",
   rcon: "secret",
-  ftp: FTP.create(
+  ftp: Ftp.create(
     host: "dallas2.tf2pug.us",
     user: "pugna3",
     pass: "secret",
@@ -59,15 +62,15 @@ Server.create(
 )
 
 [
-  [ "badlands", "cp_badlands", 12 ]
-  [ "granary", "cp_granary", 8 ]
-  [ "snakewater", "cp_snakewater_rc2", 6 ]
-  [ "gullywash", "cp_gullywash_pro", 6 ]
-  [ "coldfront", "cp_coldfront", 4 ]
-  [ "viaduct", "koth_viaduct", 4 ]
-  [ "yukon", "cp_yukon_final", 2 ] 
-  [ "ashville", "koth_ashville_rc1", 1 ]
-  [ "freight", "cp_freight_final1", 1 ]
+  [ "badlands", "cp_badlands", 12 ],
+  [ "granary", "cp_granary", 8 ],
+  [ "snakewater", "cp_snakewater_rc2", 6 ],
+  [ "gullywash", "cp_gullywash_pro", 6 ],
+  [ "coldfront", "cp_coldfront", 4 ],
+  [ "viaduct", "koth_viaduct", 4 ],
+  [ "yukon", "cp_yukon_final", 2 ],
+  [ "ashville", "koth_ashville_rc1", 1 ],
+  [ "freight", "cp_freight_final1", 1 ],
   [ "obscure", "cp_obscure_final", 1 ]
 ].each do |name, file, weight| # I think this works
   Map.create(:name => name, :file => file, :weight => weight)

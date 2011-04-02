@@ -35,7 +35,7 @@ class Match
   end
   
   # TODO: Check syntax
-  before :save, :on => :create, :method => :setup_match
+  before :create, :setup_match
   
   has n, :signups,  :constraint => :destroy
   has 2, :matchups, :constraint => :destroy
@@ -60,7 +60,7 @@ class Match
   def home; matchups.first(:home => true); end
   def away; matchups.first(:home => false); end
   
-  def setup_match do
+  def setup_match
     @server = Server.first(:order => :played_at.asc)
     @map = Map.random
   end

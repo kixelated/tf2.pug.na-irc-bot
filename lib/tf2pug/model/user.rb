@@ -31,11 +31,12 @@ class User
     def find_player player
       return cache[player] if cache.key?(player)
       
-      if user = User.first(:auth => player.authname) if player.authed? # select by auth
-        user.update(:nick => player.nick) if user.nick != player.nick # update user's nick
+      if player.authed?
+        user = User.first(:auth => player.authname) # select by auth
+        user = User.first(:nick => player.nick, :auth => nil) unless user # select by nick if fails
+        user.update(:nick => player.nick, :auth => player.authname) if user # update nick and auth
       else
         user = User.first(:nick => player.nick, :auth => nil) # select by nick
-        user.update(:auth => player.authname) if user and player.authed? # update user's auth
       end
       
       cache[player] = user

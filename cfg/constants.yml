@@ -1,4 +1,4 @@
-database: sqlite:../db/stats.sqlite3
+database: sqlite:../../db/stats.sqlite3
 
 internet:
   local_host:

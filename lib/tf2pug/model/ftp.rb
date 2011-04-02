@@ -3,18 +3,17 @@ require 'zip/zipfilesystem'
 
 require 'net/ftp'
 
-require 'tf2pug/contants'
+require 'tf2pug/constants'
 require 'tf2pug/database'
-require 'tf2pug/models/server'
+require 'tf2pug/model/server'
 
-class FTP
+class Ftp
   include DataMapper::Resource
   
   property :id,   Serial
   property :host, String, :required => true
-  property :port, Integer, :default => 21 # TODO: Double check
   
-  property :user, String, :unique => :host # TODO: Set default anonymous details
+  property :user, String # TODO: Set default anonymous details
   property :pass, String
   property :dir,  String
   
@@ -24,7 +23,7 @@ class FTP
   has 1, :server
   
   def connect
-    Net::FTP.open(@host, @port, @user, @pass) do |conn| # TODO: Double check
+    Net::FTP.open(@host, @user, @pass) do |conn| # TODO: Double check
       conn.chdir @dir if @dir
       conn.passive = true
       yield conn
@@ -86,4 +85,4 @@ class FTP
       end
     end
   end
-end `
+end

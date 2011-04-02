@@ -1,5 +1,7 @@
 require 'bundler/setup'
 
+$:.push('../../lib')
+
 require 'tf2pug/database'
 require 'tf2pug/logic/server'
 

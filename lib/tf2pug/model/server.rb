@@ -32,8 +32,8 @@ class Server
     server = server_obj
     info = server.server_info
     
-    raise Exception.new("Could not connect") unless info
-    raise Exception.new("Server is full") unless info['number_of_players'] < Constants.settings['server_full']
+    raise Exception.new("Could not connect.") unless info
+    raise Exception.new("Server is full.") unless info['number_of_players'] < Constants.settings['server_full']
     
     server.rcon_connect @rcon
     server.rcon_exec "changelevel #{ map.file }"

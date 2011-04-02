@@ -1,5 +1,6 @@
 require 'bundler/setup'
-require_relative 'load_path'
+
+$:.push('../lib')
 
 require 'tf2pug/database'
 require 'tf2pug/constants'
