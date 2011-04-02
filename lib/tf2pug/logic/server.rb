@@ -31,11 +31,26 @@ module ServerLogic
   end
   
   def self.upload_demos
-    # TODO: Get FTP object somehow
+    result = nil
+  
+    Ftp.all(:web => true).each do |ftp|
+      begin
+        result = ftp.upload_demos
+      rescue Exception => e
+        message "Error uploading demos to #{ ftp.host }: #{ e.message }"
+      end
+    end
+    
+    if result    
+      message "#{ result } demos uploaded."
+      Ftp.delete_demos
+    end
   end
   
   def self.purge_demos
-    # TODO: Get FTP object somehow
+    Ftp.all(:web => true).each do |ftp|
+      ftp.purge_demos
+    end
   end
   
   def self.list_stv

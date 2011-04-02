@@ -61,6 +61,14 @@ Server.create(
   )
 )
 
+Ftp.create(
+  host: "tf2pug.us",
+  user: "demos@tf2pug.us",
+  pass: "secret",
+  dir: "",
+  web: true
+)
+
 [
   [ "badlands", "cp_badlands", 12 ],
   [ "granary", "cp_granary", 8 ],
@@ -72,7 +80,7 @@ Server.create(
   [ "ashville", "koth_ashville_rc1", 1 ],
   [ "freight", "cp_freight_final1", 1 ],
   [ "obscure", "cp_obscure_final", 1 ]
-].each do |name, file, weight| # I think this works
+].each do |name, file, weight|
   Map.create(:name => name, :file => file, :weight => weight)
 end
 

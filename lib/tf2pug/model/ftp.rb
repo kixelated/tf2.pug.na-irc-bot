@@ -13,9 +13,11 @@ class Ftp
   property :id,   Serial
   property :host, String, :required => true
   
-  property :user, String # TODO: Set default anonymous details
+  property :user, String
   property :pass, String
   property :dir,  String
+  
+  property :web, Boolean, :default => false 
   
   property :created_at, DateTime
   property :updated_at, DateTime
@@ -23,7 +25,7 @@ class Ftp
   has 1, :server
   
   def connect
-    Net::FTP.open(@host, @user, @pass) do |conn| # TODO: Double check
+    Net::FTP.open(@host, @user, @pass) do |conn|
       conn.chdir @dir if @dir
       conn.passive = true
       yield conn
@@ -57,7 +59,7 @@ class Ftp
     storage = Constants.stv['storage']
     FileUtils.mkdir storage if not Dir.exists?(storage)
   
-    files = Dir[storage + "*.zip"]
+    files = Dir[storage + "*\.dem\.zip"]
     
     if files.size > 0
       connect do |conn|
@@ -66,8 +68,6 @@ class Ftp
           
           conn.putbinaryfile file, filename + ".tmp"
           conn.rename filename + ".tmp", filename
-          
-          FileUtils.rm file
         end
       end
     end  
@@ -75,7 +75,22 @@ class Ftp
     return files.size
   end
   
+  def self.delete_demos
+    # deletes local demos and storage directory
+    
+    storage = Constants.stv['storage']
+    FileUtils.mkdir storage if not Dir.exists?(storage)
+  
+    files = Dir[storage + "*\.dem\.zip"]
+    files.each do |file|
+      FileUtils.rm file
+    end
+    
+    FileUtils.rmdir storage
+  end
+  
   def purge_demos
+    # delete old, remote demos
     connect do |conn|
       conn.nlst.each do |filename|
         if filename =~ /(.+?)-(.{4})(.{2})(.{2})-(.{2})(.{2})-(.+)\.dem/
