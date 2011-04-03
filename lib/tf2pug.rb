@@ -13,6 +13,7 @@ require 'tf2pug/logic/user'
 
 class Tf2Pug
   include Cinch::Plugin
+  extend Irc
   
   # events
   listen_to :channel, method: :event_channel
@@ -166,7 +167,7 @@ class Tf2Pug
   
   # !random
   def command_random m, clss
-    return notice(m.user, "Pick a random player for a class: !random <class>") unless clss
+    return Irc::notice(m.user, "Pick a random player for a class: !random <class>") unless clss
   
     PickingLogic::pick_random m.user, clss 
   end
@@ -235,7 +236,7 @@ class Tf2Pug
   # Admin commands
   # !fmap
   def admin_forcemap m, map, file
-    return unless Irc::require_admin m
+    return unless require_admin m
     
     MapLogic::change_map map, file
     MapLogic::list_map
@@ -243,7 +244,7 @@ class Tf2Pug
   
   # !nextmap
   def admin_nextmap m
-    return unless Irc::require_admin m
+    return unless require_admin m
     
     MapLogic::next_map
     MapLogic::list_map
@@ -251,7 +252,7 @@ class Tf2Pug
   
   # !nextserver
   def admin_nextserver m
-    return unless Irc::require_admin m
+    return unless require_admin m
     
     ServerLogic::next_server
     ServerLogic::list_server
@@ -259,7 +260,7 @@ class Tf2Pug
 
   # !fadd
   def admin_forceadd m, player, classes
-    return unless Irc::require_admin m
+    return unless require_admin m
 
     if SignupLogic::add_player User(player), classes.split(/ /) 
       SignupLogic::list_signups_delay
@@ -269,28 +270,28 @@ class Tf2Pug
   
   # !fremove
   def admin_forceremove m, player
-    return unless Irc::require_admin m
+    return unless require_admin m
     
     SignupLogic::list_signups_delay if SignupLogic::remove_player User(player)
   end
   
   # !fpick 
   def admin_forcepick m, player, player_class
-    return unless Irc::require_admin m
+    return unless require_admin m
   
     PickingLogic::pick_player User(PickingLogic::current_captain), User(player), player_class 
   end
   
   # !replace
   def admin_replace m, player, replacement
-    return unless Irc::require_admin m
+    return unless require_admin m
     
     SignupLogic::list_signups_delay if SignupLogic::replace_player User(player), User(replacement) 
   end
   
   # !endgame
   def admin_endgame m
-    return unless Irc::require_admin m
+    return unless require_admin m
     
     Irc::message "Game has been ended."
     
@@ -300,7 +301,7 @@ class Tf2Pug
   
   # !reset
   def admin_reset m
-    return unless Irc::require_admin m
+    return unless require_admin m
     
     Irc::message "Game has been reset, please add up again."
     
@@ -309,28 +310,28 @@ class Tf2Pug
   
   # !quit
   def admin_quit m
-    return unless Irc::require_admin m
+    return unless require_admin m
   
     BotManager.instance.quit
   end
   
   # !restrict
   def admin_restrict m, nick, duration
-    return unless Irc::require_admin m
+    return unless require_admin m
     
     UserLogic::restrict_player m.user, nick, duration
   end
   
   # !authorize
   def admin_authorize m, nick
-    return unless Irc::require_admin m
+    return unless require_admin m
     
     UserLogic::authorize_player m.user, nick
   end
   
   # !cookie
   def admin_cookie m, pass
-    return unless Irc::require_admin m
+    return unless require_admin m
     
     command = if pass; "COOKIE #{ Constants.irc['auth'] } #{ pass }";
               else; "AUTHCOOKIE #{ Constants.irc['auth'] }"; end
@@ -340,7 +341,7 @@ class Tf2Pug
   
   # !reload
   def admin_reload m
-    return unless Irc::require_admin m
+    return unless require_admin m
     
     Constants.load_config
   end

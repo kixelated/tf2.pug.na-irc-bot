@@ -1,11 +1,7 @@
-require 'bundler/setup'
+require_relative '../config'
 
-$:.push('../../lib')
-
-require 'tf2pug/database'
 Dir['../../lib/tf2pug/model/*'].each { |file| require file }
 
-DataMapper.finalize
 DataMapper.auto_migrate!
 
 # TODO: Slim down these lines

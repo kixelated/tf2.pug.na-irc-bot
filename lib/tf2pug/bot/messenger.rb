@@ -4,10 +4,8 @@ require 'tf2pug/constants'
 require 'tf2pug/bot/manager'
 
 class BotMessenger < Cinch::Bot
-  include Constants
-
-  def initialize i
-    super()
+  def initialize(i)
+    super() # need the ()
     
     configure do |c|
       c.server = Constants.irc['server']
@@ -19,11 +17,9 @@ class BotMessenger < Cinch::Bot
       c.verbose = false
     end
     
-    on :connect do 
+    on(:connect) do 
       bot.msg Constants.irc['auth_serv'], "AUTH #{ Constants.irc['auth'] } #{ Constants.irc['auth_password'] }" if Constants.irc['auth']
     end
-    
-    BotManager.instance.add self
   end
 end
 

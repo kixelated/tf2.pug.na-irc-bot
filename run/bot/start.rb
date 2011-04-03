@@ -1,21 +1,17 @@
-require 'bundler/setup'
+require_relative 'config.rb'
 
-$:.push('../lib')
-
-require 'tf2pug/database'
 require 'tf2pug/constants'
 require 'tf2pug/bot/master'
 require 'tf2pug/bot/messenger'
 require 'tf2pug/bot/manager'
 
-DataMapper.finalize
-
 bots = [ BotMaster.new ]
 Constants.messengers['count'].times { |i| bots << BotMessenger.new(i) }
 
+threads = []
 bots.each do |bot|
-  Thread.new { bot.start }
-  sleep(Constants.delay['bot'])
+  BotManager.instance.add bot
+  threads << Thread.new { bot.start }
 end
 
-BotManager.instance.start
+threads[0].join # join on master, so messagers will also quit on crash
