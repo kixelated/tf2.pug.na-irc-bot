@@ -1,5 +1,4 @@
 require 'tf2pug/database'
-require 'tf2pug/model/match'
 
 class Map
   include DataMapper::Resource
@@ -17,13 +16,9 @@ class Map
   
   # random based on weights
   def self.random
-    maps = Map.all
-    weight = maps.sum(:weight)
+    weight = self.all.sum(:weight)
+    maps = self.all.select do { |map| map.weight > rand(weight) }
     
-    maps.shuffle.each do |map|
-      return map if rand(weight) < map.weight
-    end
-    
-    return maps.last # could not find a map, play the newest map
+    maps.shuffle.first or self.first(:order => :played_at.asc)
   end
 end

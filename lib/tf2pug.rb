@@ -159,10 +159,10 @@ class Tf2Pug
   
   # Picking-related commands
   # !pick
-  def command_pick m, player, player_class
+  def command_pick m, pick, clss
     return Irc::notice(m.user, "Pick a player for your team: !pick <name> <class> OR !pick <num> <class>") unless player and player_class
   
-    PickingLogic::pick_player m.user, player, player_class
+    PickingLogic::pick_player m.user, User(pick), clss
   end
   
   # !random

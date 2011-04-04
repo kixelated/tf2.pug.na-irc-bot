@@ -1,19 +1,16 @@
 require 'tf2pug/constants'
 require 'tf2pug/database'
 require 'tf2pug/model/map'
-require 'tf2pug/model/matchup'
-require 'tf2pug/model/team'
 require 'tf2pug/model/server'
 
 class Match
   include DataMapper::Resource
   
   property :id, Serial
+  property :type, Discriminator
 
   belongs_to :map
   belongs_to :server
-  
-  property :type, Discriminator
   
   property :played_at,  DateTime, :index => true
   property :created_at, DateTime
@@ -35,8 +32,8 @@ class Match
   has 2, :matchups, :constraint => :destroy
   has 2, :teams,    :through => :matchups
   
-  def home; matchups.first(:home => true); end
-  def away; matchups.first(:home => false); end
+  def home; matchups.first; end
+  def away; matchups.last; end
   
   before :create, :setup_match
   

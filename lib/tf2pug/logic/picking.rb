@@ -1,68 +1,45 @@
-require 'tf2pug/model/match'
-require 'tf2pug/model/matchup'
-require 'tf2pug/model/pick'
-require 'tf2pug/model/roster'
-require 'tf2pug/model/stat'
-require 'tf2pug/model/team'
-require 'tf2pug/model/user'
+require 'tf2pug/database'
 
 module PickingLogic
+  def self.pick_player(captain, pick, clss)
+    pug = Pug.last(:state_pug => :picking)
+  
+    # return Irc.notice(captain, "Picking has not started.") unless state?("picking") # TODO
+    return Irc.notice(captain, "It is not your turn to pick.") unless current_captain == User.find_player(captain)
+
+    id = pick.nick.to_i
+    user = pug.signups.first(:id => id) if id > 0 # if pick by number
+    user = User.find_player(pick) unless user
+    
+    return Irc.notice(captain, "Could not find user #{ pick.nick }.") unless user
+    
+    tfclass = Tfclass.first(:name => clss.downcase)
+    return Irc.notice(captain, "Invalid class #{ clss }.") unless tfclass
+
+    return Irc.notice(user, "The class #{ clss } is full.") unless pick_class_avaliable?(tfclass)
+    return Irc.notice(user, "You cannot pick one of the remaining medics.") if pick_medic_conflicting?(user, tfclass)
+
+    pug.add_pick(user, team, tfclass)
+    pug.remove_signup(user)
+    
+    Irc.message "#{ captain.nick } picked #{ pick.nick } as #{ clss.name }"
+  end
+
   def self.pick_num
-    
-  end
-
-  def self.start_picking
-    update_lookup
-    choose_captains
-    tell_captain
-  end
-
-  def self.choose_captains
-    @signups_all = @signups.dup
-    
-    captains = get_classes['captain'].sort_by { |player| calculate_fatkid @auth[player] }
-    
-    captains.first(Constants.teams['count']).each_with_index do |captain, i|
-      @teams << { "captain" => captain }
-      @signups.delete captain
-    end
-
-    output = @teams.collect.with_index { |team, i| team_colourize team.captain, i }
-    Irc.message "Captains are #{ output * ", " }"
-
-    captains.each do |captain|
-      Irc.notice captain, "You have been selected as a captain. When it is your turn to pick, you can choose players with the '!pick num' or '!pick name' command. Remember, you will play the class that you do not pick, so be sure to pick a medic if you do not wish to play medic."
-    end
-  end
-
-  def self.update_lookup
-    @lookup.clear
-    @signups.keys.each_with_index { |nick, i| @lookup[i + 1] = nick }
+    Pug.last(:state_pug => :picking).picks.count
   end
 
   def self.tell_captain
-    Irc.notice current_captain, "It is your turn to pick."
-
-    classes = get_classes
-    lookup_i = @lookup.invert
-
-    # Display all of the players
-    output = @signups.keys.collect { |player| "(#{ lookup_i[player] }) #{ player }" }
-    Irc.notice current_captain, "#{ bold rjust("all: ") } #{ output * ", " }"
-
-    # Displays the classes that are not yet full for this team
-    classes_needed(current_team.get_classes, 1).each do |clss, count| # logic/players.rb
-      output = classes[clss].collect { |player| "(#{ lookup_i[player] }) #{ player }" }
-      Irc.notice current_captain, "#{ bold rjust("#{ count } #{ clss }: ") } #{ output * ", " }"
-    end
+    Irc.notice current_captain.nick, "It is your turn to pick."
   end
 
-  def self.list_captain user
-    return Irc.notice(user, "Picking has not started.") unless state? "picking" # logic/state.rb
+  def self.list_captain
+    return Irc.message("Picking has not started.") unless state?("picking") # TODO
 
-    Irc.message "It is #{ current_captain }'s turn to pick"
+    Irc.message "It is #{ current_captain.nick }'s turn to pick"
   end
 
+  # TODO: !random
   def self.pick_random user, clss
     classes = get_classes[clss]
     nick = classes[rand(classes.length)]
@@ -70,13 +47,8 @@ module PickingLogic
     pick_player user, nick, clss
   end
 
-  def self.can_pick? nick
-    current_captain == nick
-  end
-
-  def self.find_player player
-    temp = @signups.keys.reject { |k| k.downcase != player.downcase }
-    temp.first unless temp.empty?
+  def self.can_pick? user
+    current_captain == user
   end
 
   def self.pick_class_valid? clss
@@ -97,32 +69,6 @@ module PickingLogic
     needed -= 1 if clss == "medic" and !@signups_all[current_team.captain].include? "medic" # special case where team has a captain who can med
 
     return medics < needed
-  end
-
-  def self.pick_player user, nick, clss
-    return Irc.notice(user, "Picking has not started.") unless state? "picking" # logic/state.rb
-    return Irc.notice(user, "It is not your turn to pick.") unless can_pick? user.nick
-
-    clss.downcase!
-    player = find_player nick
-
-    unless player
-      player = @lookup[nick.to_i] if nick.to_i > 0
-      return Irc.notice(user, "Could not find #{ nick }.") unless player
-      return Irc.notice(user, "#{ player } has already been picked.") unless @signups.key? player
-    end
-
-    return Irc.notice(user, "Invalid class #{ clss }.") unless pick_class_valid? clss
-    return Irc.notice(user, "The class #{ clss } is full.") unless pick_class_avaliable? clss
-    return Irc.notice(user, "You cannot pick one of the remaining medics.") if pick_medic_conflicting? player, clss
-
-    current_team.signups[player] = clss
-    @signups.delete player
-    @pick_order << player
-    
-    Irc.message "#{ current_team.my_colourize user.nick } picked #{ player } as #{ clss }"
-
-    next_pick
   end
 
   def self.next_pick

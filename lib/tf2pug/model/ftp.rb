@@ -5,7 +5,6 @@ require 'net/ftp'
 
 require 'tf2pug/constants'
 require 'tf2pug/database'
-require 'tf2pug/model/server'
 
 class Ftp
   include DataMapper::Resource

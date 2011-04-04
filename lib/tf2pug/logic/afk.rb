@@ -27,7 +27,7 @@ module AfkLogic
   def self.remove_afk
     pug = Pug.last
     check_afk(Constants.settings['afk'] + Constants.delays['afk']).each do |signup|
-      match.signups.all(:user => user).destroy
+      match.remove(user)
     end
   end
   

@@ -1,7 +1,4 @@
 require 'tf2pug/database'
-require 'tf2pug/model/roster'
-require 'tf2pug/model/team'
-require 'tf2pug/model/signup'
 
 class User
   include DataMapper::Resource
