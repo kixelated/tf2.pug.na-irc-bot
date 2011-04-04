@@ -6,7 +6,7 @@ class Matchup
   include DataMapper::Resource
   
   belongs_to :match, :key => true
-  property   :id,    Serial
+  belongs_to :team,  :key => true
   
-  belongs_to :team, :index => true
+  property :home, Boolean
 end

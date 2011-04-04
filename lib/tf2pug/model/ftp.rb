@@ -1,7 +1,6 @@
 require 'fileutils'
-require 'zip/zipfilesystem'
-
 require 'net/ftp'
+require 'zip/zipfilesystem'
 
 require 'tf2pug/constants'
 require 'tf2pug/database'
@@ -20,8 +19,6 @@ class Ftp
   
   property :created_at, DateTime
   property :updated_at, DateTime
-  
-  has 1, :server
   
   def connect
     Net::FTP.open(@host, @user, @pass) do |conn|

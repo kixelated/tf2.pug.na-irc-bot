@@ -2,33 +2,36 @@ require 'tf2pug/database'
 
 module PickingLogic
   def self.pick_player(captain, pick, clss)
-    pug = Pug.last(:state_pug => :picking)
-  
-    # return Irc.notice(captain, "Picking has not started.") unless state?("picking") # TODO
-    return Irc.notice(captain, "It is not your turn to pick.") unless current_captain == User.find_player(captain)
+    pugs = Pug.all(:state_pug => :picking) # possible to have multiple picking processes
+    return Irc.notice(captain, "Picking has not started.") if pugs.empty?
+    
+    captain_u = User.find_player(captain)
+    pug = pugs.detect do |pug| 
+      team = pug.get_team &get_pick # might work
+      team.leader == captain_u # detect pug if user is current captain
+    end
+    
+    return Irc.notice(captain, "It is not your turn to pick.") unless pug
+    
+    tfclass = Tfclass.first(:name => clss.downcase)
+    return Irc.notice(captain, "Invalid class #{ clss }.") unless tfclass
 
     id = pick.nick.to_i
     user = pug.signups.first(:id => id) if id > 0 # if pick by number
     user = User.find_player(pick) unless user
     
     return Irc.notice(captain, "Could not find user #{ pick.nick }.") unless user
+    return Irc.notice(captain, "#{ pick.nick } is not added to this pug.") unless pug.signups.first(:user => user)
+    return Irc.notice(captain, "#{ pick.nick } has already been picked.") unless pug.picks.first(:user => user)
     
-    tfclass = Tfclass.first(:name => clss.downcase)
-    return Irc.notice(captain, "Invalid class #{ clss }.") unless tfclass
-
-    return Irc.notice(user, "The class #{ clss } is full.") unless pick_class_avaliable?(tfclass)
-    return Irc.notice(user, "You cannot pick one of the remaining medics.") if pick_medic_conflicting?(user, tfclass)
+    #return Irc.notice(user, "The class #{ clss } is full.") unless pick_class_avaliable?(tfclass)
+    #return Irc.notice(user, "You cannot pick one of the remaining medics.") if pick_medic_conflicting?(user, tfclass)
 
     pug.add_pick(user, team, tfclass)
-    pug.remove_signup(user)
     
-    Irc.message "#{ captain.nick } picked #{ pick.nick } as #{ clss.name }"
+    Irc.message "#{ captain.nick } picked #{ pick.nick } as #{ clss }"
   end
-
-  def self.pick_num
-    Pug.last(:state_pug => :picking).picks.count
-  end
-
+=begin
   def self.tell_captain
     Irc.notice current_captain.nick, "It is your turn to pick."
   end
@@ -157,13 +160,9 @@ module PickingLogic
     end
     Irc.message "The picking format is: #{ output * " " }"
   end
-
-  def self.current_captain
-    current_team.captain
-  end
-
-  def self.current_team
-    @teams[pick_format @pick]
+=end
+  def self.get_pick pug
+    pick_format(pug.pick_num - 2) + 1 # - 2 to factor in captains, + 1 to factor in zero-indexing
   end
 
   def self.pick_format num
@@ -172,19 +171,11 @@ module PickingLogic
 
   def self.sequential num
     # 0 1 0 1 0 1 0 1 ...
-    num % Constants.teams['count']
+    num % 2
   end
 
   def self.staggered num
     # 0 1 1 0 0 1 1 0 ...
-    # won't work as expected when Constants.teams['count'] > 2
-    ((num + 1) / Constants.teams['count']) % Constants.teams['count']
-  end
-
-  def self.hybrid num
-    # 0 1 0 1
-    #         1 0 0 1 1 0 ...
-    return sequential(num) if num < 4
-    staggered(num - 2)
+    ((num + 1) / 2) % 2
   end
 end

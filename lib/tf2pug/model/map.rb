@@ -11,14 +11,14 @@ class Map
   property :played_at,  DateTime, :index => true
   property :created_at, DateTime
   property :updated_at, DateTime
-
-  has n, :matches
   
   # random based on weights
   def self.random
-    weight = self.all.sum(:weight)
-    maps = self.all.select do { |map| map.weight > rand(weight) }
+    target = rand(self.all.sum(:weight))
     
-    maps.shuffle.first or self.first(:order => :played_at.asc)
+    self.all.detect do |map|
+      target -= map.weight
+      target < 0
+    end 
   end
 end

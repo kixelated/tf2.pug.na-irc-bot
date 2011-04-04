@@ -6,6 +6,4 @@ class Tfclass
   property :id,   Serial
   property :name, String,  :required => true
   property :pug,  Integer, :default => 0
-  
-  has n, :picks
 end

@@ -1,32 +1,35 @@
 require 'tf2pug/database'
+require 'tf2pug/model/roster'
+require 'tf2pug/model/team'
+require 'tf2pug/model/signup'
+require 'tf2pug/model/pick'
 
 class User
   include DataMapper::Resource
  
   property :id, Serial
   property :auth, String, :index => :auth_nick
-  property :nick, String, :index => :auth_nick, :unique => :auth, :required => true
+  property :nick, String, :index => :auth_nick, :required => true
   
   property :restricted_at, DateTime, :index => true
  
-  has n, :rosters, :constraint => :destroy
+  has n, :rosters
   has n, :teams,   :through => :rosters
-  has n, :signups, :constraint => :destroy
   has n, :picks
+  has n, :signups
   
   property :spoken_at, DateTime
   property :created_at, DateTime
   property :updated_at, DateTime
   
+  @cache = {}
   class << self
-    cache = {} # TODO: Might be @cache
-    
     def create_player player
-      cache[player] = User.create(:auth => player.authname, :nick => player.nick)
+      @cache[player] = User.first_or_create(:auth => player.authname, :nick => player.nick)
     end
   
     def find_player player
-      return cache[player] if cache.key?(player)
+      return @cache[player] if @cache.key?(player)
       
       if player.authed?
         user = User.first(:auth => player.authname) # select by auth
@@ -36,17 +39,17 @@ class User
         user = User.first(:nick => player.nick, :auth => nil) # select by nick
       end
       
-      cache[player] = user
+      @cache[player] = user
     end
     
     def update_cache player, replacement = nil
-      temp = cache.delete player
-      cache[replacement] = temp if replacement
+      temp = @cache.delete player
+      @cache[replacement] = temp if replacement
     end
   end
   
   def restricted?
-    @restricted_at > 0
+    @restricted_at != nil
   end
   
   def restrict duration
@@ -54,6 +57,6 @@ class User
   end
   
   def authorize
-    update(:restricted_at => 0)
+    update(:restricted_at => nil)
   end
 end

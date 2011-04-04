@@ -1,6 +1,7 @@
 require 'tf2pug/constants'
 require 'tf2pug/database'
 require 'tf2pug/model/map'
+require 'tf2pug/model/matchup'
 require 'tf2pug/model/server'
 
 class Match
@@ -32,15 +33,8 @@ class Match
   has 2, :matchups, :constraint => :destroy
   has 2, :teams,    :through => :matchups
   
-  def home; matchups.first; end
-  def away; matchups.last; end
-  
-  before :create, :setup_match
-  
-  def setup_match
-    @server = Server.first(:order => :played_at.asc)
-    @map = Map.random
-  end
+  def home; matchups.first(:home => true); end
+  def away; matchups.first(:home => false); end
   
   def start_match
     @server.start(@map) # if an exception is thrown, the state never gets updated
@@ -50,11 +44,9 @@ class Match
     # TODO
   end
   
-  def can_add?
-    @state == :setup
-  end
-  
-  def can_remove?
-    @state == :setup
+  # TODO: optional block can be used instead
+  def get_team(index = nil, &block)
+    index = block.call(self) unless index
+    self.matchups.get(index)
   end
 end

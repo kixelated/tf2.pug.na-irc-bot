@@ -21,8 +21,6 @@ class Server
   
   belongs_to :ftp
   
-  has n, :matches
-  
   def server_obj
     SourceServer.new @host, @port
   end

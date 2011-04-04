@@ -1,29 +1,27 @@
 require 'tf2pug/database'
-require 'tf2pug/models/pug'
-require 'tf2pug/models/team'
-require 'tf2pug/models/tfclass'
+require 'tf2pug/model/pug'
+require 'tf2pug/model/team'
+require 'tf2pug/model/tfclass'
 
 module PugLogic
-  def self.setup_pug
-    pug = Pug.last(:state_pug => :picking)
-    
+  def self.create_pug
+    map = Map.random
+    server = Server.first(:order => :played_at.asc)
     teams = choose_teams
-    captains = choose_captains(pug)
+  
+    Pug.create(:server => server, :map => map, :teams => teams)
+  end
+  
+  def create_captains(pug)
     tfcaptain = Tfclass.first(:name => "captain") # captain is a hard-coded class
+    captains = choose_captains(pug, tfcaptain)
     
-    teams.zip(captains).each do |team, captain|
-      pug.matchups.create(:team => team)
-      pug.picks.create(:user => captain, :team => team, :tfclass => tfcaptain)
-      
-      team.add_signup(captain, true) # add player to roster, and make them leader
-    end
-    
-    output = captains.collect { |user| user.nick }
-    Irc.message "Captains are #{ output * ", " }"
-    
-    captains.each do |user|
+    output = captains.collect do |user| 
       Irc.notice user.nick, "You have been selected as a captain. When it is your turn to pick, you can choose players with the '!pick num' or '!pick name' command. Remember, you will play the class that you do not pick, so be careful with your last pick."
+      user.nick
     end
+    
+    Irc.message "Captains are #{ output * ", " }"
   end
   
   def self.choose_teams
@@ -32,8 +30,8 @@ module PugLogic
     end
   end
   
-  def self.choose_captains(pug)
-    captains = pug.signups.all(:tfclass => "captain").sort_by do |signup|
+  def self.choose_captains(pug, tfclass)
+    captains = pug.signups.all(:tfclass => tfclass).sort_by do |signup|
       temp = signup.user.picks.aggregate(:all, :team)
       temp[0].to_f / temp[1].to_f # sort by fatkid ratio
     end
