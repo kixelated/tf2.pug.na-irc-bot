@@ -28,20 +28,25 @@ class Cup
   end
 
   def command_cup m, classes
-    return message("#{ @cup.size } users signed up for the cup.") unless classes
-  
-    classes = classes.split(/ /)
-    classes.collect! { |clss| clss.downcase } # convert classes to lowercase
-    classes.uniq! # remove duplicate classes
+    unless classes
+      if @cup.delete(m.user.nick)
+        notice(m.user, "You have been removed from the cup.") 
+        message("#{ @cup.size } users signed up for the cup.")
+      end
+    else
+      classes = classes.split(/ /)
+      classes.collect! { |clss| clss.downcase } # convert classes to lowercase
+      classes.uniq! # remove duplicate classes
 
-    rej = classes.reject! { |clss| not const["teams"]["classes"].key? clss } # remove invalid classes
-    return notice user, "Invalid classes. Possible options are #{ const["teams"]["classes"].keys * ", " }" if rej
-    
-    @cup[m.user.nick] = classes
-    @cup_changed = true
-    
-    notice(m.user, "Thanks for signing up for the cup! Teams will be chosen at a later date and posted.")
-    message("#{ @cup.size } users signed up for the cup.")
+      rej = classes.reject! { |clss| not const["teams"]["classes"].key? clss } # remove invalid classes
+      return notice m.user, "Invalid classes. Possible options are #{ const["teams"]["classes"].keys * ", " }" if rej
+      
+      @cup[m.user.nick] = classes
+      @cup_changed = true
+      
+      notice(m.user, "Thanks for signing up for the cup! Teams will be chosen at a later date and posted.")
+      message("#{ @cup.size } users signed up for the cup.")
+    end
   end
   
   def dump_cup
