@@ -5,6 +5,7 @@ require_relative 'constants'
 class Cup
   include Cinch::Plugin
   include Constants
+  include Utilities
 
   match /cup(?: (.+))?/i, method: :command_cup
   timer 60, method: :dump_cup
