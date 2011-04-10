@@ -1,9 +1,11 @@
 require 'cinch'
 
 require_relative 'constants'
+require_relative 'util'
 
 class Cup
   include Cinch::Plugin
+  
   include Constants
   include Utilities
 
