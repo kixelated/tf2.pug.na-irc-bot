@@ -29,10 +29,8 @@ class Cup
 
   def command_cup m, classes
     unless classes
-      if @cup.delete(m.user.nick)
-        notice(m.user, "You have been removed from the cup.") 
-        message("#{ @cup.size } users signed up for the cup.")
-      end
+      notice(m.user, "You have been removed from the cup.") if @cup.delete(m.user.nick)
+      message("#{ @cup.size } users signed up for the cup.")
     else
       classes = classes.split(/ /)
       classes.collect! { |clss| clss.downcase } # convert classes to lowercase
