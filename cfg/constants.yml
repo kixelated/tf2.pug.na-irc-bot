@@ -128,7 +128,7 @@ rotation:
       
     - name: viaduct
       file: koth_viaduct
-      weight: 12
+      weight: 8
       
     - name: yukon
       file: cp_yukon_final
@@ -159,7 +159,7 @@ rotation:
       weight: 2
 
     - name: metalworks
-      file: cp_metalworks_b13
+      file: cp_metalworks_b14
       weight: 2
       
     - name: warmfront
@@ -170,9 +170,9 @@ rotation:
       file: cp_mainline_rc6
       weight: 2
       
-    - name: badlands (koth)
-      file: koth_badlands
-      weight: 1
+    - name: pro_viaduct
+      file: koth_pro_viaduct_rc2
+      weight: 2
       
     - name: integrity
       file: cp_integrity_a2
@@ -183,7 +183,7 @@ rotation:
       weight: 1
       
     - name: process
-      file: cp_process_a2
+      file: cp_process_a3
       weight: 1
       
     - name: peaks
