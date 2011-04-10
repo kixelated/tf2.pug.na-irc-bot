@@ -10,6 +10,8 @@ class Cup
   include Utilities
 
   match /cup(?: (.+))?/i, method: :command_cup
+  match /cuplist/i, method: :command_cuplist
+  
   timer 60, method: :dump_cup
 
   def initialize(*args)
@@ -45,6 +47,10 @@ class Cup
       notice(m.user, "Thanks for signing up for the cup! Teams will be chosen at a later date and posted.")
       message("#{ @cup.size } users signed up for the cup.")
     end
+  end
+  
+  def command_cuplist m
+    message("#{ @cup.keys * ", " }") if m.channel.opped?(m.user)
   end
   
   def dump_cup
