@@ -6,12 +6,12 @@ module PickingLogic
     return Irc.notice(captain, "Picking has not started.") if pugs.empty?
     
     captain_u = User.find_player(captain)
-    pug = pugs.detect do |pug| 
-      team = pug.get_team &get_pick # might work
-      team.leader == captain_u # detect pug if user is current captain
-    end
     
-    return Irc.notice(captain, "It is not your turn to pick.") unless pug
+    pug = pugs.detect { |pug| pug.signups.first(:user => captain_u) } # select the pug this player is signed up for
+    return Irc.notice(captain, "You are not able to pick.") unless pug
+    
+    matchup = pug.get_matchup(&pick_format)
+    return Irc.notice(captain, "It is not your turn to pick.") unless matchup.team.leader == captain_u
     
     tfclass = Tfclass.first(:name => clss.downcase)
     return Irc.notice(captain, "Invalid class #{ clss }.") unless tfclass
@@ -24,13 +24,19 @@ module PickingLogic
     return Irc.notice(captain, "#{ pick.nick } is not added to this pug.") unless pug.signups.first(:user => user)
     return Irc.notice(captain, "#{ pick.nick } has already been picked.") unless pug.picks.first(:user => user)
     
-    #return Irc.notice(user, "The class #{ clss } is full.") unless pick_class_avaliable?(tfclass)
-    #return Irc.notice(user, "You cannot pick one of the remaining medics.") if pick_medic_conflicting?(user, tfclass)
-
-    pug.add_pick(user, team, tfclass)
+    remaining = tfclass.pug - matchup.picks.count(:tfclass => tfclass)
+    return Irc.notice(user, "The class #{ clss } is full.") unless remaining > 0
     
-    Irc.message "#{ captain.nick } picked #{ pick.nick } as #{ clss }"
+    tfmedic = Tfclass.first(:name => "medic")
+    if tfclass != tfmedic and pug.signups.first(:user => user, :tfclass => tfmedic) # only check if player is not picked as medic and was added as medic
+      #return Irc.notice(user, "You cannot pick one of the remaining medics.") # TODO
+    end
+
+    matchup.add_pick(user, tfclass)
+    
+    Irc.message "#{ captain.nick } picked #{ pick.nic k } as #{ clss }"
   end
+  
 =begin
   def self.tell_captain
     Irc.notice current_captain.nick, "It is your turn to pick."
@@ -161,12 +167,9 @@ module PickingLogic
     Irc.message "The picking format is: #{ output * " " }"
   end
 =end
-  def self.get_pick pug
-    pick_format(pug.pick_num - 2) + 1 # - 2 to factor in captains, + 1 to factor in zero-indexing
-  end
-
-  def self.pick_format num
-    staggered num
+  def self.pick_format pug
+    num = pug.pick_num - 2 # factors in captains
+    staggered(num) + 1 # factors in zero-indexing
   end
 
   def self.sequential num

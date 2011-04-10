@@ -19,7 +19,8 @@ class Pug < Match
   end
   
   has n, :signups
-  has n, :picks
+  has n, :picks,   :through => :matchups
+  
   
   # Signup stuff
   def add_signup(user, tfclasses)
@@ -39,10 +40,6 @@ class Pug < Match
   end
   
   # Picking stuff
-  def add_pick(user, team, tfclass)
-    self.picks.create(:user => user, :team => team, :tfclass => tfclass)
-  end
-  
   def num_pick
     self.picks.count
   end

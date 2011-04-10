@@ -45,7 +45,7 @@ class Match
   end
   
   # TODO: optional block can be used instead
-  def get_team(index = nil, &block)
+  def get_matchup(index = nil, &block)
     index = block.call(self) unless index
     self.matchups.get(index)
   end
