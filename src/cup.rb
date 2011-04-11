@@ -22,7 +22,7 @@ class Cup
     
     if File.exists?('cup.txt')
       File.open('cup.txt').each_line do |str|
-        if str =~ /^(\w+): (.+)$/
+        if str =~ /^([^:]+): (.+)$/
           @cup[$1] = $2.split(/ /)
         end
       end
