@@ -10,7 +10,7 @@ class Cup
   include Utilities
 
   match /cup(?: (.+))?/i, method: :command_cup
-  match /cuplist/i, method: :command_cuplist
+  match /cuplist$/i, method: :command_cuplist
   
   timer 60, method: :dump_cup
 
