@@ -9,7 +9,7 @@ class Cup
   include Constants
   include Utilities
 
-  match /cup(?: (.+))?/i, method: :command_cup
+  match /cup(?: (.+))?$/i, method: :command_cup
   match /cuplist$/i, method: :command_cuplist
   
   timer 60, method: :dump_cup
