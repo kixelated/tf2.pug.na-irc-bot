@@ -50,7 +50,8 @@ class Cup
   end
   
   def command_cuplist m
-    message("#{ @cup.keys * ", " }") if m.channel.opped?(m.user)
+    message("#{ @cup.size } users signed up for the cup.")
+    message("#{ @cup.keys * ", " }")
   end
   
   def dump_cup
