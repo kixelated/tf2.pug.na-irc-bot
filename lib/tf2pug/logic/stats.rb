@@ -1,12 +1,11 @@
 require 'tf2pug/database'
 require 'tf2pug/bot/irc'
-require 'tf2pug/logic/user'
-require 'tf2pug/models/user'
+require 'tf2pug/model/user'
 
 module Logic
   module Stats
     def self.list_stats(player)
-      user = User.find_user player
+      user = User.find_player player
       return Irc.message "There are no records of the user #{ player }" unless user
       
       total = user.picks.count(:tfclass)

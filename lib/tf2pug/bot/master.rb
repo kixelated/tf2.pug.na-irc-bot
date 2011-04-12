@@ -14,7 +14,7 @@ class BotMaster < Cinch::Bot
       c.local_host = Constants.internet['local_host']
       
       c.channels = [ Constants.irc['channel'] ]
-      c.plugins.plugins = [ Pug ]
+      c.plugins.plugins = [ Tf2Pug ]
 
       c.verbose = false
     end

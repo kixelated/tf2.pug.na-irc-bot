@@ -7,13 +7,11 @@ require 'tf2pug/logic/map'
 require 'tf2pug/logic/picking'
 require 'tf2pug/logic/server'
 require 'tf2pug/logic/signup'
-require 'tf2pug/logic/state'
 require 'tf2pug/logic/stats'
 require 'tf2pug/logic/user'
 
 class Tf2Pug
   include Cinch::Plugin
-  extend Irc
   
   # events
   listen_to :channel, method: :event_channel
@@ -23,8 +21,7 @@ class Tf2Pug
   listen_to :kick, method: :event_kick
   listen_to :nick, method: :event_nick
   
-  timer 1, method: :timer_list
-  timer 30, method: :timer_restriction
+  timer 60, method: :timer_restriction
   
   # player-related commands
   match /add(?: (.+))?/i, method: :command_add
@@ -72,7 +69,7 @@ class Tf2Pug
   
   # Events
   def event_channel m
-    AfkLogic::update_spoken m.user
+    AfkLogic::spoken_player m.user
   end
   
   def event_join m
@@ -88,7 +85,7 @@ class Tf2Pug
   end
   
   def event_kick m
-    SignupLogic::remove_player User(m.params[1])
+    SignupLogic::remove_signup User(m.params[1])
   end
   
   def event_nick m
@@ -96,11 +93,6 @@ class Tf2Pug
     
     SignupLogic::replace_player old, m.user
     UserLogic::rename_player old, m.user
-  end
-  
-  def timer_list
-    SignupLogic::list_signups if @show_list > 1
-    @show_list = 0
   end
   
   def timer_restriction
@@ -112,15 +104,16 @@ class Tf2Pug
   def command_add m, classes
     return Irc::notice(m.user, "Add to the pug: !add <class1> <class2> <etc>") unless classes
   
-    if SignupLogic::add_player m.user, classes.split(/ /)
-      SignupLogic::list_signups_delay
+    if SignupLogic::add_signup m.user, classes.split(/ /)
+      SignupLogic::list_signups
       MatchLogic::attempt_afk 
     end
   end
 
   # !remove
   def command_remove m
-    SignupLogic::list_signups_delay if SignupLogic::remove_player m.user
+    SignupLogic::remove_signup m.user
+    SignupLogic::list_signups
   end
   
   # !list
@@ -263,7 +256,7 @@ class Tf2Pug
     return unless require_admin m
 
     if SignupLogic::add_player User(player), classes.split(/ /) 
-      SignupLogic::list_signups_delay
+      SignupLogic::list_signups
       MatchLogic::attempt_afk 
     end
   end
@@ -272,7 +265,7 @@ class Tf2Pug
   def admin_forceremove m, player
     return unless require_admin m
     
-    SignupLogic::list_signups_delay if SignupLogic::remove_player User(player)
+    SignupLogic::list_signups if SignupLogic::remove_signup User(player)
   end
   
   # !fpick 
@@ -286,7 +279,7 @@ class Tf2Pug
   def admin_replace m, player, replacement
     return unless require_admin m
     
-    SignupLogic::list_signups_delay if SignupLogic::replace_player User(player), User(replacement) 
+    SignupLogic::list_signups if SignupLogic::replace_player User(player), User(replacement) 
   end
   
   # !endgame

@@ -34,7 +34,7 @@ module PickingLogic
 
     matchup.add_pick(user, tfclass)
     
-    Irc.message "#{ captain.nick } picked #{ pick.nic k } as #{ clss }"
+    Irc.message "#{ captain.nick } picked #{ pick.nick } as #{ clss }"
   end
   
 =begin

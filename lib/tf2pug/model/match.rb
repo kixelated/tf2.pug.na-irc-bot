@@ -30,7 +30,7 @@ class Match
     end
   end
 
-  has 2, :matchups, :constraint => :destroy
+  has 2, :matchups
   has 2, :teams,    :through => :matchups
   
   def home; matchups.first(:home => true); end

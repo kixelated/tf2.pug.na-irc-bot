@@ -15,7 +15,7 @@ class BotManager
   end
 
   def message(target, msg, notice = false)
-    @bots.push(@bots.shift).last.message(target, msg, notice)
+    @bots.push(@bots.shift).last.msg(target, msg, notice)
   end
   
   def notice(target, message)

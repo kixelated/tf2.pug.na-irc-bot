@@ -43,8 +43,8 @@ module UserLogic
     end
   end
   
-  def self.reward_user(player)
-    user = User.find_user player
+  def self.reward_player(player)
+    user = User.find_player player
     
     total = StatsLogic::calculate_total(user)
     return if total < Constants.reward['min']

@@ -81,11 +81,6 @@ module SignupLogic
     Irc.message "#{ Irc.rjust("#{ output.size } users added:") } #{ output * ", " }"
   end
   
-  def self.list_signups_delay
-    list_signups unless @show_list > 0
-    @show_list += 1
-  end
-  
   # TODO: Find a place to put this
   def self.classes_needed(pug)
     tfclasses = Tfclass.all(:pug.gte => 1).collect { |tfclass| [tfclass, tfclass.pug * 2] }
