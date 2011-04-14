@@ -123,7 +123,7 @@ rotation:
       weight: 18
       
     - name: snakewater
-      file: cp_snakewater_rc2
+      file: cp_snakewater_rc3
       weight: 18
       
     - name: viaduct
