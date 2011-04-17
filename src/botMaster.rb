@@ -3,7 +3,6 @@ require 'cinch'
 require_relative 'constants'
 require_relative 'botManager'
 require_relative 'pug'
-require_relative 'cup'
 
 class BotMaster < Cinch::Bot
   include Constants
@@ -18,7 +17,7 @@ class BotMaster < Cinch::Bot
       c.local_host = Constants.const["internet"]["local_host"]
       
       c.channels = [ Constants.const["irc"]["channel"] ]
-      c.plugins.plugins = [ Pug, Cup ]
+      c.plugins.plugins = [ Pug ]
 
       c.verbose = false
     end
