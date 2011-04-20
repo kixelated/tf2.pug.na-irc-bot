@@ -130,13 +130,21 @@ rotation:
       file: koth_viaduct
       weight: 8
       
+    - name: viaduct (pro)
+      file: koth_pro_viaduct_rc2
+      weight: 2
+      
     - name: yukon
       file: cp_yukon_final
       weight: 8
       
     - name: coldfront
       file: cp_coldfront
-      weight: 4
+      weight: 6
+
+    - name: warmfront
+      file: cp_warmfront
+      weight: 2
 
     - name: ashville
       file: koth_ashville_rc1
@@ -144,7 +152,7 @@ rotation:
       
     - name: obscure
       file: cp_obscure_final
-      weight: 4
+      weight: 2
       
     - name: freight
       file: cp_freight_final1
@@ -153,37 +161,25 @@ rotation:
     - name: bazillion
       file: cp_bazillion_rc2
       weight: 2
-      
-    - name: indulge
-      file: cp_indulge
-      weight: 2
 
     - name: metalworks
-      file: cp_metalworks_b14
-      weight: 2
-      
-    - name: warmfront
-      file: cp_warmfront
+      file: cp_metalworks_b17
       weight: 2
       
     - name: mainline
       file: cp_mainline_rc6
-      weight: 2
-      
-    - name: pro_viaduct
-      file: koth_pro_viaduct_rc2
-      weight: 2
-      
-    - name: integrity
-      file: cp_integrity_a2
       weight: 1
       
+    - name: indulge
+      file: cp_indulge
+      weight: 1
+
     - name: stark
       file: cp_stark_b2
       weight: 1
       
     - name: process
-      file: cp_process_a3
+      file: cp_process_a4
       weight: 1
       
     - name: peaks
