@@ -4,7 +4,7 @@ Feature: Signups
   I want to signup as classes
   
   Scenario: Add signup
-    Given There are no signups
+    Given an empty pug
     When I sign up as scout, soldier
     Then I should see 1 player signed up
       And I should see 1 scout signed up
@@ -14,9 +14,9 @@ Feature: Signups
       And I should see 0 captains signed up
       
   Scenario: Remove signup
-    Given There are no signups
-      And I sign up as scout, soldier
-    When I remove my signup
+    Given an empty pug
+    When I sign up as scout, soldier
+      And I remove my signup
     Then I should see 0 players signed up
       And I should see 0 scouts signed up
       And I should see 0 soldiers signed up
@@ -25,7 +25,7 @@ Feature: Signups
       And I should see 0 captains signed up
       
   Scenario: Multiple add signups
-    Given There are no signups
+    Given an empty pug
     When I sign up as scout, soldier
       And I sign up as scout, demo
     Then I should see 1 player signed up
@@ -36,9 +36,9 @@ Feature: Signups
       And I should see 0 captains signed up
    
   Scenario: Multiple remove signups
-    Given There are no signups
-      And I sign up as scout, soldier
-    When I remove my signup
+    Given an empty pug
+    When I sign up as scout, soldier
+      And I remove my signup
       And I remove my signup
     Then I should see 0 players signed up
       And I should see 0 scouts signed up
