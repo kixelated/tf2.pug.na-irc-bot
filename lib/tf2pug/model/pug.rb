@@ -1,6 +1,8 @@
 require 'tf2pug/constants'
 require 'tf2pug/database'
+require 'tf2pug/model/map'
 require 'tf2pug/model/match'
+require 'tf2pug/model/server'
 require 'tf2pug/model/signup'
 require 'tf2pug/model/pick'
 
@@ -11,7 +13,7 @@ class Pug < Match
     state :picking
     state :final
     
-    event :forward_pug do
+    event :advance_pug do
       transition :from => :waiting, :to => :afk
       transition :from => :afk,     :to => :picking
       transition :from => :picking, :to => :final
@@ -19,28 +21,19 @@ class Pug < Match
   end
   
   has n, :signups
-  has n, :picks,   :through => :matchups
+  has n, :picks
   
+  include SignupOperations
+  include PickOperations
   
-  # Signup stuff
-  def add_signup(user, tfclasses)
-    remove_signup(user) # delete any previous signups
-    
-    tfclasses.each do |tfclass|
-      self.signups.create(:user => user, :tfclass => tfclass) # create the signups
+  class << self
+    def waiting
+      # try finding a waiting pug, otherwise, create one (there should always be a waiting pug)
+      Pug.first(:state_pug => :waiting) || Pug.create(:server => Server.last_played, :map => Map.random, :teams => Team.random(2))
     end
-  end
-  
-  def remove_signup(user)
-    self.signups.all(:user => user).destroy # delete any previous signups
-  end
-  
-  def replace_signup(user_old, user_new)
-    self.signups.all(:user => user_old).update(:user => user_new)
-  end
-  
-  # Picking stuff
-  def num_pick
-    self.picks.count
+    
+    def picking
+      Pug.first(:state_pug => :picking)
+    end
   end
 end

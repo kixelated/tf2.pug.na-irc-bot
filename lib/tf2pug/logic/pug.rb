@@ -4,15 +4,7 @@ require 'tf2pug/model/team'
 require 'tf2pug/model/tfclass'
 
 module PugLogic
-  def self.create_pug
-    map = Map.random
-    server = Server.first(:order => :played_at.asc)
-    teams = choose_teams
-  
-    Pug.create(:server => server, :map => map, :teams => teams)
-  end
-  
-  def create_captains(pug)
+  def self.create_captains(pug)
     tfcaptain = Tfclass.first(:name => "captain") # captain is a hard-coded class
     captains = choose_captains(pug, tfcaptain)
     
@@ -22,12 +14,6 @@ module PugLogic
     end
     
     Irc.message "Captains are #{ output * ", " }"
-  end
-  
-  def self.choose_teams
-    Constants.teams.shuffle.first(2).collect do |team_name|
-      Team.first_or_create(:name => team_name)
-    end
   end
   
   def self.choose_captains(pug, tfclass)

@@ -15,15 +15,17 @@ GEM
     cinch (1.1.1)
     data_objects (0.10.3)
       addressable (~> 2.1)
-    dm-aggregates (1.1.0)
+    dm-adjust (1.1.0)
       dm-core (~> 1.1.0)
-    dm-constraints (1.1.0)
+    dm-aggregates (1.1.0)
       dm-core (~> 1.1.0)
     dm-core (1.1.0)
       addressable (~> 2.2.4)
     dm-do-adapter (1.1.0)
       data_objects (~> 0.10.2)
       dm-core (~> 1.1.0)
+    dm-is-list (1.1.0)
+      dm-adjust (~> 1.1.0)
     dm-is-state_machine (1.1.0)
       dm-core (~> 1.1.0)
     dm-migrations (1.1.0)
@@ -48,8 +50,8 @@ DEPENDENCIES
   chronic_duration
   cinch
   dm-aggregates
-  dm-constraints
   dm-core
+  dm-is-list
   dm-is-state_machine
   dm-migrations
   dm-sqlite-adapter

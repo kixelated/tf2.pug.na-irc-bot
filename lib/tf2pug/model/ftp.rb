@@ -71,9 +71,8 @@ class Ftp
     return files.size
   end
   
+  # delete local demos and storage directory
   def self.delete_demos
-    # deletes local demos and storage directory
-    
     storage = Constants.stv['storage']
     FileUtils.mkdir storage if not Dir.exists?(storage)
   
@@ -85,8 +84,8 @@ class Ftp
     FileUtils.rmdir storage
   end
   
+  # delete old, remote demos
   def purge_demos
-    # delete old, remote demos
     connect do |conn|
       conn.nlst.each do |filename|
         if filename =~ /(.+?)-(.{4})(.{2})(.{2})-(.{2})(.{2})-(.+)\.dem/

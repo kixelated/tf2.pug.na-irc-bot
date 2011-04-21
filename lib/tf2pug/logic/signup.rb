@@ -3,13 +3,14 @@ require 'chronic_duration'
 require 'tf2pug/constants'
 require 'tf2pug/bot/irc'
 require 'tf2pug/logic/pug'
+require 'tf2pug/logic/user'
 require 'tf2pug/model/match'
 require 'tf2pug/model/tfclass'
 require 'tf2pug/model/user'
 
 module SignupLogic
   def self.add_signup(player, classes)
-    tfclasses = Tfclass.all(:pug.gte => 1) # select all of the pug-friendly classes
+    tfclasses = Tfclass.pug # select all of the pug-friendly classes
     tfnames = tfclasses.collect { |tf| tf.name }
     
     return Irc.notice user, "No classes entered. Usage: !add #{ tfnames * " " }" unless classes
@@ -20,7 +21,7 @@ module SignupLogic
     player.refresh unless player.authed? # refresh and see if recently authed
     Irc.notice player, "You are not authorized with Gamesurge. You can still play in the channel, but any accumulated stats will only be connected to this nick. Please follow this guide to register and authorize with Gamesurge: http://www.gamesurge.net/newuser/" unless player.authed?
     
-    user = User.find_player(player) || User.create_player(player) # find or create user
+    user = UserLogic.find_player(player) || UserLogic.create_player(player) # find or create user
     return Irc.notice player, "You are restricted from playing in this channel." if user.restricted?
     
     total = user.picks.count # determine total pugs played
@@ -32,37 +33,34 @@ module SignupLogic
     classes = tfclasses.select { |tf| classes.include?(tf.name) } # keep the classes signed up for 
     return Irc.notice player, "Invalid classes. Possible options are #{ tfnames * ", " }" if classes.empty?
     
-    Irc.notice player, "You cannot add at this time, and have been added to the next pug." if Pug.last(:state_pug => :picking)
+    Irc.notice player, "You cannot add at this time, and have been added to the next pug." if Pug.picking
 
-    pug = Pug.last(:state_pug => :waiting) || PugLogic.create_pug
+    pug = Pug.waiting || PugLogic.create_pug
     pug.add_signup(user, classes)
   end
-  
+
   def self.remove_signup(player)
-    user = User.find_player(player)
+    user = UserLogic.find_player(player)
     return Irc.notice player, "Could not find user." unless user
     
-    unless Pug.last.remove_signup(user)
-      pug = Pug.last(:state_pug => :picking) # maybe they were trying to remove during picking
-      return Irc.notice player, "You cannot remove at this time." if pug and pug.signups.first(:user => user)
+    unless Pug.waiting.remove_signup(user)
+      # maybe they were trying to remove during picking
+      Irc.notice player, "You cannot remove at this time." if Pug.picking and Pug.picking.signups.first(:user => user)
     end
   end
-  
+
   def self.replace_signup(player_old, player_new, admin = nil)
-    pug = Pug.last
-    return Irc.notice admin, "You cannot add or remove at this time." unless pug.can_remove?
+    user_old = UserLogic.find_player player_old
+    user_new = UserLogic.find_player player_new
     
-    user_old = User.find_player player_old
     return Irc.notice admin, "Cannot find user #{ player_old }." unless user_old
-    
-    user_new = User.find_player player_new
     return Irc.notice admin, "Cannot find user #{ player_new }." unless user_new
-    
-    pug.replace_signup(user_old, user_new)
-  end
   
+    Pug.waiting.replace_signup(user_old, user_new)
+  end
+
   def self.list_signups
-    pug = Pug.last
+    pug = Pug.waiting
     
     signups = { }
     pug.signups.all.each do |signup|
@@ -80,7 +78,7 @@ module SignupLogic
     
     Irc.message "#{ Irc.rjust("#{ output.size } users added:") } #{ output * ", " }"
   end
-  
+
   # TODO: Find a place to put this
   def self.classes_needed(pug)
     tfclasses = Tfclass.all(:pug.gte => 1).collect { |tfclass| [tfclass, tfclass.pug * 2] }
@@ -89,14 +87,14 @@ module SignupLogic
     pug.signups.all.each { |signup| tfclasses[signup.tfclass] -= 1 }
     tfclasses.select { |tf, count| count > 0 }
   end
-  
+
   def self.players_needed(pug)
     required = (Tfclass.all.sum(:pug) - 1) * 2 # - 1 to factor in captain, * 2 for number of teams
     avaliable = pug.signups.all(:fields => [:user_id], :unique => true).size
     
     required - avaliable
   end
-  
+
   def self.list_classes_needed
     pug = Pug.last
     

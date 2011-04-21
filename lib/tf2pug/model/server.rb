@@ -10,10 +10,10 @@ class Server
   property :id,   Serial
   property :name, String, :required => true
   
-  property :host, String, :required => true
+  property :host, String,  :required => true
   property :port, Integer, :default => 27015
   property :pass, String
-  property :rcon, String, :required => true
+  property :rcon, String,  :required => true
   
   property :played_at,  DateTime, :index => true
   property :created_at, DateTime
@@ -78,5 +78,9 @@ class Server
   
   def connect_info
     "connect #{ @host }:#{ @port }; password #{ @password }"
+  end
+  
+  class << self
+    def last_played; self.first(:order => :played_at.asc); end
   end
 end

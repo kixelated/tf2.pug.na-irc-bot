@@ -1,6 +1,6 @@
 require 'dm-core'
 require 'dm-aggregates'
-#require 'dm-constraints'
+require 'dm-is-list'
 require 'dm-is-state_machine'
 require 'dm-migrations'
 require 'dm-timestamps'

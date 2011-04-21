@@ -1,2 +1,2 @@
 require 'bundler/setup'
-$: << '../../lib' # could cause a problem
+$: << File.dirname(__FILE__) + '/../lib'

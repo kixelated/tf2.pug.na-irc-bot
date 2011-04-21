@@ -7,7 +7,7 @@ require 'tf2pug/model/server'
 class Match
   include DataMapper::Resource
   
-  property :id, Serial
+  property :id,   Serial
   property :type, Discriminator
 
   belongs_to :map
@@ -19,11 +19,11 @@ class Match
   
   is :state_machine, :initial => :setup, :column => :state do
     state :setup
-    state :warmup,  :enter => :start_match
+    state :warmup, :enter => :start_match
     state :live
-    state :final,   :enter => :end_match
+    state :final,  :enter => :end_match
     
-    event :forward do
+    event :advance do
       transition :from => :setup,   :to => :warmup
       transition :from => :warmup,  :to => :live
       transition :from => :live,    :to => :final
@@ -33,20 +33,15 @@ class Match
   has 2, :matchups
   has 2, :teams,    :through => :matchups
   
-  def home; matchups.first(:home => true); end
-  def away; matchups.first(:home => false); end
+  def home; self.matches.get(0); end
+  def away; self.matches.get(1); end
   
   def start_match
-    @server.start(@map) # if an exception is thrown, the state never gets updated
+    # note: if an exception is thrown, the state never gets updated
+    @server.start(@map) 
   end
   
   def end_match
-    # TODO
-  end
-  
-  # TODO: optional block can be used instead
-  def get_matchup(index = nil, &block)
-    index = block.call(self) unless index
-    self.matchups.get(index)
+    
   end
 end

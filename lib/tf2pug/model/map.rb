@@ -12,13 +12,15 @@ class Map
   property :created_at, DateTime
   property :updated_at, DateTime
   
-  # random based on weights
-  def self.random
-    target = rand(self.all.sum(:weight))
-    
-    self.all.detect do |map|
-      target -= map.weight
-      target < 0
-    end 
+  class << self
+    # random based on weights
+    def random
+      target = rand(self.all.sum(:weight))
+      
+      self.all.detect do |map|
+        target -= map.weight
+        target < 0
+      end 
+    end
   end
 end
