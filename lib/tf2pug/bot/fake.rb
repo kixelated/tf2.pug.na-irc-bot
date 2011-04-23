@@ -3,9 +3,12 @@ class BotFake
     puts "#{ "(notice) " if notice }#{ target }: #{ msg }"
   end
   
-  def quit
-    true
-  end
+  def quit; true; end
+end
+
+class BotFaker
+  def msg(target, msg, notice = false); end
+  def quit; true; end
 end
 
 class UserFake

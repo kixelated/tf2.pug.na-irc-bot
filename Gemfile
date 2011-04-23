@@ -17,3 +17,6 @@ end
 
 gem 'sqlite3'
 gem 'dm-sqlite-adapter'
+
+gem 'cucumber'
+gem 'rspec'

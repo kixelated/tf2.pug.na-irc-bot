@@ -1,5 +1,3 @@
-database: sqlite:../../db/stats.sqlite3
-
 internet:
   local_host:
   server_port: 27060

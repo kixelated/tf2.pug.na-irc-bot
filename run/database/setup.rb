@@ -8,9 +8,9 @@ DataMapper.auto_migrate!
 
 # Create server objects
 [   #  name  #  #      host        #  # pass #  # rcon #  # ftp #   # ftp pass #  #   ftp dir   #
-  [ "chicago1", "chicago1.tf2pug.us", "tf2pug", "secret", "pugna",  "ftp_secret", "/orangebox/tf" ]
-  [ "dallas1",  "dallas1.tf2pug.us",  "tf2pug", "secret", "pugna",  "ftp_secret", "/orangebox/tf" ]
-  [ "chicago2", "chicago2.tf2pug.us", "tf2pug", "secret", "pugna2", "ftp_secret", "/orangebox/tf" ]
+  [ "chicago1", "chicago1.tf2pug.us", "tf2pug", "secret", "pugna",  "ftp_secret", "/orangebox/tf" ],
+  [ "dallas1",  "dallas1.tf2pug.us",  "tf2pug", "secret", "pugna",  "ftp_secret", "/orangebox/tf" ],
+  [ "chicago2", "chicago2.tf2pug.us", "tf2pug", "secret", "pugna2", "ftp_secret", "/orangebox/tf" ],
   [ "dallas2",  "dallas2.tf2pug.us",  "tf2pug", "secret", "pugna3", "ftp_secret", "/orangebox/tf" ]
 ].each do |name, host, pass, rcon, ftp_user, ftp_pass, ftp_dir|
   Server.create(:name => name, :host => host, :pass => pass, :rcon => rcon, :ftp => Ftp.create(:host => host, :user => ftp_user, :pass => ftp_pass, :dir => ftp_dir))

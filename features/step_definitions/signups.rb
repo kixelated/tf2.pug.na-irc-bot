@@ -1,29 +1,30 @@
-require 'tf2pug/bot/fake'
-require 'tf2pug/logic/signup'
 require 'tf2pug/model/pug'
 
-@myself = UserFake.new(:name => "pingu")
-
-Given /^an empty pug$/ do
-  Pug.waiting.clear_signups
+def myself
+  User.first_or_create(:nick => "pingu")
 end
 
-When /^I sign up as (.)+$/ do |tfclasses|
-  SignupLogic.add_signup(@myself, tfclasses.split(", "))
+Given /^an empty pug$/ do
+  (Pug.waiting || Pug.create_random).signup_clear
+end
+
+When /^I sign up as (.+)$/ do |tfclasses|
+  puts tfclasses.split(", ")
+  temp = Tfclass.all(:name => tfclasses.split(", "))
+  Pug.waiting.signup_add(myself, temp)
 end
 
 When /^I remove my signup$/ do
-  SignupLogic.remove_signup(@myself)
+  Pug.waiting.signup_remove(myself)
 end
 
 Then /^I should see (\d+) (scouts?|soldiers?|demos?|medics?|captains?|players?) signed up$/ do |count, clss|
-  pug = Pug.waiting
   clss = clss.chomp('s') # remove the s
-  
+
   if clss == "player"
-    pug.count_signups.should == count
+    Pug.waiting.signups.count.should == count.to_i
   else
     tfclass = Tfclass.first(:name => clss)
-    pug.tfclass_signups(tfclass).count.should == count
+    Pug.waiting.signup_class(tfclass).size.should == count.to_i
   end
 end

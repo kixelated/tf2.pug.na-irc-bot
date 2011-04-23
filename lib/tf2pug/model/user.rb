@@ -1,5 +1,5 @@
 require 'tf2pug/database'
-require 'tf2pug/model/roster'
+require 'tf2pug/model/member'
 require 'tf2pug/model/team'
 require 'tf2pug/model/signup'
 require 'tf2pug/model/pick'
@@ -13,8 +13,8 @@ class User
   
   property :restricted_at, DateTime, :index => true
  
-  has n, :rosters
-  has n, :teams,   :through => :rosters
+  has n, :members
+  has n, :teams,   :through => :members
   has n, :picks
   has n, :signups
   

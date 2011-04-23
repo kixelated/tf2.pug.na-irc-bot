@@ -8,5 +8,5 @@ require 'dm-validations'
 
 require 'tf2pug/constants'
 
-DataMapper::Logger.new($stdout, :debug)
-DataMapper.setup(:default, Constants.database)
+#DataMapper::Logger.new($stdout, :debug)
+DataMapper.setup(:default, "sqlite:" + File.dirname(__FILE__) + "/../../db/stats.sqlite3")

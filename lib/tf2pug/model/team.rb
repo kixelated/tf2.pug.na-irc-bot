@@ -22,10 +22,4 @@ class Team
   has n, :users,   :through => :members
   
   include MemberOperations
-  
-  class << self
-    def random(count = 1)
-      Team.all(:pug => true).shuffle.first(count)
-    end
-  end
 end

@@ -1,10 +1,10 @@
-require 'tf2pug/constants'
 require 'tf2pug/database'
 require 'tf2pug/model/map'
 require 'tf2pug/model/match'
+require 'tf2pug/model/pick'
 require 'tf2pug/model/server'
 require 'tf2pug/model/signup'
-require 'tf2pug/model/pick'
+require 'tf2pug/model/team'
 
 class Pug < Match
   is :state_machine, :initial => :waiting, :column => :state_pug do
@@ -23,17 +23,44 @@ class Pug < Match
   has n, :signups
   has n, :picks
   
-  include SignupOperations
-  include PickOperations
+  def signup_add(user, tfclasses)
+    raise "User is restricted." if user.restricted?
+    
+    self.signup_remove(user) # delete any previous signups
+    self.signups.create(:user => user, :tfclasses => tfclasses)
+  end
+  
+  def signup_remove(user)
+    self.signups.all(:user => user).destroy # delete any previous signups
+  end
+  
+  def signup_replace(user_old, user_new)
+    self.signups.all(:user => user_old).update(:user => user_new)
+  end
+  
+  def signup_clear
+    self.signups.clear
+  end
+  
+  def signup_class(tfclass)
+    self.signups.select { |signup| signup.tfclasses.include?(tfclass) }
+  end
+  
+  def choose_captains
+    tfcaptain = Tfclass.first(:name => "captain") # captain is a hard-coded class
+    captains = self.signups.all(:tfclass => tfcaptain).shuffle.first(2)
+    
+    self.teams.zip(captains).each do |team, captain|
+      self.picks.create(:team => team, :user => captain, :tfclass => tfcaptain)
+    end
+  end
   
   class << self
-    def waiting
-      # try finding a waiting pug, otherwise, create one (there should always be a waiting pug)
-      Pug.first(:state_pug => :waiting) || Pug.create(:server => Server.last_played, :map => Map.random, :teams => Team.random(2))
+    def create_random
+      self.create(:server => Server.last_played, :map => Map.random, :teams => Team.all(:pug => true).shuffle.first(2))
     end
-    
-    def picking
-      Pug.first(:state_pug => :picking)
-    end
+  
+    def waiting; self.first(:state_pug => :waiting); end
+    def picking; self.first(:state_pug => :picking); end
   end
 end

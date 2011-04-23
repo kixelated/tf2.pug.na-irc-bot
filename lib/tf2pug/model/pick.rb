@@ -15,7 +15,3 @@ class Pick
   
   is :list, :scope => [ :pug_id, :team_id ]
 end
-
-module PickOperations
-
-end
