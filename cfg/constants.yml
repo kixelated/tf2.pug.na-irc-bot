@@ -169,6 +169,10 @@ rotation:
     - name: mainline
       file: cp_mainline_rc6
       weight: 1
+     
+    - name: process
+      file: cp_process_b4
+      weight: 1
       
     - name: stark
       file: cp_stark_b2
