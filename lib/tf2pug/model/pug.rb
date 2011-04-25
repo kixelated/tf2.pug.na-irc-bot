@@ -20,30 +20,47 @@ class Pug < Match
     end
   end
   
-  has n, :signups
-  has n, :picks
+  has n, :signups, :constraint => :destroy
+  has n, :picks,   :constraint => :destroy
   
   def signup_add(user, tfclasses)
     raise "User is restricted." if user.restricted?
     
-    self.signup_remove(user) # delete any previous signups
-    self.signups.create(:user => user, :tfclasses => tfclasses)
+    self.signup_remove(user)
+    
+    tfclasses.each do |tfclass| 
+      self.signups.create(:user => user, :tfclass => tfclass)
+    end
   end
   
   def signup_remove(user)
-    self.signups.all(:user => user).destroy # delete any previous signups
+    self.signups.all(:user => user).destroy
   end
   
   def signup_replace(user_old, user_new)
+    self.signup_remove(user_new)
     self.signups.all(:user => user_old).update(:user => user_new)
   end
   
   def signup_clear
-    self.signups.clear
+    self.signups.all.destroy
   end
   
-  def signup_class(tfclass)
-    self.signups.select { |signup| signup.tfclasses.include?(tfclass) }
+  def signup_map(&block)
+    Hash.new.tap do |output|
+      self.signups.each do |signup|
+        (output[block.call(signup)] ||= []) << signup
+      end
+      output.default = []
+    end
+  end
+  
+  def signup_classes
+    self.signup_map { |signup| signup.tfclass }
+  end
+
+  def signup_users
+    self.signup_map { |signup| signup.user }
   end
   
   def choose_captains
