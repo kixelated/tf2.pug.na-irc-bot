@@ -1,3 +1,5 @@
+database: postgres://postgres:secret@localhost/tf2pug
+
 internet:
   local_host:
   server_port: 27060
