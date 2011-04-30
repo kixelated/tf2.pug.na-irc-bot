@@ -37,9 +37,18 @@ class Pug < Match
     self.signups.all(:user => user).destroy
   end
   
-  def signup_replace(user_old, user_new)
+=begin
+  def signup_replace(user_new, user_old)
     self.signup_remove(user_new)
     self.signups.all(:user => user_old).update(:user => user_new)
+  end
+=end
+
+  def signup_replace(user_new, user_old)
+    signups = self.signup_users[user_old]
+    
+    self.signup_add(user_new, signups)
+    self.signup_remove(user_old)
   end
   
   def signup_clear

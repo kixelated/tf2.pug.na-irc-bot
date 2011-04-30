@@ -18,7 +18,7 @@ class Team
   has n, :matchups
   has n, :matches,  :through => :matchups
   
-  has n, :members
+  has n, :members, :constraint => :destroy
   has n, :users,   :through => :members
   
   include MemberOperations

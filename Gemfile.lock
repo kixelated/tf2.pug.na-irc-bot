@@ -43,11 +43,16 @@ GEM
     dm-postgres-adapter (1.1.0)
       dm-do-adapter (~> 1.1.0)
       do_postgres (~> 0.10.2)
+    dm-sqlite-adapter (1.1.0)
+      dm-do-adapter (~> 1.1.0)
+      do_sqlite3 (~> 0.10.2)
     dm-timestamps (1.1.0)
       dm-core (~> 1.1.0)
     dm-validations (1.1.0)
       dm-core (~> 1.1.0)
     do_postgres (0.10.3)
+      data_objects (= 0.10.3)
+    do_sqlite3 (0.10.3)
       data_objects (= 0.10.3)
     gherkin (2.3.6)
       json (>= 1.4.6)
@@ -77,6 +82,7 @@ DEPENDENCIES
   dm-is-state_machine
   dm-migrations
   dm-postgres-adapter
+  dm-sqlite-adapter
   dm-timestamps
   dm-validations
   rspec

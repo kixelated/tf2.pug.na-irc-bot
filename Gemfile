@@ -17,6 +17,7 @@ group :dm do
 end
 
 gem 'dm-postgres-adapter'
+gem 'dm-sqlite-adapter'
 
 gem 'cucumber'
 gem 'rspec'

@@ -13,10 +13,10 @@ class User
   
   property :restricted_at, DateTime, :index => true
  
-  has n, :members
+  has n, :members, :constraint => :destroy
   has n, :teams,   :through => :members
-  has n, :picks
-  has n, :signups
+  has n, :picks,   :constraint => :destroy
+  has n, :signups, :constraint => :destroy
   
   property :spoken_at,  DateTime
   property :created_at, DateTime
