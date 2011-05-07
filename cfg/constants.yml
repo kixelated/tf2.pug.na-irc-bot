@@ -150,10 +150,6 @@ rotation:
       file: koth_ashville_rc1
       weight: 4
       
-    - name: obscure
-      file: cp_obscure_final
-      weight: 2
-      
     - name: freight
       file: cp_freight_final1
       weight: 2
@@ -164,14 +160,22 @@ rotation:
 
     - name: metalworks
       file: cp_metalworks_b17
+      weight: 2
+     
+    - name: process
+      file: cp_process_b4
+      weight: 2
+
+    - name: follower
+      file: cp_follower
+      weight: 2
+
+    - name: obscure
+      file: cp_obscure_final
       weight: 1
       
     - name: mainline
       file: cp_mainline_rc6
-      weight: 1
-     
-    - name: process
-      file: cp_process_b4
       weight: 1
       
     - name: stark
