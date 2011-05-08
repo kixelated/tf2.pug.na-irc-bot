@@ -112,50 +112,34 @@ rotation:
   maps:
     - name: badlands
       file: cp_badlands
-      weight: 32
+      weight: 16
       
     - name: granary
       file: cp_granary
-      weight: 24
+      weight: 12
+
+    - name: snakewater
+      file: cp_snakewater_rc3
+      weight: 10
       
     - name: gullywash
       file: cp_gullywash_pro
-      weight: 18
-      
-    - name: snakewater
-      file: cp_snakewater_rc3
-      weight: 18
-      
-    - name: viaduct
-      file: koth_viaduct
-      weight: 6
+      weight: 8
       
     - name: pro viaduct
       file: koth_pro_viaduct_rc2
-      weight: 4
+      weight: 5
       
-    - name: coldfront
-      file: cp_coldfront
-      weight: 4
-
     - name: warmfront
       file: cp_warmfront
-      weight: 4
-      
-    - name: yukon
-      file: cp_yukon_final
       weight: 4
 
     - name: ashville
       file: koth_ashville_rc1
-      weight: 4
-      
-    - name: freight
-      file: cp_freight_final1
-      weight: 2
-      
-    - name: bazillion
-      file: cp_bazillion_rc2
+      weight: 3
+
+    - name: yukon
+      file: cp_yukon_final
       weight: 2
 
     - name: metalworks
@@ -163,23 +147,23 @@ rotation:
       weight: 2
      
     - name: process
-      file: cp_process_b4
+      file: cp_process_a5
       weight: 2
 
     - name: follower
       file: cp_follower
       weight: 2
+      
+    - name: freight
+      file: cp_freight_final1
+      weight: 1
+      
+    - name: bazillion
+      file: cp_bazillion_rc2
+      weight: 1
 
     - name: obscure
       file: cp_obscure_final
-      weight: 1
-      
-    - name: mainline
-      file: cp_mainline_rc6
-      weight: 1
-      
-    - name: stark
-      file: cp_stark_b2
       weight: 1
 
     - name: turbine
@@ -188,10 +172,6 @@ rotation:
     
     - name: well
       file: cp_well
-      weight: 1
-      
-    - name: wildfire
-      file: ctf_wildfire_rc
       weight: 1
 
 reward:
