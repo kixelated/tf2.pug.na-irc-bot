@@ -1,6 +1,7 @@
 require 'chronic_duration'
 
 require_relative '../server'
+require_relative '../logs'
 require_relative '../stv'
 
 module ServerLogic
@@ -43,6 +44,38 @@ module ServerLogic
   def change_map map, file
     @map = { 'name' => map, 'file' => file, 'weight' => 0 }
   end
+
+  def update_logs
+    begin
+      @updating = true
+    
+      thread_servers do |server|
+        info = server.update_server_info
+        
+        if info["number_of_players"] >= const["settings"]["used"]
+          message "#{ server } is in use, please wait until the pug has ended."
+        else
+          server.logs.connect
+          count = server.logs.logs.size
+          
+          if count > 0
+            message "Uploading #{ count } logs from #{ server }."
+            server.logs.update server
+          else
+            message "No new demos on #{ server.name }."
+          end
+          
+          server.logs.purge
+          server.logs.disconnect
+        end
+      end
+    
+      message "Finished uploading log files."
+    ensure
+      @updating = false
+    end
+  end
+
   
   def update_stv
     begin
@@ -73,6 +106,10 @@ module ServerLogic
     ensure
       @updating = false
     end
+  end
+  
+  def list_logs
+    message "Log files can be found here: #{ const["logs"]["url"] }"
   end
   
   def list_stv

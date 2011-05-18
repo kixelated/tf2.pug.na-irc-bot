@@ -101,6 +101,17 @@ stv:
   delete:
     remote: true
     local: true
+
+logs:
+  url: http://tf2pug.us/logs
+  storage: ../logs/
+  ftp:
+    ip: tf2pug.us
+    user: logs@tf2pug.us
+    password: secret
+  delete:
+    remote: true
+    local: true
     
 mumble:
   ip: chi6.eoreality.net

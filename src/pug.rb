@@ -52,6 +52,7 @@ class Pug
   match /server/i, method: :command_server
   match /ip/i, method: :command_server
   match /last/i, method: :command_last
+  match /logs/i, method: :command_logs
   match /mumble/i, method: :command_mumble
   match /rotation/i, method: :command_rotation
   match /stv/i, method: :command_stv  
@@ -219,6 +220,12 @@ class Pug
   # !last
   def command_last m
     list_last # logic/server.rb
+  end
+  
+  # !logs
+  def command_logs m
+    list_logs # logic/server.rb
+    update_logs unless @updating # logic/server.rb
   end
   
   # !rotation
