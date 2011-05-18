@@ -11,6 +11,7 @@ module Variables
     
     const["servers"].each_with_index do |details, i|
       @servers << Server.new(details["ip"], details["port"], const["internet"]["local_host"], const["internet"]["server_port"] + i).tap do |server|
+        server.logs = Logs.new(details["ftp"].values)
         server.stv = STV.new(details["ftp"].values)
         server.details = details
       end

@@ -2,7 +2,7 @@ require 'steam-condenser'
 require_relative 'constants'
 
 class Server < SourceServer
-  attr_accessor :details, :stv
+  attr_accessor :details, :stv, :logs
 
   def tournament_info connect = true
     rcon_connect rcon if connect

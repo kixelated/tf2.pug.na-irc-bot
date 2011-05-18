@@ -39,7 +39,7 @@ class Logs
     logs.each do |filename|
       file = "#{ server }-#{ filename }"
       
-      storage = "#{ const["stv"]["storage"] }"
+      storage = "#{ const["logs"]["storage"] }-#{ server }"
       
       # TODO: Does storage exist?
       FileUtils.mkdir_p storage if storage and not Dir.exists? storage

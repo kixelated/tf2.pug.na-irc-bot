@@ -62,7 +62,7 @@ module ServerLogic
             message "Uploading #{ count } logs from #{ server }."
             server.logs.update server
           else
-            message "No new demos on #{ server.name }."
+            message "No new logs on #{ server.name }."
           end
           
           server.logs.purge
