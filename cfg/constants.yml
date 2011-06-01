@@ -51,45 +51,46 @@ servers:
     ip: chicago1.tf2pug.us
     port: 27015
     password: tf2pug
-    rcon: secret
+    rcon: 8288Oc3
     ftp:
       ip: chicago1.tf2pug.us
       user: pugna
-      password: secret
+      password: LD4ysPKm
       dir: orangebox/tf
-    
+
   - name: dallas1
     ip: dallas1.tf2pug.us
     port: 27015
     password: tf2pug
-    rcon: secret
+    rcon: 8288Oc3
     ftp:
       ip: dallas1.tf2pug.us
       user: pugna
-      password: secret
+      password: LD4ysPKm
       dir: orangebox/tf
-     
+
   - name: chicago2
     ip: chicago2.tf2pug.us
     port: 27015
     password: tf2pug
-    rcon: secret
+    rcon: 8288Oc3
     ftp:
       ip: chicago2.tf2pug.us
       user: pugna2
-      password: secret
+      password: dd1f359
       dir: orangebox/tf
-      
+
   - name: dallas2
     ip: dallas2.tf2pug.us
     port: 27015
     password: tf2pug
-    rcon: secret
+    rcon: 8288Oc3
     ftp:
       ip: dallas2.tf2pug.us
       user: pugna3
-      password: secret
+      password: w4m1k6n
       dir: orangebox/tf
+
 
 stv:
   url: http://tf2pug.us/demos
@@ -108,7 +109,7 @@ logs:
   ftp:
     ip: tf2pug.us
     user: logs@tf2pug.us
-    password: secret
+    password: DzkA0lxJo4hr7o
   delete:
     remote: true
     local: true
@@ -138,7 +139,7 @@ rotation:
       weight: 8
       
     - name: pro viaduct
-      file: koth_pro_viaduct_rc2
+      file: koth_pro_viaduct_rc3
       weight: 5
       
     - name: warmfront
