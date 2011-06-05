@@ -155,11 +155,11 @@ rotation:
       weight: 2
 
     - name: metalworks
-      file: cp_metalworks_b20
+      file: cp_metalworks_b22
       weight: 2
      
     - name: process
-      file: cp_process_a5
+      file: cp_process_b1
       weight: 2
 
     - name: follower
