@@ -87,6 +87,10 @@ module PickingLogic
     classes_needed(current_team.get_classes, 1).key? clss # logic/players.rb
   end
 
+	def medic_captains?
+		@teams.all? { |team| @signups_all[team.captain].include? "medic" }
+	end
+
   def pick_medic_conflicting? nick, clss
     return false unless @signups[nick].include? "medic"
 
@@ -114,6 +118,7 @@ module PickingLogic
 
     return notice(user, "Invalid class #{ clss }.") unless pick_class_valid? clss
     return notice(user, "The class #{ clss } is full.") unless pick_class_avaliable? clss
+		return notice(user, "You cannot pick a medic when there are two medic-captains") if medic_captains? and clss == "medic"
     return notice(user, "You cannot pick one of the remaining medics.") if pick_medic_conflicting? player, clss
 
     current_team.signups[player] = clss
