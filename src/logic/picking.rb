@@ -16,7 +16,7 @@ module PickingLogic
   
     captains = get_classes["captain"].shuffle
     captains.sort_by! { |nick| @signups[nick].include?("medic") ? 0 : 1 } # give medics priority
-    captains = captains.first const["teams"]["count"] # select first 2* captains
+    captains = captains.first(const["teams"]["count"]).shuffle # select first 2* captains
 
     captains.each_with_index do |captain, i|
       team = Team.new
