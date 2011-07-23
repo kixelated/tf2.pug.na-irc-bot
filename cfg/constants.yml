@@ -51,44 +51,44 @@ servers:
     ip: chicago1.tf2pug.us
     port: 27015
     password: tf2pug
-    rcon: 8288Oc3
+    rcon: secret
     ftp:
       ip: chicago1.tf2pug.us
       user: pugna
-      password: LD4ysPKm
+      password: secret
       dir: orangebox/tf
 
   - name: dallas1
     ip: dallas1.tf2pug.us
     port: 27015
     password: tf2pug
-    rcon: 8288Oc3
+    rcon: secret
     ftp:
       ip: dallas1.tf2pug.us
       user: pugna
-      password: LD4ysPKm
+      password: secret
       dir: orangebox/tf
 
   - name: chicago2
     ip: chicago2.tf2pug.us
     port: 27015
     password: tf2pug
-    rcon: 8288Oc3
+    rcon: secret
     ftp:
       ip: chicago2.tf2pug.us
       user: pugna2
-      password: dd1f359
+      password: secret
       dir: orangebox/tf
 
   - name: dallas2
     ip: dallas2.tf2pug.us
     port: 27015
     password: tf2pug
-    rcon: 8288Oc3
+    rcon: secret
     ftp:
       ip: dallas2.tf2pug.us
       user: pugna3
-      password: w4m1k6n
+      password: secret
       dir: orangebox/tf
 
 
@@ -109,7 +109,7 @@ logs:
   ftp:
     ip: tf2pug.us
     user: logs@tf2pug.us
-    password: DzkA0lxJo4hr7o
+    password: secret
   delete:
     remote: true
     local: true
