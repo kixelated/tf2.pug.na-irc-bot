@@ -131,7 +131,7 @@ rotation:
       weight: 6
 
     - name: snakewater
-      file: cp_snakewater_rc4
+      file: cp_snakewater_rc5
       weight: 5
 
     - name: gullywash
