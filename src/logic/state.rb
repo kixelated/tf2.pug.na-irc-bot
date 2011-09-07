@@ -57,8 +57,8 @@ module StateLogic
   
   def start_delay
     state "delay"
-        
-    message colourize "Teams are being drafted, captains will be selected in #{ const["delays"]["picking"] } seconds", const["colours"]["yellow"]
+
+    message colourize "Teams will be drafted in #{ const["delays"]["picking"] } seconds", const["colours"]["yellow"]
     sleep const["delays"]["picking"]
   end
   
