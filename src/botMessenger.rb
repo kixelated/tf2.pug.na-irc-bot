@@ -14,7 +14,7 @@ class BotMessenger < Cinch::Bot
       c.nick = Constants.const["messengers"]["nick"] + i.to_s
       c.local_host = Constants.const["internet"]["local_host"]
       
-      c.channels = [ Constants.const["irc"]["channel"] ] 
+      c.channels = [ Constants.const["irc"]["channel"], Constants.const["irc"]["channel2"] ] 
       c.verbose = false
     end
     
@@ -22,7 +22,7 @@ class BotMessenger < Cinch::Bot
       bot.msg Constants.const["irc"]["auth_serv"], "AUTH #{ Constants.const["irc"]["auth"] } #{ Constants.const["irc"]["auth_password"] }" if Constants.const["irc"]["auth"]
     end
     
-    BotManager.instance.add self
+    BotManager.instance.add self, Constants.const["irc"]["channel"], Constants.const["irc"]["channel2"]
   end
 end
 

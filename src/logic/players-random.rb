@@ -18,6 +18,7 @@ module PlayersRandomLogic
 
     tf_class = classes.first
     return notice user, "That class is full, please pick another." if get_classes[tf_class].size >= const["teams"]["classes"][tf_class] * const["teams"]["count"]
+    return notice user, "You cannot add as captain in this channel." if tf_class == 'captain'
 
     u = find_user user
     u = create_user user unless u

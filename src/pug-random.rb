@@ -8,7 +8,7 @@ require_relative 'logic/picking-random'
 require_relative 'logic/state'
 require_relative 'logic/server'
 
-class Pug
+class PugRandom
   include Cinch::Plugin
   
   include Variables
@@ -31,7 +31,7 @@ class Pug
   timer 30, method: :timer_restriction
   
   # player-related commands
-  match /add(?: (\w+))?/i, method: :command_add
+  match /add(?: (\w+))?$/i, method: :command_add
   match /remove/i, method: :command_remove
   match /list/i, method: :command_players
   match /players/i, method: :command_players
@@ -340,7 +340,7 @@ class Pug
   end
   
   def message msg
-    BotManager.instance.msg const["irc"]["channel"], colourize(msg.to_s)
+    BotManager.instance.msg const["irc"]["channel2"], colourize(msg.to_s)
     false
   end
   
@@ -349,7 +349,7 @@ class Pug
     false
   end
 
-  def notice channel = const["irc"]["channel"], msg
+  def notice channel = const["irc"]["channel2"], msg
     BotManager.instance.notice channel, msg
     false
   end

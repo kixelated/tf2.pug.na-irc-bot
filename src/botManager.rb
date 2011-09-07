@@ -10,13 +10,20 @@ class BotManager
     @queue = []
   end
   
-  def add bot
-    @bots << bot unless @bots.include? bot
+  def add(bot, *channels)
+    @bots << bot
+
+    @channels ||= Hash.new
+    channels.each do |channel|
+      @channels[channel] ||= Array.new
+      @channels[channel] << bot
+    end
   end
   
   def quit
     @bots.each { |bot| bot.quit }
     @bots.clear
+    @channels.clear
   end
 
   def msg recipient, message, notice = false
@@ -31,7 +38,14 @@ class BotManager
     while @bots.size > 0
       unless @queue.empty?
         tosend = @queue.shift
-        bot = @bots.push(@bots.shift).last
+
+        if @channels[tosend[:to]]
+          bots = @channels[tosend[:to]]
+        else
+          bots = @bots
+        end
+
+        bot = bots.push(bots.shift).last
         
         bot.msg tosend[:to], tosend[:message], tosend[:notice]
         

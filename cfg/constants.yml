@@ -11,7 +11,9 @@ irc:
   port: 6667
 
   nick: TF2CompanionTest
+  nick2: TF2PugTest
   channel: '#tf2.pug.na.beta'
+  channel2: '#tf2.pug.beta'
 
   auth_password: secret
   auth:
