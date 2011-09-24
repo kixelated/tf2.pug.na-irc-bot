@@ -5,8 +5,6 @@ require 'zip/zipfilesystem'
 require_relative 'constants'
 
 class STV
-  include Constants
-  
   attr_accessor :ip, :user, :password, :dir
 
   def initialize details
@@ -21,9 +19,9 @@ class STV
   end
   
   def open_up
-    @up = Net::FTP.open(const["stv"]["ftp"]["ip"], const["stv"]["ftp"]["user"], const["stv"]["ftp"]["password"]).tap do |conn|
+    @up = Net::FTP.open(Constants.const["stv"]["ftp"]["ip"], Constants.const["stv"]["ftp"]["user"], Constants.const["stv"]["ftp"]["password"]).tap do |conn|
       conn.passive = true
-      conn.chdir const["stv"]["ftp"]["dir"] if const["stv"]["ftp"]["dir"]
+      conn.chdir Constants.const["stv"]["ftp"]["dir"] if Constants.const["stv"]["ftp"]["dir"]
     end
   end
   
@@ -41,7 +39,7 @@ class STV
       filezip = "#{ file }.zip"
       filetemp = "#{ file }.tmp"
 
-      storage = "#{ const["stv"]["storage"] }"
+      storage = "#{ Constants.const["stv"]["storage"] }"
       
       # TODO: Does storage exist?
       FileUtils.mkdir_p storage if storage and not Dir.exists? storage
@@ -56,10 +54,10 @@ class STV
       
       # Delete local files
       FileUtils.rm storage + filename
-      FileUtils.rm storage + filezip if const["stv"]["delete"]["local"]
+      FileUtils.rm storage + filezip if Constants.const["stv"]["delete"]["local"]
 
       # Delete remote files
-      @down.delete filename if const["stv"]["delete"]["remote"]
+      @down.delete filename if Constants.const["stv"]["delete"]["remote"]
     end
   end
   

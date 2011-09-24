@@ -6,8 +6,6 @@ require_relative 'pug'
 require_relative 'pug-random'
 
 class BotMaster < Cinch::Bot
-  include Constants
-
   def initialize(i)
     super()
     

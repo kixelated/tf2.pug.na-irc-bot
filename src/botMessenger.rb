@@ -3,8 +3,6 @@ require_relative 'constants'
 require_relative 'botManager'
 
 class BotMessenger < Cinch::Bot
-  include Constants
-
   def initialize i
     super()
     

@@ -3,7 +3,6 @@ require_relative 'constants'
 
 class BotManager
   include Singleton
-  include Constants
   
   def initialize
     @bots = []
@@ -49,9 +48,9 @@ class BotManager
         
         bot.msg tosend[:to], tosend[:message], tosend[:notice]
         
-        sleep(1.0 / (const["messengers"]["mps"].to_f * @bots.size.to_f))
+        sleep(1.0 / (Constants.const["messengers"]["mps"].to_f * @bots.size.to_f))
       else
-        sleep(const["delays"]["manager"].to_f)
+        sleep(Constants.const["delays"]["manager"].to_f)
       end
     end
   end

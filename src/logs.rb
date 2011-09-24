@@ -5,8 +5,6 @@ require 'zip/zipfilesystem'
 require_relative 'constants'
 
 class Logs
-  include Constants
-  
   attr_accessor :ip, :user, :password, :dir
 
   def initialize details
@@ -21,9 +19,9 @@ class Logs
   end
   
   def open_up
-    @up = Net::FTP.open(const["logs"]["ftp"]["ip"], const["logs"]["ftp"]["user"], const["logs"]["ftp"]["password"]).tap do |conn|
+    @up = Net::FTP.open(Constants.const["logs"]["ftp"]["ip"], Constants.const["logs"]["ftp"]["user"], Constants.const["logs"]["ftp"]["password"]).tap do |conn|
       conn.passive = true
-      conn.chdir const["logs"]["ftp"]["dir"] if const["logs"]["ftp"]["dir"]
+      conn.chdir Constants.const["logs"]["ftp"]["dir"] if Constants.const["logs"]["ftp"]["dir"]
     end
   end
   
@@ -39,7 +37,7 @@ class Logs
     logs.each do |filename|
       file = "#{ server }-#{ filename }"
       
-      storage = "#{ const["logs"]["storage"] }-#{ server }"
+      storage = "#{ Constants.const["logs"]["storage"] }-#{ server }"
       
       # TODO: Does storage exist?
       FileUtils.mkdir_p storage if storage and not Dir.exists? storage
@@ -53,7 +51,7 @@ class Logs
       FileUtils.rm storage + filename
 
       # Delete remote files
-      @down.delete filename if const["logs"]["delete"]["remote"]
+      @down.delete filename if Constants.const["logs"]["delete"]["remote"]
     end
   end
   

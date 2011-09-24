@@ -1,5 +1,6 @@
 require 'cinch'
 
+require_relative 'constants'
 require_relative 'variables'
 require_relative 'util'
 
@@ -11,6 +12,7 @@ require_relative 'logic/server'
 class PugRandom
   include Cinch::Plugin
   
+  include Const
   include Variables
   include Utilities
   
@@ -73,7 +75,13 @@ class PugRandom
   
   def initialize *args
     super
-    setup # variables.rb 
+
+    load_config
+    calculate
+
+    const['teams']['classes'].delete('captain')
+
+    setup # variables.rb
   end
   
   # Events
@@ -320,9 +328,9 @@ class PugRandom
     return unless require_admin m
     
     unless pass
-      bot.msg Constants.const["irc"]["auth_serv"], "AUTHCOOKIE #{ Constants.const["irc"]["auth"] }"
+      bot.msg const["irc"]["auth_serv"], "AUTHCOOKIE #{ const["irc"]["auth"] }"
     else
-      bot.msg Constants.const["irc"]["auth_serv"], "COOKIE #{ Constants.const["irc"]["auth"] } #{ pass }"
+      bot.msg const["irc"]["auth_serv"], "COOKIE #{ const["irc"]["auth"] } #{ pass }"
     end
   end
   
@@ -330,8 +338,8 @@ class PugRandom
   def admin_reload m
     return unless require_admin m
     
-    Constants.load_config
-    Constants.calculate
+    load_config
+    calculate
   end
 
   def require_admin m

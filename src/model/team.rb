@@ -8,7 +8,6 @@ require_relative 'user'
 require_relative 'pick'
 
 class Team < ActiveRecord::Base
-  include Constants
   include Utilities
 
   has_and_belongs_to_many :matches # TODO: Create join table.
@@ -29,11 +28,11 @@ class Team < ActiveRecord::Base
     @colour = info["colour"]
   end
 
-  def my_colourize str, bg = const["colours"]["black"]
+  def my_colourize str, bg = Constants.const["colours"]["black"]
     colourize str, @colour, bg
   end
   
-  def format_team bg = const["colours"]["black"]
+  def format_team bg = Constants.const["colours"]["black"]
     output = @signups.collect { |k, v| "#{ k } as #{ my_colourize v, bg }" }
     "#{ format_name bg }: #{ output.join(", ") if output }"
   end
@@ -42,7 +41,7 @@ class Team < ActiveRecord::Base
     @signups.invert_proper
   end
   
-  def format_name bg = const["colours"]["black"]
+  def format_name bg = Constants.const["colours"]["black"]
     my_colourize @name, bg
   end
   

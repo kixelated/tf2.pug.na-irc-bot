@@ -1,23 +1,24 @@
 require 'yaml'
 
-module Constants
-  def self.const
-    @@const
-  end
-  
+module Const
   def const
-    @@const
+    @const
   end
-  
-  def self.load_config
-    @@const = YAML.load_file(File.dirname(__FILE__) + '/../cfg/constants.yml')
+
+  def load_config
+    @const = YAML.load_file(File.dirname(__FILE__) + '/../cfg/constants.yml')
   end
-  
-  def self.calculate
+
+  def calculate
     const["teams"]["count"] = const["teams"]["details"].size
     const["teams"]["total"] = const["teams"]["players"] * const["teams"]["count"]
   end
 end
 
+class GlobalConstants
+  include Const
+end
+
+Constants = GlobalConstants.new
 Constants.load_config
 Constants.calculate
