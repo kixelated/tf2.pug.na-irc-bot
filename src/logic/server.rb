@@ -6,21 +6,25 @@ require_relative '../stv'
 
 module ServerLogic
   def find_server
-    first = true
+    attempt = 0
   
     begin
       started = start_server
     rescue Exception => e
-      if first
+      if attempt == 0
         message "#{ e.message }. Trying server again in #{ const["delays"]["server"] } seconds."
-        first = false
       else
         message "#{ e.message }. Trying the next server in #{ const["delays"]["server"] } seconds."
         next_server
       end
-      
+
+      attempt += 1
       sleep const["delays"]["server"]
-    end while not started
+    end while not started and attempt < const["servers"].size - 1
+
+    if not started
+      message "Could not find an avaliable server. Please verify that the selected server is opperational."
+    end
   end
   
   def start_server
